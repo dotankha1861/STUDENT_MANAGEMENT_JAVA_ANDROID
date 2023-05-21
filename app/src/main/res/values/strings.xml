@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">studentmanagement</string>
+    <string name="tvQLSV_text">QUẢN LÝ SINH VIÊN</string>
+    <string name="txtDangNhap_text">ĐĂNG NHẬP</string>
+    <string name="edtTenDN_hint">Tên đăng nhập</string>
+    <string name="edtMatKhau_hint">Mật khẩu</string>
+    <string name="tvQuenMatKhau_text">Quên mật khẩu?</string>
+    <string name="btnDangNhap_text">ĐĂNG NHẬP</string>
+    <string name="btnQuayLai_text">QUAY LẠI</string>
+    <string name="btnGuiMail_text">GỬI</string>
+    <string name="navigation_open">Open navigation</string>
+    <string name="navigation_close">Close navigation</string>
+</resources>

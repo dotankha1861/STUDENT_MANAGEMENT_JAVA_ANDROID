@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="20dp"
+    android:padding="30dp"
+    android:background="@drawable/spinner_shadow"
+    android:gravity="center">
+    <ImageView
+        android:id="@+id/iv_dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/iv_dialog"
+        android:layout_marginBottom="10dp"
+        android:contentDescription="TODO" />
+    <TextView
+        android:id="@+id/tv_message"
+        android:textColor="#145B60"
+        android:gravity="center"
+        android:textSize="22dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="This is message"
+        android:layout_marginBottom="15dp"/>
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:inputType="text"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:layout_marginBottom="20dp"/>
+
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+        <Button
+            style="@style/style_button"
+            android:id="@+id/btn_positive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_button_green"
+            android:textColor="#fff"
+            android:text="Đồng ý"/>
+        <Button
+            android:id="@+id/btn_negative"
+            android:textColor="#fff"
+            android:layout_marginLeft="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_button_yellow"
+            android:text="Hủy bỏ"/>
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/primary_color">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/splash_img" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="@string/txtDangNhap_text"
+        android:layout_gravity="center"
+        android:textStyle="bold"
+        android:textSize="40sp"
+        android:layout_marginBottom="40dp"
+        android:textColor="@color/white"/>
+    <EditText
+        android:inputType="text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:layout_gravity="center"
+        android:drawablePadding="10dp"
+        android:layout_marginHorizontal="35dp"
+        android:hint="@string/edtTenDN_hint"
+        style="@style/style_edittext"
+        android:drawableStart="@drawable/baseline_person_24"
+        android:id="@+id/edtUsername"/>
+
+    <EditText
+        android:id="@+id/edtPassword"
+        style="@style/style_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="35dp"
+        android:layout_marginRight="35dp"
+        android:drawableStart="@drawable/baseline_lock_24"
+        android:drawablePadding="10dp"
+        android:hint="@string/edtMatKhau_hint"
+        android:inputType="text|textPassword"
+        android:longClickable="false"
+        android:padding="15dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="right|center">
+
+        <TextView
+            android:id="@+id/tvVisibleMK"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:text="Hiện mật khẩu"
+            android:textColor="#bbb"
+            android:textStyle="italic" />
+
+        <ToggleButton
+            android:id="@+id/tgbVisible"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginRight="35dp"
+            android:background="@drawable/baseline_visibility_24"
+            android:text=""
+            android:textOn=""
+            android:textOff="" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="5dp"
+        android:text=""
+        android:textColor="#f11"
+        android:textSize="17sp" />
+
+    <Button
+        android:id="@+id/btnDangnhap"
+        style="@style/style_button"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="70dp"
+        android:layout_marginTop="40dp"
+        android:paddingHorizontal="30dp"
+        android:paddingVertical="10dp"
+        android:background="@drawable/custom_button_yellow"
+        android:text="@string/btnDangNhap_text"
+        android:textColor="@color/primary_color"
+        android:textSize="22sp" />
+
+</LinearLayout>

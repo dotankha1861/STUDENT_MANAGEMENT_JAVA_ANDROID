@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+       tools:showIn="navigation_view">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/navUserInfor"
+            android:title="Thông tin tài khoản"
+            android:icon="@drawable/nav_user" />
+        <item
+            android:id="@+id/nav_ChangePassword"
+            android:title="Đổi mật khẩu"
+            android:icon="@drawable/nav_changepassword" />
+        <item
+            android:id="@+id/navLogOut"
+            android:title="Đăng xuất"
+            android:icon="@drawable/log_out" />
+    </group>
+
+</menu>
