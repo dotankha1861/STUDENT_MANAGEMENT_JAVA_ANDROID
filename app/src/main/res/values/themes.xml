@@ -58,4 +58,7 @@
         <item name="android:background">@drawable/custom_edittext_notforcused</item>
         <item name="android:searchIcon">@android:color/transparent</item>
     </style>
+    <style name="toolbarNoTitle">
+        <item name="android:textSize">0sp</item>
+    </style>
 </resources>

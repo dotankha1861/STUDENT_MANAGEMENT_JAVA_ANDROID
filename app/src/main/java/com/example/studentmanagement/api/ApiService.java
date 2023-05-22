@@ -1,18 +1,22 @@
 package com.example.studentmanagement.api;
 
+import com.example.studentmanagement.adapter.FacultyAdapter;
+import com.example.studentmanagement.models.entity.Faculty;
+import com.example.studentmanagement.models.requestbody.RequestBodyChangePassword;
 import com.example.studentmanagement.models.requestbody.RequestBodyLogin;
 import com.example.studentmanagement.models.responsebody.ResponseBodyLogin;
+import com.example.studentmanagement.models.view.FacultyItemLv;
 
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
-import retrofit2.http.Query;
 
 public interface ApiService {
     // Authentication
@@ -22,8 +26,8 @@ public interface ApiService {
 //    @POST("auth/signout")
 //    Call<ResponseObject<Object>> logout(@Header("Authorization") String jwt);
 //
-//    @PUT("admin/updatePassword")
-//    Call<ResponseObject<Object>> changePassword(@Header("Authorization") String jwt, @Body ChangePwdInfor changePwdInfor);
+    @PUT("admin/updatePassword")
+    Call<ResponseObject<Object>> changePassword(@Header("Authorization") String jwt, @Body RequestBodyChangePassword requestBodyChangePassword);
 //
 //    // Giảng Viên
 //    @GET("admin/giangVien/khoa/{maKhoa}")
@@ -39,10 +43,16 @@ public interface ApiService {
 //    Call<ResponseObject<List<SVItemLv>>> getAllSVByMaLop(@Header("Authorization") String jwt, @Path("maLop") String maLop);
 //
 //    //Khoa
-//    @GET("admin/khoa")
-//    Call<ResponseObject<List<List<Khoa>>>> getAllKhoa(@Header("Authorization") String jwt);
-//    @GET("admin/khoa/{id}")
-//    Call<ResponseObject<Khoa>> getKhoaById(@Header("Authorization") String jwt, @Path("id") String id);
+    @GET("admin/khoa")
+    Call<ResponseObject<List<List<FacultyItemLv>>>> getAllFaculty(@Header("Authorization") String jwt);
+    @GET("admin/khoa/{id}")
+    Call<ResponseObject<Faculty>> getFacultyById(@Header("Authorization") String jwt, @Path("id") String id);
+    @POST("admin/khoa")
+    Call<ResponseObject<Faculty>> createFaculty(@Header("Authorization") String jwt, @Body Faculty faculty);
+    @PUT("admin/khoa")
+    Call<ResponseObject<Faculty>> updateFaculty(@Header("Authorization") String jwt, @Body Faculty faculty);
+    @HTTP(method = "DELETE", path = "admin/khoa", hasBody = true)
+    Call<ResponseObject<List<String>>> removeFaculty(@Header("Authorization") String jwt, @Body List<String> listFacultyCode);
 //    // Lớp
 //    @GET("admin/lop/khoa/{maKhoa}")
 //    Call<ResponseObject<List<Lop>>> getLopByMaKhoa(@Header("Authorization") String jwt, @Path("maKhoa") String maKhoa);

@@ -56,6 +56,7 @@
                         android:textStyle="italic" />
                 </LinearLayout>
                 <androidx.appcompat.widget.Toolbar
+                    app:titleTextAppearance="@style/toolbarNoTitle"
                     android:id="@+id/toolbar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />

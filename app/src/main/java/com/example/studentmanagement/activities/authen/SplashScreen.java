@@ -1,5 +1,6 @@
-package com.example.studentmanagement.activities;
+package com.example.studentmanagement.activities.authen;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -7,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.studentmanagement.R;
 
+@SuppressLint("CustomSplashScreen")
 public class SplashScreen extends AppCompatActivity {
     private final int sleepTime = 5000;
     @Override

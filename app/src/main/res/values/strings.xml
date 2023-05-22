@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">studentmanagement</string>
+    <string name="app_name">StuMana</string>
     <string name="tvQLSV_text">QUẢN LÝ SINH VIÊN</string>
     <string name="txtDangNhap_text">ĐĂNG NHẬP</string>
     <string name="edtTenDN_hint">Tên đăng nhập</string>

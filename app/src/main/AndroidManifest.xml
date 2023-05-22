@@ -7,17 +7,27 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/icon_app_foreground"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Studentmanagement"
         tools:targetApi="31">
-        <activity android:name=".activities.LoginActivity"
+        <activity android:name=".activities.authen.LoginActivity"
             android:exported="true"/>
-        <activity android:name=".activities.HomeAdminActivity"
+        <activity android:name=".activities.home.HomeAdminActivity"
+            android:exported="true"/>
+        <activity android:name=".activities.authen.ChangePasswordActivity"
+            android:exported="true"/>
+        <activity android:name=".activities.faculty.MainFacultyActivity"
+            android:exported="true"/>
+        <activity android:name=".activities.faculty.InforFacultyActivity"
+            android:exported="true"/>
+        <activity android:name=".activities.faculty.AddFacultyActivity"
+            android:exported="true"/>
+        <activity android:name=".activities.faculty.EditFacultyActivity"
             android:exported="true"/>
         <activity
-            android:name=".activities.SplashScreen"
+            android:name=".activities.authen.SplashScreen"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
