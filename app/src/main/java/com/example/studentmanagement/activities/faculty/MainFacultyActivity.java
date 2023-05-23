@@ -18,7 +18,7 @@ import com.example.studentmanagement.R;
 import com.example.studentmanagement.activities.customactivity.CustomAppCompactActivitySearchAdd;
 import com.example.studentmanagement.adapter.FacultyAdapter;
 import com.example.studentmanagement.models.entity.Faculty;
-import com.example.studentmanagement.models.view.FacultyItemLv;
+import com.example.studentmanagement.models.view.FacultyItem;
 import com.example.studentmanagement.ui.CustomDialog;
 
 import java.util.List;
@@ -84,38 +84,44 @@ public class MainFacultyActivity extends CustomAppCompactActivitySearchAdd {
         mCreateKhoaLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
-                        Faculty faculty = (Faculty) result.getData().getSerializableExtra("newFaculty");
-                        FacultyItemLv facultyItemLv = new FacultyItemLv();
-                        facultyItemLv.setId(faculty.getId());
-                        facultyItemLv.setMaKhoa(faculty.getMaKhoa());
-                        facultyItemLv.setTenKhoa(faculty.getTenKhoa());
-                        facultyAdapter.insert(facultyItemLv,0);
-                        facultyAdapter.notifyDataSetChanged();
+                        Faculty faculty = null;
+                        if (result.getData() != null) {
+                            faculty = (Faculty) result.getData().getSerializableExtra("newFaculty");
+                            FacultyItem facultyItem = new FacultyItem();
+                            facultyItem.setId(faculty.getId());
+                            facultyItem.setMaKhoa(faculty.getMaKhoa());
+                            facultyItem.setTenKhoa(faculty.getTenKhoa());
+                            facultyAdapter.insert(facultyItem,0);
+                            facultyAdapter.notifyDataSetChanged();
 
-                        new CustomDialog.BuliderOKDialog(MainFacultyActivity.this)
-                                .setMessage("Thêm thành công")
-                                .setSuccessful(true)
-                                .build()
-                                .show();
+                            new CustomDialog.BuliderOKDialog(MainFacultyActivity.this)
+                                    .setMessage("Thêm thành công")
+                                    .setSuccessful(true)
+                                    .build()
+                                    .show();
+                        }
                     }
                 }
         );
         mUpdateKhoaLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
-                        Faculty faculty = (Faculty) result.getData().getSerializableExtra("changedFaculty");
-                        FacultyItemLv facultyItemLv = new FacultyItemLv();
-                        facultyItemLv.setId(faculty.getId());
-                        facultyItemLv.setTenKhoa(faculty.getTenKhoa());
-                        facultyItemLv.setMaKhoa(faculty.getMaKhoa());
-                        facultyAdapter.setItem(facultyItemLv, facultyAdapter.getPosition(facultyItemLv));
-                        facultyAdapter.notifyDataSetChanged();
+                        Faculty faculty = null;
+                        if (result.getData() != null) {
+                            faculty = (Faculty) result.getData().getSerializableExtra("changedFaculty");
+                            FacultyItem facultyItem = new FacultyItem();
+                            facultyItem.setId(faculty.getId());
+                            facultyItem.setTenKhoa(faculty.getTenKhoa());
+                            facultyItem.setMaKhoa(faculty.getMaKhoa());
+                            facultyAdapter.setItem(facultyItem, facultyAdapter.getPosition(facultyItem));
+                            facultyAdapter.notifyDataSetChanged();
 
-                        new CustomDialog.BuliderOKDialog(MainFacultyActivity.this)
-                                .setMessage("Lưu thành công")
-                                .setSuccessful(true)
-                                .build()
-                                .show();
+                            new CustomDialog.BuliderOKDialog(MainFacultyActivity.this)
+                                    .setMessage("Lưu thành công")
+                                    .setSuccessful(true)
+                                    .build()
+                                    .show();
+                        }
                     }
                 }
         );
@@ -123,9 +129,9 @@ public class MainFacultyActivity extends CustomAppCompactActivitySearchAdd {
     }
 
     private void setListView() {
-        List<FacultyItemLv> facultyItemLvs = (List<FacultyItemLv>) getIntent().getSerializableExtra("listFacultyItemLv");
+        List<FacultyItem> facultyItems = (List<FacultyItem>) getIntent().getSerializableExtra("listFacultyItemLv");
         facultyAdapter = new FacultyAdapter(MainFacultyActivity.this, R.layout.item_listview_faculty);
-        facultyAdapter.addAll(facultyItemLvs);
+        facultyAdapter.addAll(facultyItems);
         lvFaculty.setAdapter(facultyAdapter);
         facultyAdapter.notifyDataSetChanged();
     }

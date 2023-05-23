@@ -19,18 +19,12 @@ import java.util.function.Predicate;
 public class CustomDialog {
     private final Dialog dialog;
 
-    public Dialog getDialog() {
-        return dialog;
-    }
 
     private CustomDialog(Dialog dialog) {
         this.dialog = dialog;
     }
     public void show() {
         dialog.show();
-    }
-    public void dismiss() {
-        dialog.dismiss();
     }
 
     public static class Builder {

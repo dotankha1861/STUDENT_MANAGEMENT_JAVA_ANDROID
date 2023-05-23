@@ -1,11 +1,20 @@
 package com.example.studentmanagement.api;
 
-import com.example.studentmanagement.adapter.FacultyAdapter;
+import com.airbnb.lottie.L;
+import com.example.studentmanagement.adapter.PracticalClassAdapter;
+import com.example.studentmanagement.models.entity.Course;
 import com.example.studentmanagement.models.entity.Faculty;
+import com.example.studentmanagement.models.entity.Lecturer;
+import com.example.studentmanagement.models.entity.PracticalClass;
+import com.example.studentmanagement.models.entity.Student;
 import com.example.studentmanagement.models.requestbody.RequestBodyChangePassword;
 import com.example.studentmanagement.models.requestbody.RequestBodyLogin;
 import com.example.studentmanagement.models.responsebody.ResponseBodyLogin;
-import com.example.studentmanagement.models.view.FacultyItemLv;
+import com.example.studentmanagement.models.view.CourseItem;
+import com.example.studentmanagement.models.view.FacultyItem;
+import com.example.studentmanagement.models.view.LecturerItem;
+import com.example.studentmanagement.models.view.PracticalClassItem;
+import com.example.studentmanagement.models.view.StudentItem;
 
 import java.util.List;
 
@@ -29,22 +38,20 @@ public interface ApiService {
     @PUT("admin/updatePassword")
     Call<ResponseObject<Object>> changePassword(@Header("Authorization") String jwt, @Body RequestBodyChangePassword requestBodyChangePassword);
 //
-//    // Giảng Viên
-//    @GET("admin/giangVien/khoa/{maKhoa}")
-//    Call<ResponseObject<List<GVItemLv>>> getAllGVByMaKhoa(@Header("Authorization" ) String jwt, @Path("maKhoa") String maKhoa);
-//    @GET("admin/giangVien/{id}")
-//    Call<ResponseObject<GiangVien>> getGVByID(@Header("Authorization") String jwt, @Path("id") String idGV);
-//
-//    //Sinh Viên
-//    @GET("admin/sinhVien/{id}")
-//    Call<ResponseObject<SinhVien>> getSVByID(@Header("Authorization") String jwt, @Path("id") String idGV);
-//
-//    @GET("admin/sinhVien/lop/{maLop}")
-//    Call<ResponseObject<List<SVItemLv>>> getAllSVByMaLop(@Header("Authorization") String jwt, @Path("maLop") String maLop);
-//
+    // Giảng Viên
+    @GET("admin/giangVien/khoa/{maKhoa}?page=0&size=999999")
+    Call<ResponseObject<List<LecturerItem>>> getAllLecturerByFacultyCode(@Header("Authorization") String jwt, @Path("maKhoa") String maKhoa);
+    @GET("admin/giangVien/{id}")
+    Call<ResponseObject<Lecturer>> getLecturerById(@Header("Authorization") String jwt, @Path("id") String id);
+    @POST("admin/giangVien")
+    Call<ResponseObject<Lecturer>> createLecturer(@Header("Authorization") String jwt, @Body Lecturer lecturer);
+    @PUT("admin/giangVien")
+    Call<ResponseObject<Lecturer>> updateLecturer(@Header("Authorization") String jwt, @Body Lecturer lecturer);
+    @HTTP(method = "DELETE", path = "admin/giangVien", hasBody = true)
+    Call<ResponseObject<List<String>>> removeLecturer(@Header("Authorization") String jwt, @Body List<String> listMaGiangVien);
 //    //Khoa
     @GET("admin/khoa")
-    Call<ResponseObject<List<List<FacultyItemLv>>>> getAllFaculty(@Header("Authorization") String jwt);
+    Call<ResponseObject<List<List<FacultyItem>>>> getAllFaculty(@Header("Authorization") String jwt);
     @GET("admin/khoa/{id}")
     Call<ResponseObject<Faculty>> getFacultyById(@Header("Authorization") String jwt, @Path("id") String id);
     @POST("admin/khoa")
@@ -53,16 +60,42 @@ public interface ApiService {
     Call<ResponseObject<Faculty>> updateFaculty(@Header("Authorization") String jwt, @Body Faculty faculty);
     @HTTP(method = "DELETE", path = "admin/khoa", hasBody = true)
     Call<ResponseObject<List<String>>> removeFaculty(@Header("Authorization") String jwt, @Body List<String> listFacultyCode);
-//    // Lớp
-//    @GET("admin/lop/khoa/{maKhoa}")
-//    Call<ResponseObject<List<Lop>>> getLopByMaKhoa(@Header("Authorization") String jwt, @Path("maKhoa") String maKhoa);
-//    @GET("admin/lop")
-//    Call<ResponseObject<List<List<Lop>>>> getAllLop(@Header("Authorization") String jwt);
-//    @GET("admin/lop/{id}")
-//    Call<ResponseObject<Lop>> getLopById(@Header("Authorization") String jwt, @Path("id") String id);
+    // Lớp
+    @GET("admin/lop/khoa/{maKhoa}")
+    Call<ResponseObject<List<PracticalClassItem>>> getAllPracticalClassByFacultyCode(@Header("Authorization") String jwt, @Path("maKhoa") String maKhoa);
+    @POST("admin/lop")
+    Call<ResponseObject<PracticalClass>> createPracticalClass(@Header("Authorization") String jwt, @Body PracticalClass practicalClass);
+    @PUT("admin/lop")
+    Call<ResponseObject<PracticalClass>> updatePracticalClass(@Header("Authorization") String jwt, @Body PracticalClass practicalClass);
+    @HTTP(method = "DELETE", path = "admin/lop", hasBody = true)
+    Call<ResponseObject<List<String>>> removePracticalClass(@Header("Authorization") String jwt, @Body List<String> listMaLop);
+    @GET("admin/lop/{id}")
+    Call<ResponseObject<PracticalClass>> getPracticalClassById(@Header("Authorization") String jwt, @Path("id") String id);
+    @GET("admin/lop")
+    Call<ResponseObject<List<List<PracticalClassItem>>>> getAllPracticalClass(@Header("Authorization") String jwt);
 //    // Học phần
-//    @GET("admin/monHoc/khoa/{maKhoa}")
-//    Call<ResponseObject<List<HPItemLv>>> getHPByMaKhoa(@Header("Authorization") String jwt, @Path("maKhoa") String maKhoa);
+    @GET("admin/monHoc/khoa/{maKhoa}?page=0&size=999999")
+    Call<ResponseObject<List<CourseItem>>> getAllCourseByFacultyCode(@Header("Authorization") String jwt, @Path("maKhoa") String maKhoa);
+    @GET("admin/monHoc/{id}")
+    Call<ResponseObject<Course>> getCourseById(@Header("Authorization") String jwt, @Path("id") String id);
+    @POST("admin/monHoc")
+    Call<ResponseObject<Course>> createCourse(@Header("Authorization") String jwt, @Body Course course);
+    @PUT("admin/monHoc")
+    Call<ResponseObject<Course>> updateCourse(@Header("Authorization") String jwt, @Body Course course);
+    @HTTP(method = "DELETE", path = "admin/monHoc", hasBody = true)
+    Call<ResponseObject<List<String>>> removeCourse(@Header("Authorization") String jwt, @Body List<String> listCourseCode);
+
+    //Sinh viên
+    @GET("admin/sinhVien/{id}")
+    Call<ResponseObject<Student>> getStudentById(@Header("Authorization") String jwt, @Path("id") String id);
+    @GET("admin/sinhVien/lop/{maLop}?page=0&size=999999")
+    Call<ResponseObject<List<StudentItem>>> getAllStudentByPracticalClassCode(@Header("Authorization") String jwt, @Path("maLop") String maLop);
+    @POST("admin/sinhVien")
+    Call<ResponseObject<Student>> createStudent(@Header("Authorization") String jwt, @Body Student student);
+    @PUT("admin/sinhVien")
+    Call<ResponseObject<Student>> updateStudent(@Header("Authorization") String jwt, @Body Student student);
+    @HTTP(method = "DELETE", path = "admin/sinhVien", hasBody = true)
+    Call<ResponseObject<List<String>>> removeStudent(@Header("Authorization") String jwt, @Body List<String> listMaSinhVien);
 //    @GET("admin/monHoc")
 //    Call<ResponseObject<List<List<HocPhan>>>> getAllHocPhan(@Header("Authorization") String jwt);
 //    @GET("admin/monHoc/{id}")

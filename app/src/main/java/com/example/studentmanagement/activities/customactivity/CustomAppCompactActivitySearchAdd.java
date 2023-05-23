@@ -9,10 +9,11 @@ import com.example.studentmanagement.ui.CustomSearchView;
 
 public class CustomAppCompactActivitySearchAdd extends CustomAppCompactActivity{
     SearchView searchView;
+    MenuItem searchItem;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search_create, menu);
-        MenuItem searchItem = menu.findItem(R.id.itSearch);
+        searchItem = menu.findItem(R.id.itSearch);
         searchView = (SearchView) searchItem.getActionView();
         CustomSearchView.customSearchView(this, searchView);
         return super.onCreateOptionsMenu(menu);
@@ -20,5 +21,9 @@ public class CustomAppCompactActivitySearchAdd extends CustomAppCompactActivity{
 
     public SearchView getSearchView() {
         return searchView;
+    }
+
+    public MenuItem getSearchItem() {
+        return searchItem;
     }
 }

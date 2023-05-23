@@ -16,13 +16,14 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+
 import com.example.studentmanagement.R;
-import com.example.studentmanagement.activities.faculty.EditFacultyActivity;
-import com.example.studentmanagement.activities.faculty.InforFacultyActivity;
+import com.example.studentmanagement.activities.practicalclass.EditPracticalClassActivity;
+import com.example.studentmanagement.activities.practicalclass.InforPracticalClassActivity;
 import com.example.studentmanagement.api.ApiManager;
 import com.example.studentmanagement.api.ResponseObject;
-import com.example.studentmanagement.models.entity.Faculty;
-import com.example.studentmanagement.models.view.FacultyItem;
+import com.example.studentmanagement.models.entity.PracticalClass;
+import com.example.studentmanagement.models.view.PracticalClassItem;
 import com.example.studentmanagement.ui.CustomDialog;
 import com.example.studentmanagement.utils.MyFuncButton;
 import com.example.studentmanagement.utils.MyPrefs;
@@ -37,18 +38,18 @@ import java.util.stream.Collectors;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
 @SuppressLint("SetTextI18n")
-public class FacultyAdapter extends ArrayAdapter implements Filterable {
+public class PracticalClassAdapter extends ArrayAdapter implements Filterable {
     Context context;
     int resource;
-    private ArrayList<FacultyItem> data_org;
-    private ArrayList<FacultyItem> data_view;
+    private ArrayList<PracticalClassItem> data_org;
+
+    private ArrayList<PracticalClassItem> data_view;
+
     private String searchQuery;
+    ActivityResultLauncher<Intent> mUpdateLopLauncher;
 
-    ActivityResultLauncher<Intent> mUpdateKhoaLauncher;
-
-    public FacultyAdapter(Context context, int resource) {
+    public PracticalClassAdapter(Context context, int resource) {
         super(context, resource);
         this.context = context;
         this.resource = resource;
@@ -61,10 +62,9 @@ public class FacultyAdapter extends ArrayAdapter implements Filterable {
         this.searchQuery = searchQuery;
     }
 
-    public void setmUpdateKhoaLauncher(ActivityResultLauncher<Intent> mUpdateKhoaLauncher) {
-        this.mUpdateKhoaLauncher = mUpdateKhoaLauncher;
+    public void setmUpdateLopLauncher(ActivityResultLauncher<Intent> mUpdateLopLauncher) {
+        this.mUpdateLopLauncher = mUpdateLopLauncher;
     }
-
     @Override
     public int getCount() {
         return data_view.size();
@@ -77,7 +77,7 @@ public class FacultyAdapter extends ArrayAdapter implements Filterable {
 
     @Override
     public void insert(@Nullable Object object, int index) {
-        data_org.add(index, (FacultyItem) object);
+        data_org.add(index, (PracticalClassItem) object);
     }
 
     @Override
@@ -85,9 +85,10 @@ public class FacultyAdapter extends ArrayAdapter implements Filterable {
         return data_org.indexOf(item);
     }
 
-    public void setItem(@Nullable FacultyItem object, int index){
-        data_org.set(index, object);
+    public void setItem(@Nullable Object object, int index){
+        data_org.set(index, (PracticalClassItem) object);
     }
+
 
     @Override
     public void remove(@Nullable Object object) {
@@ -111,14 +112,14 @@ public class FacultyAdapter extends ArrayAdapter implements Filterable {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults filterResults = new FilterResults();
-                List<FacultyItem> filteredList;
+                List<PracticalClassItem> filteredList;
 
                 String search_constraint = constraint.toString();
                 if (search_constraint.isEmpty()) {
                     filteredList = new ArrayList<>(data_org);
                 } else {
-                    filteredList = data_org.stream().filter((khoa) ->
-                            (khoa.getMaKhoa() + " " + khoa.getTenKhoa())
+                    filteredList = data_org.stream().filter((lop) ->
+                            (lop.getMaLop() + " " + lop.getTenLop())
                                     .toLowerCase().contains(constraint.toString().toLowerCase())).collect(Collectors.toList());
                 }
                 filterResults.values = filteredList;
@@ -127,14 +128,12 @@ public class FacultyAdapter extends ArrayAdapter implements Filterable {
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                data_view = (ArrayList<FacultyItem>) results.values;
-                FacultyAdapter.super.notifyDataSetChanged();
+                data_view = (ArrayList<PracticalClassItem>) results.values;
+                PracticalClassAdapter.super.notifyDataSetChanged();
             }
         };
     }
 
-    //
-//
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder = null;
@@ -143,101 +142,54 @@ public class FacultyAdapter extends ArrayAdapter implements Filterable {
             viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         } else viewHolder = (ViewHolder) convertView.getTag();
-        FacultyItem facultyItem =data_view.get(position);
-        viewHolder.tvTenKhoa.setText(facultyItem.getTenKhoa());
-        viewHolder.tvMaKhoa.setText("Mã khoa: " + facultyItem.getMaKhoa());
-        viewHolder.ibtXoa.setOnClickListener(view -> handleXoa(facultyItem));
-        viewHolder.ibtSua.setOnClickListener(view -> handleSua(facultyItem));
-        viewHolder.tvDetail.setOnClickListener(view -> hanldeViewDetail(facultyItem));
+
+        PracticalClassItem practicalClassItem = data_view.get(position);
+        viewHolder.tvMaLop.setText("Mã lớp: " + practicalClassItem.getMaLop());
+        viewHolder.tvTenLop.setText(practicalClassItem.getTenLop());
+
+        viewHolder.ibtXoa.setOnClickListener(view -> handleXoa(practicalClassItem));
+        viewHolder.ibtSua.setOnClickListener(view -> handleSua(practicalClassItem));
+        viewHolder.tvDetail.setOnClickListener(view -> hanldeViewDetail(practicalClassItem));
 
         return convertView;
     }
 
-    private void hanldeViewDetail(FacultyItem facultyItem) {
-        callFaculty(facultyItem, MyFuncButton.VIEW_FACULTY);
+    private void hanldeViewDetail(PracticalClassItem practicalClassItem) {
+        callPracticalClass(practicalClassItem, MyFuncButton.VIEW_PRACTICAL_CLASS);
     }
-    private void handleSua(FacultyItem facultyItem) {
-        callFaculty(facultyItem, MyFuncButton.EDIT_FACULTY);
+    private void handleSua(PracticalClassItem practicalClassItem) {
+        callPracticalClass(practicalClassItem, MyFuncButton.EDIT_PRACTICAL_CLASS);
     }
 
-    private void handleXoa(FacultyItem facultyItem) {
+    private void handleXoa(PracticalClassItem practicalClassItem) {
         new CustomDialog.BuliderPosNegDialog(context)
-                .setMessage("Bạn chắc chắn muốn xóa học phần này?")
-                .setPositiveButton("Đồng ý", (view) -> handleAgreeDelete(facultyItem), dismiss -> true)
+                .setMessage("Bạn chắc chắn muốn xóa lớp này?")
+                .setPositiveButton("Đồng ý", (view) -> handleAgreeDelete(practicalClassItem), dismiss -> true)
                 .setNegativeButton("Hủy", null, dismiss -> true)
                 .build()
                 .show();
     }
-
-    private void callFaculty(FacultyItem facultyItem, MyFuncButton myFuncButton) {
+    private void handleAgreeDelete(PracticalClassItem practicalClassItem) {
+        List<String> listPracticalClassCode = new ArrayList<>();
+        listPracticalClassCode.add(practicalClassItem.getId());
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(context, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
-        Call<ResponseObject<Faculty>> call = apiManager.getApiService().getFacultyById(jwt, facultyItem.getId());
-        call.enqueue(new Callback<ResponseObject<Faculty>>() {
-            @Override
-            public void onResponse(@NonNull Call<ResponseObject<Faculty>> call, @NonNull Response<ResponseObject<Faculty>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    Faculty data = response.body().getRetObj();
-                    Intent intent;
-                    if(myFuncButton == MyFuncButton.VIEW_FACULTY){
-                        intent = new Intent(context, InforFacultyActivity.class);
-                        intent.putExtra("faculty", data);
-                        context.startActivity(intent);
-                    }
-                    else{
-                        intent = new Intent(context, EditFacultyActivity.class);
-                        intent.putExtra("faculty", data);
-                        mUpdateKhoaLauncher.launch(intent);
-                    }
-                } else {
-                    if (response.errorBody() != null) {
-                        ResponseObject<Object> errorResponse = new Gson().fromJson(
-                                response.errorBody().charStream(),
-                                new TypeToken<ResponseObject<Object>>() {
-                                }.getType()
-                        );
-                        new CustomDialog.BuliderOKDialog(context)
-                                .setMessage("Lỗi" + errorResponse.getMessage())
-                                .setSuccessful(false)
-                                .build()
-                                .show();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ResponseObject<Faculty>> call, @NonNull Throwable t) {
-                new CustomDialog.BuliderOKDialog(context)
-                        .setMessage("Lỗi kết nối!" + t.getMessage())
-                        .setSuccessful(false)
-                        .build()
-                        .show();
-            }
-        });
-    }
-    private void handleAgreeDelete(FacultyItem facultyItem) {
-        MyPrefs myPrefs = MyPrefs.getInstance();
-        String jwt = myPrefs.getString(context, "jwt", "");
-        List<String> listFacultyCode = new ArrayList<>();
-        listFacultyCode.add(facultyItem.getId());
-        ApiManager apiManager = ApiManager.getInstance();
-        Call<ResponseObject<List<String>>> call = apiManager.getApiService().removeFaculty(jwt, listFacultyCode);
+        Call<ResponseObject<List<String>>> call = apiManager.getApiService().removePracticalClass(jwt, listPracticalClassCode);
         call.enqueue(new Callback<ResponseObject<List<String>>>() {
             @Override
             public void onResponse(@NonNull Call<ResponseObject<List<String>>> call, @NonNull Response<ResponseObject<List<String>>> response) {
                 if (response.isSuccessful()&&response.body()!=null) {
                     ResponseObject<List<String>> dataRes = response.body();
-                    if (dataRes.getRetObj() == null || dataRes.getRetObj().size() == 0) {
+                    if (dataRes.getRetObj()==null || dataRes.getRetObj().size() == 0) {
                         new CustomDialog.BuliderOKDialog(context)
-                                .setMessage("Không thể xóa khoa này")
+                                .setMessage("Không thể xóa lớp này")
                                 .setSuccessful(false)
                                 .build()
                                 .show();
                     } else {
-                        data_org.remove(facultyItem);
+                        data_org.remove(practicalClassItem);
                         notifyDataSetChanged();
-
                         new CustomDialog.BuliderOKDialog(context)
                                 .setMessage("Xóa thành công")
                                 .setSuccessful(true)
@@ -262,9 +214,9 @@ public class FacultyAdapter extends ArrayAdapter implements Filterable {
             }
 
             @Override
-            public void onFailure(@NonNull Call<ResponseObject<List<String>>> call, @NonNull Throwable t) {
+            public void onFailure(Call<ResponseObject<List<String>>> call, Throwable t) {
                 new CustomDialog.BuliderOKDialog(context)
-                        .setMessage("Lỗi kết nối! " + t.getMessage())
+                        .setMessage("Lỗi kết nối!" + t.getMessage())
                         .setSuccessful(false)
                         .build()
                         .show();
@@ -272,20 +224,70 @@ public class FacultyAdapter extends ArrayAdapter implements Filterable {
         });
     }
 
+    private void callPracticalClass(PracticalClassItem practicalClassItem, MyFuncButton myFuncButton) {
+        MyPrefs myPrefs = MyPrefs.getInstance();
+        String jwt = myPrefs.getString(context, "jwt", "");
+        ApiManager apiManager = ApiManager.getInstance();
+        Call<ResponseObject<PracticalClass>> call = apiManager.getApiService().getPracticalClassById(jwt, practicalClassItem.getId());
+        call.enqueue(new Callback<ResponseObject<PracticalClass>>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseObject<PracticalClass>> call, @NonNull Response<ResponseObject<PracticalClass>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    PracticalClass data = response.body().getRetObj();
+                    Intent intent;
+                    if (myFuncButton == MyFuncButton.VIEW_PRACTICAL_CLASS) {
+                        intent = new Intent(context, InforPracticalClassActivity.class);
+                        intent.putExtra("practicalClass", data);
+                        context.startActivity(intent);
+                    } else {
+                        intent = new Intent(context, EditPracticalClassActivity.class);
+                        intent.putExtra("practicalClass", data);
+                        mUpdateLopLauncher.launch(intent);
+                    }
+                }
+                else{
+                    if (response.errorBody() != null) {
+                        ResponseObject<Object> errorResponse = new Gson().fromJson(
+                                response.errorBody().charStream(),
+                                new TypeToken<ResponseObject<Object>>() {
+                                }.getType()
+                        );
+                        new CustomDialog.BuliderOKDialog(context)
+                                .setMessage("Lỗi" + errorResponse.getMessage())
+                                .setSuccessful(false)
+                                .build()
+                                .show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseObject<PracticalClass>> call, @NonNull Throwable t) {
+                new CustomDialog.BuliderOKDialog(context)
+                        .setMessage("Lỗi kết nối!" + t.getMessage())
+                        .setSuccessful(false)
+                        .build()
+                        .show();
+            }
+        });
+    }
+
+
+    //
     private static class ViewHolder {
-        TextView tvTenKhoa;
-        TextView tvMaKhoa;
+        TextView tvTenLop;
+        TextView tvMaLop;
+
         TextView tvDetail;
+        //
         ImageButton ibtSua;
         ImageButton ibtXoa;
-
-        //
-        public ViewHolder(View view) {
-            this.tvTenKhoa = view.findViewById(R.id.tvTenKhoa);
-            this.tvMaKhoa = view.findViewById(R.id.tvMaKhoa);
-            this.tvDetail=view.findViewById(R.id.tvInforDetail);
+        public ViewHolder (View view){
+            this.tvTenLop = view.findViewById(R.id.tvTenLop);
+            this.tvMaLop = view.findViewById(R.id.tvMaLop);
             this.ibtSua = view.findViewById(R.id.ibtSua);
             this.ibtXoa = view.findViewById(R.id.ibtXoa);
+            this.tvDetail=view.findViewById(R.id.tvInforDetail);
         }
     }
 }

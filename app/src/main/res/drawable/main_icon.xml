@@ -10,9 +10,9 @@
     </item>
 
     <!-- White Top color -->
-    <item android:bottom="13px" android:right="13px" android:top="7px" android:left="7px">
+    <item android:bottom="10px" android:right="10px" android:top="7px" android:left="7px">
         <shape  android:shape="rectangle">
-            <solid android:color="#FFFFFF" />
+            <solid android:color="#fcfcfc" />
             <corners android:radius="30dp" />
         </shape>
     </item>

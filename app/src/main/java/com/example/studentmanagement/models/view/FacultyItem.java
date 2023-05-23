@@ -1,14 +1,16 @@
 package com.example.studentmanagement.models.view;
 
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 import java.util.Objects;
 
-public class FacultyItemLv implements Serializable {
+public class FacultyItem implements Serializable {
     private String id;
     private String maKhoa;
     private String tenKhoa;
 
-    public FacultyItemLv() {}
+    public FacultyItem() {}
 
     public String getId() {
         return id;
@@ -37,8 +39,8 @@ public class FacultyItemLv implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FacultyItemLv)) return false;
-        FacultyItemLv falcultyItemLv = (FacultyItemLv) o;
+        if (!(o instanceof FacultyItem)) return false;
+        FacultyItem falcultyItemLv = (FacultyItem) o;
         return maKhoa.equals(falcultyItemLv.maKhoa);
     }
 
@@ -47,4 +49,9 @@ public class FacultyItemLv implements Serializable {
         return Objects.hash(maKhoa);
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return this.maKhoa + " - " + this.tenKhoa;
+    }
 }

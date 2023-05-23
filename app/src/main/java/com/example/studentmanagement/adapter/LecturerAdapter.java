@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -17,12 +18,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.studentmanagement.R;
-import com.example.studentmanagement.activities.faculty.EditFacultyActivity;
-import com.example.studentmanagement.activities.faculty.InforFacultyActivity;
+import com.example.studentmanagement.activities.lecturer.EditLecturerActivity;
+import com.example.studentmanagement.activities.lecturer.InforLecturerActivity;
 import com.example.studentmanagement.api.ApiManager;
 import com.example.studentmanagement.api.ResponseObject;
-import com.example.studentmanagement.models.entity.Faculty;
-import com.example.studentmanagement.models.view.FacultyItem;
+import com.example.studentmanagement.models.entity.Lecturer;
+import com.example.studentmanagement.models.view.LecturerItem;
 import com.example.studentmanagement.ui.CustomDialog;
 import com.example.studentmanagement.utils.MyFuncButton;
 import com.example.studentmanagement.utils.MyPrefs;
@@ -37,18 +38,19 @@ import java.util.stream.Collectors;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
 @SuppressLint("SetTextI18n")
-public class FacultyAdapter extends ArrayAdapter implements Filterable {
+public class LecturerAdapter extends ArrayAdapter implements Filterable {
     Context context;
     int resource;
-    private ArrayList<FacultyItem> data_org;
-    private ArrayList<FacultyItem> data_view;
+    private ArrayList<LecturerItem> data_org;
+
+    private ArrayList<LecturerItem> data_view;
+
     private String searchQuery;
 
-    ActivityResultLauncher<Intent> mUpdateKhoaLauncher;
+    ActivityResultLauncher<Intent> mUpdateGiangVienLauncher;
 
-    public FacultyAdapter(Context context, int resource) {
+    public LecturerAdapter(Context context, int resource) {
         super(context, resource);
         this.context = context;
         this.resource = resource;
@@ -61,10 +63,9 @@ public class FacultyAdapter extends ArrayAdapter implements Filterable {
         this.searchQuery = searchQuery;
     }
 
-    public void setmUpdateKhoaLauncher(ActivityResultLauncher<Intent> mUpdateKhoaLauncher) {
-        this.mUpdateKhoaLauncher = mUpdateKhoaLauncher;
+    public void setmUpdateGiangVienLauncher(ActivityResultLauncher<Intent> mUpdateGiangVienLauncher) {
+        this.mUpdateGiangVienLauncher = mUpdateGiangVienLauncher;
     }
-
     @Override
     public int getCount() {
         return data_view.size();
@@ -77,7 +78,7 @@ public class FacultyAdapter extends ArrayAdapter implements Filterable {
 
     @Override
     public void insert(@Nullable Object object, int index) {
-        data_org.add(index, (FacultyItem) object);
+        data_org.add(index, (LecturerItem) object);
     }
 
     @Override
@@ -85,9 +86,10 @@ public class FacultyAdapter extends ArrayAdapter implements Filterable {
         return data_org.indexOf(item);
     }
 
-    public void setItem(@Nullable FacultyItem object, int index){
-        data_org.set(index, object);
+    public void setItem(@Nullable Object object, int index){
+        data_org.set(index, (LecturerItem) object);
     }
+
 
     @Override
     public void remove(@Nullable Object object) {
@@ -105,20 +107,21 @@ public class FacultyAdapter extends ArrayAdapter implements Filterable {
     }
 
 
+
     @Override
     public Filter getFilter() {
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults filterResults = new FilterResults();
-                List<FacultyItem> filteredList;
+                List<LecturerItem> filteredList;
 
                 String search_constraint = constraint.toString();
                 if (search_constraint.isEmpty()) {
                     filteredList = new ArrayList<>(data_org);
                 } else {
-                    filteredList = data_org.stream().filter((khoa) ->
-                            (khoa.getMaKhoa() + " " + khoa.getTenKhoa())
+                    filteredList = data_org.stream().filter((giangvien) ->
+                            (giangvien.getMaGv() + " " + giangvien.getHo() + " "+giangvien.getTen())
                                     .toLowerCase().contains(constraint.toString().toLowerCase())).collect(Collectors.toList());
                 }
                 filterResults.values = filteredList;
@@ -127,70 +130,79 @@ public class FacultyAdapter extends ArrayAdapter implements Filterable {
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                data_view = (ArrayList<FacultyItem>) results.values;
-                FacultyAdapter.super.notifyDataSetChanged();
+                data_view = (ArrayList<LecturerItem>) results.values;
+                LecturerAdapter.super.notifyDataSetChanged();
             }
         };
     }
-
     //
 //
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder = null;
+        ViewHolder viewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(resource, null);
             viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         } else viewHolder = (ViewHolder) convertView.getTag();
-        FacultyItem facultyItem =data_view.get(position);
-        viewHolder.tvTenKhoa.setText(facultyItem.getTenKhoa());
-        viewHolder.tvMaKhoa.setText("Mã khoa: " + facultyItem.getMaKhoa());
-        viewHolder.ibtXoa.setOnClickListener(view -> handleXoa(facultyItem));
-        viewHolder.ibtSua.setOnClickListener(view -> handleSua(facultyItem));
-        viewHolder.tvDetail.setOnClickListener(view -> hanldeViewDetail(facultyItem));
 
+        LecturerItem lecturerItem = data_view.get(position);
+        viewHolder.tvTenGV.setText(lecturerItem.getHo() + " " + lecturerItem.getTen());
+        viewHolder.tvMaGV.setText("Mã GV: " + lecturerItem.getMaGv());
+        boolean isMale= lecturerItem.getPhai().equalsIgnoreCase("nam");
+
+        if(isMale) viewHolder.imvPhai.setImageResource(R.drawable.icon_front_man);
+        else viewHolder.imvPhai.setImageResource(R.drawable.icon_fornt_woman);
+        viewHolder.ibtXoa.setOnClickListener(view -> handleXoa(lecturerItem));
+        viewHolder.ibtSua.setOnClickListener(view -> handleSua(lecturerItem));
+        viewHolder.tvDetail.setOnClickListener(view -> hanldeViewDetail(lecturerItem));
         return convertView;
     }
 
-    private void hanldeViewDetail(FacultyItem facultyItem) {
-        callFaculty(facultyItem, MyFuncButton.VIEW_FACULTY);
+    private void hanldeViewDetail(LecturerItem lecturerItem) {
+        callLecturer(lecturerItem, MyFuncButton.VIEW_LECTURER);
     }
-    private void handleSua(FacultyItem facultyItem) {
-        callFaculty(facultyItem, MyFuncButton.EDIT_FACULTY);
+    private void handleSua(LecturerItem lecturerItem) {
+        callLecturer(lecturerItem, MyFuncButton.EDIT_LECTURER);
     }
 
-    private void handleXoa(FacultyItem facultyItem) {
+    private void handleXoa(LecturerItem lecturerItem) {
         new CustomDialog.BuliderPosNegDialog(context)
-                .setMessage("Bạn chắc chắn muốn xóa học phần này?")
-                .setPositiveButton("Đồng ý", (view) -> handleAgreeDelete(facultyItem), dismiss -> true)
+                .setMessage("Bạn chắn chắn muốn xóa giảng viên này?")
+                .setPositiveButton("Đồng ý", view -> handleAgreeDelete(lecturerItem), dismiss -> true)
                 .setNegativeButton("Hủy", null, dismiss -> true)
                 .build()
                 .show();
     }
-
-    private void callFaculty(FacultyItem facultyItem, MyFuncButton myFuncButton) {
+    private void handleAgreeDelete(LecturerItem lecturerItem) {
+        List<String> listLecturerCode = new ArrayList<>();
+        listLecturerCode.add(lecturerItem.getId());
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(context, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
-        Call<ResponseObject<Faculty>> call = apiManager.getApiService().getFacultyById(jwt, facultyItem.getId());
-        call.enqueue(new Callback<ResponseObject<Faculty>>() {
+        Call<ResponseObject<List<String>>> call = apiManager.getApiService().removeLecturer(jwt, listLecturerCode);
+        call.enqueue(new Callback<ResponseObject<List<String>>>() {
             @Override
-            public void onResponse(@NonNull Call<ResponseObject<Faculty>> call, @NonNull Response<ResponseObject<Faculty>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    Faculty data = response.body().getRetObj();
-                    Intent intent;
-                    if(myFuncButton == MyFuncButton.VIEW_FACULTY){
-                        intent = new Intent(context, InforFacultyActivity.class);
-                        intent.putExtra("faculty", data);
-                        context.startActivity(intent);
+            public void onResponse(@NonNull Call<ResponseObject<List<String>>> call, @NonNull Response<ResponseObject<List<String>>> response) {
+                if (response.isSuccessful()&&response.body()!=null) {
+                    ResponseObject<List<String>> resData = response.body();
+                    if (resData.getRetObj()==null || resData.getRetObj().size() == 0) {
+                        new CustomDialog.BuliderOKDialog(context)
+                                .setMessage(resData.getMessage())
+                                .setSuccessful(false)
+                                .build()
+                                .show();
+                    } else {
+                        data_org.remove(lecturerItem);
+                        notifyDataSetChanged();
+                        new CustomDialog.BuliderOKDialog(context)
+                                .setMessage("Xóa thành công")
+                                .setSuccessful(true)
+                                .build()
+                                .show();
                     }
-                    else{
-                        intent = new Intent(context, EditFacultyActivity.class);
-                        intent.putExtra("faculty", data);
-                        mUpdateKhoaLauncher.launch(intent);
-                    }
-                } else {
+                }
+                else {
                     if (response.errorBody() != null) {
                         ResponseObject<Object> errorResponse = new Gson().fromJson(
                                 response.errorBody().charStream(),
@@ -207,7 +219,7 @@ public class FacultyAdapter extends ArrayAdapter implements Filterable {
             }
 
             @Override
-            public void onFailure(@NonNull Call<ResponseObject<Faculty>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ResponseObject<List<String>>> call, @NonNull Throwable t) {
                 new CustomDialog.BuliderOKDialog(context)
                         .setMessage("Lỗi kết nối!" + t.getMessage())
                         .setSuccessful(false)
@@ -216,33 +228,26 @@ public class FacultyAdapter extends ArrayAdapter implements Filterable {
             }
         });
     }
-    private void handleAgreeDelete(FacultyItem facultyItem) {
+
+    private void callLecturer(LecturerItem lecturerItem, MyFuncButton myFuncButton) {
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(context, "jwt", "");
-        List<String> listFacultyCode = new ArrayList<>();
-        listFacultyCode.add(facultyItem.getId());
         ApiManager apiManager = ApiManager.getInstance();
-        Call<ResponseObject<List<String>>> call = apiManager.getApiService().removeFaculty(jwt, listFacultyCode);
-        call.enqueue(new Callback<ResponseObject<List<String>>>() {
+        Call<ResponseObject<Lecturer>> call = apiManager.getApiService().getLecturerById(jwt, lecturerItem.getId());
+        call.enqueue(new Callback<ResponseObject<Lecturer>>() {
             @Override
-            public void onResponse(@NonNull Call<ResponseObject<List<String>>> call, @NonNull Response<ResponseObject<List<String>>> response) {
-                if (response.isSuccessful()&&response.body()!=null) {
-                    ResponseObject<List<String>> dataRes = response.body();
-                    if (dataRes.getRetObj() == null || dataRes.getRetObj().size() == 0) {
-                        new CustomDialog.BuliderOKDialog(context)
-                                .setMessage("Không thể xóa khoa này")
-                                .setSuccessful(false)
-                                .build()
-                                .show();
+            public void onResponse(@NonNull Call<ResponseObject<Lecturer>> call, @NonNull Response<ResponseObject<Lecturer>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Lecturer data = response.body().getRetObj();
+                    Intent intent;
+                    if (myFuncButton == MyFuncButton.VIEW_LECTURER) {
+                        intent = new Intent(context, InforLecturerActivity.class);
+                        intent.putExtra("lecturer", data);
+                        context.startActivity(intent);
                     } else {
-                        data_org.remove(facultyItem);
-                        notifyDataSetChanged();
-
-                        new CustomDialog.BuliderOKDialog(context)
-                                .setMessage("Xóa thành công")
-                                .setSuccessful(true)
-                                .build()
-                                .show();
+                        intent = new Intent(context, EditLecturerActivity.class);
+                        intent.putExtra("lecturer", data);
+                        mUpdateGiangVienLauncher.launch(intent);
                     }
                 }
                 else{
@@ -262,9 +267,9 @@ public class FacultyAdapter extends ArrayAdapter implements Filterable {
             }
 
             @Override
-            public void onFailure(@NonNull Call<ResponseObject<List<String>>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ResponseObject<Lecturer>> call, @NonNull Throwable t) {
                 new CustomDialog.BuliderOKDialog(context)
-                        .setMessage("Lỗi kết nối! " + t.getMessage())
+                        .setMessage("Lỗi kết nối!" + t.getMessage())
                         .setSuccessful(false)
                         .build()
                         .show();
@@ -273,19 +278,20 @@ public class FacultyAdapter extends ArrayAdapter implements Filterable {
     }
 
     private static class ViewHolder {
-        TextView tvTenKhoa;
-        TextView tvMaKhoa;
+        TextView tvTenGV;
+        TextView tvMaGV;
+        ImageView imvPhai;
         TextView tvDetail;
         ImageButton ibtSua;
         ImageButton ibtXoa;
 
-        //
-        public ViewHolder(View view) {
-            this.tvTenKhoa = view.findViewById(R.id.tvTenKhoa);
-            this.tvMaKhoa = view.findViewById(R.id.tvMaKhoa);
-            this.tvDetail=view.findViewById(R.id.tvInforDetail);
+        public ViewHolder (View view){
+            this.tvTenGV = view.findViewById(R.id.tvHoTenGV);
+            this.tvMaGV = view.findViewById(R.id.tvMaGV);
+            this.imvPhai = view.findViewById(R.id.imvPhai);
             this.ibtSua = view.findViewById(R.id.ibtSua);
             this.ibtXoa = view.findViewById(R.id.ibtXoa);
+            this.tvDetail = view.findViewById(R.id.tvInforDetail);
         }
     }
 }

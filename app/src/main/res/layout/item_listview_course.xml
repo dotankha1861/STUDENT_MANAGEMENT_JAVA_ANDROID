@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:paddingHorizontal="10dp">
+    <LinearLayout
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="12dp"
+        android:orientation="vertical"
+        android:background="@drawable/main_icon"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_front_hocphan"
+                android:contentDescription="@string/imv_hp_contDes" />
+            <LinearLayout
+                android:paddingTop="5dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginHorizontal="10dp"
+                android:orientation="vertical"
+                android:layout_weight="1">
+                <TextView
+                    android:id="@+id/tvTenHP"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tv_tenhp_text"
+                    android:textColor="#000"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="3dp"/>
+                <TextView
+                    android:id="@+id/tvMaHP"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tv_mahp_text"
+                    android:textColor="#000"
+                    android:textSize="20sp"/>
+                <TextView
+                    android:id="@+id/tvInforDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:textStyle="italic"
+                    android:textAllCaps="false"
+                    android:textSize="20dp"
+                    android:text="Xem chi tiết ..."
+                    android:textColor="@color/second_color" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <ImageButton
+                    android:id="@+id/ibtSua"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/icon_edit"
+                    android:contentDescription="@string/imb_contDes_btnEdit" />
+                <ImageButton
+                    android:id="@+id/ibtXoa"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/icon_delete"
+                    android:contentDescription="@string/imb_contDes_btnXoa" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

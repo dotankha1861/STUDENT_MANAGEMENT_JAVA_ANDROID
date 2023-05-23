@@ -99,8 +99,8 @@ public class EditFacultyActivity extends CustomAppCompactActivity {
         faculty.setSdt(sdt);
         faculty.setEmail(email);
         faculty.setId(((Faculty) getIntent().getSerializableExtra("faculty")).getId());
-        new CustomDialog.Builder(EditFacultyActivity.this)
-                .setImage(R.drawable.iv_dialog)
+
+        new CustomDialog.BuliderPosNegDialog(EditFacultyActivity.this)
                 .setMessage("Bạn có muốn lưu thay đổi không?")
                 .setPositiveButton("Đồng ý", view -> callUpdateFaculty(faculty), dismiss -> true)
                 .setNegativeButton("Hủy", null, dismiss -> true)

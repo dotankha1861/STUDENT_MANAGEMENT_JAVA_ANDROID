@@ -10,4 +10,14 @@
     <string name="btnGuiMail_text">GỬI</string>
     <string name="navigation_open">Open navigation</string>
     <string name="navigation_close">Close navigation</string>
+    <string name="tv_title_hp_text">HỌC PHẦN</string>
+    <string name="tv_khoa_for_spn_text">Khoa: </string>
+    <string name="it_title_search">Search</string>
+    <string name="imv_hp_contDes">Image HP</string>
+    <string name="tv_tenhp_text">Tên học phần</string>
+    <string name="tv_mahp_text">Mã học phần: </string>
+    <string name="imb_contDes_btnXoa">Btn Xóa</string>
+    <string name="imb_contDes_btnEdit">Btn Edit</string>
+    <string name="tv_title_themhp_text">THÊM HỌC PHẦN</string>
+    <string name="tv_mahp_title_text">Mã học phần</string>
 </resources>

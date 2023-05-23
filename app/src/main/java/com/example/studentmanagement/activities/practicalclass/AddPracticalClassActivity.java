@@ -1,13 +1,11 @@
-package com.example.studentmanagement.activities.faculty;
+package com.example.studentmanagement.activities.practicalclass;
 
 import android.content.Intent;
-import android.media.FaceDetector;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.MenuItem;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -17,26 +15,26 @@ import com.example.studentmanagement.R;
 import com.example.studentmanagement.activities.customactivity.CustomAppCompactActivity;
 import com.example.studentmanagement.api.ApiManager;
 import com.example.studentmanagement.api.ResponseObject;
-import com.example.studentmanagement.models.entity.Faculty;
+import com.example.studentmanagement.models.entity.PracticalClass;
 import com.example.studentmanagement.ui.CustomDialog;
 import com.example.studentmanagement.utils.MyPrefs;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AddFacultyActivity extends CustomAppCompactActivity {
+public class AddPracticalClassActivity extends CustomAppCompactActivity {
+
     Button btnLuu;
-    EditText edtTenKhoa, edtMaKhoa, edtSDT, edtEmail;
+    EditText edtTenLop, edtMaLop;
     Toolbar toolbar;
     Boolean error = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_infor_faculty_edit);
+        setContentView(R.layout.layout_infor_practical_class_edit);
         setControl();
         setEvent();
     }
@@ -44,57 +42,54 @@ public class AddFacultyActivity extends CustomAppCompactActivity {
     private void setEvent() {
         setSupportActionBar(toolbar);
         btnLuu.setOnClickListener( view -> handleLuu());
+
     }
-
     private void handleLuu() {
-        String maKhoa=edtMaKhoa.getText().toString().trim();
-        String tenKhoa=edtTenKhoa.getText().toString().trim();
-        String sdt=edtSDT.getText().toString().trim();
-        String email= edtEmail.getText().toString().trim();
+        String maLop = edtMaLop.getText().toString().trim();
+        String tenLop = edtTenLop.getText().toString().trim();
 
-        if(TextUtils.isEmpty(email)){
-            edtEmail.setError("Vui lòng nhập email khoa");
-            edtEmail.requestFocus();
+        if(TextUtils.isEmpty(tenLop)){
+            edtTenLop.setError("Vui lòng nhập tên lớp");
+            edtTenLop.requestFocus();
             error = true;
         }
 
-        if(TextUtils.isEmpty(sdt)){
-            edtSDT.setError("Vui lòng nhập số điện thoại khoa");
-            edtSDT.requestFocus();
+        if(TextUtils.isEmpty(maLop)){
+            edtMaLop.setError("Vui lòng nhập mã lớp");
+            edtMaLop.requestFocus();
+            error = true;
+        }
+        else if(maLop.length()<3){
+            edtMaLop.setError("Mã lớp phải có tối thiểu 3 kí tự");
+            edtMaLop.requestFocus();
             error = true;
         }
 
-        if(TextUtils.isEmpty(tenKhoa)){
-            edtTenKhoa.setError("Vui lòng nhập tên khoa");
-            edtTenKhoa.requestFocus();
-            error = true;
-        }
         if(error){
             error=false;
             return;
         }
 
-        Faculty faculty= new Faculty();
-        faculty.setMaKhoa(maKhoa);
-        faculty.setTenKhoa(tenKhoa);
-        faculty.setSdt(sdt);
-        faculty.setEmail(email);
+        PracticalClass practicalClass = new PracticalClass();
+        practicalClass.setMaLop(maLop);
+        practicalClass.setTenLop(tenLop);
+        practicalClass.setMaKhoa(getIntent().getStringExtra("crtFacultyCode"));
 
-        callAddFaculty(faculty);
+        callAddPracticalClass(practicalClass);
     }
-
-    private void callAddFaculty(Faculty faculty) {
+    private void callAddPracticalClass(PracticalClass practicalClass) {
         MyPrefs myPrefs = MyPrefs.getInstance();
-        String jwt = myPrefs.getString(AddFacultyActivity.this, "jwt","");
+        String jwt = myPrefs.getString(AddPracticalClassActivity.this, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
-        Call<ResponseObject<Faculty>> call = apiManager.getApiService().createFaculty(jwt, faculty);
-        call.enqueue(new Callback<ResponseObject<Faculty>>() {
+        Call<ResponseObject<PracticalClass>> call = apiManager.getApiService().createPracticalClass(jwt, practicalClass);
+        call.enqueue(new Callback<ResponseObject<PracticalClass>>() {
             @Override
-            public void onResponse(@NonNull Call<ResponseObject<Faculty>> call, @NonNull Response<ResponseObject<Faculty>> response) {
+            public void onResponse(@NonNull Call<ResponseObject<PracticalClass>> call,
+                                   @NonNull Response<ResponseObject<PracticalClass>> response) {
                 if (response.isSuccessful()&&response.body()!=null) {
-                    ResponseObject<Faculty> resData = response.body();
-                    if(resData.getStatus().equals("error")) {
-                        new CustomDialog.BuliderOKDialog(AddFacultyActivity.this)
+                    ResponseObject<PracticalClass> resData = response.body();
+                    if(resData.getStatus().equals("error")){
+                        new CustomDialog.BuliderOKDialog(AddPracticalClassActivity.this)
                                 .setMessage(resData.getMessage())
                                 .setSuccessful(false)
                                 .build()
@@ -102,7 +97,7 @@ public class AddFacultyActivity extends CustomAppCompactActivity {
                     }
                     else {
                         Intent intent = new Intent();
-                        intent.putExtra("newFaculty", resData.getRetObj());
+                        intent.putExtra("newPracticalClass", resData.getRetObj());
                         setResult(RESULT_OK, intent);
                         onBackPressed();
                     }
@@ -114,7 +109,7 @@ public class AddFacultyActivity extends CustomAppCompactActivity {
                                 new TypeToken<ResponseObject<Object>>() {
                                 }.getType()
                         );
-                        new CustomDialog.BuliderOKDialog(AddFacultyActivity.this)
+                        new CustomDialog.BuliderOKDialog(AddPracticalClassActivity.this)
                                 .setMessage("Lỗi" + errorResponse.getMessage())
                                 .setSuccessful(false)
                                 .build()
@@ -123,8 +118,8 @@ public class AddFacultyActivity extends CustomAppCompactActivity {
                 }
             }
             @Override
-            public void onFailure(@NonNull Call<ResponseObject<Faculty>> call, @NonNull Throwable t) {
-                new CustomDialog.BuliderOKDialog(AddFacultyActivity.this)
+            public void onFailure(@NonNull Call<ResponseObject<PracticalClass>> call, @NonNull Throwable t) {
+              new CustomDialog.BuliderOKDialog(AddPracticalClassActivity.this)
                         .setMessage("Lỗi kết nối! " + t.getMessage())
                         .setSuccessful(false)
                         .build()
@@ -132,13 +127,13 @@ public class AddFacultyActivity extends CustomAppCompactActivity {
             }
         });
     }
-
     private void setControl() {
         btnLuu=findViewById(R.id.btnLuu);
-        edtTenKhoa=findViewById(R.id.edtTenKhoa);
-        edtMaKhoa=findViewById(R.id.edtMaKhoa);
-        edtSDT=findViewById(R.id.edtSDT);
-        edtEmail=findViewById(R.id.edtEmail);
+        edtTenLop=findViewById(R.id.edtTenLop);
+        edtMaLop=findViewById(R.id.edtMaLop);
         toolbar=findViewById(R.id.toolbar);
     }
+
+
 }
+

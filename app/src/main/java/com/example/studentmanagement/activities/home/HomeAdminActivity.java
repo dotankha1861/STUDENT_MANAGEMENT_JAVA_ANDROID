@@ -21,16 +21,25 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.studentmanagement.R;
 import com.example.studentmanagement.activities.authen.ChangePasswordActivity;
+import com.example.studentmanagement.activities.course.MainCourseActivity;
 import com.example.studentmanagement.activities.faculty.MainFacultyActivity;
 import com.example.studentmanagement.activities.authen.LoginActivity;
 import com.example.studentmanagement.activities.customactivity.CustomAppCompactActivity;
+import com.example.studentmanagement.activities.lecturer.MainLecturerActivity;
+import com.example.studentmanagement.activities.practicalclass.MainPracticalClassActivity;
+import com.example.studentmanagement.activities.student.MainStudentActivity;
+import com.example.studentmanagement.adapter.LecturerAdapter;
 import com.example.studentmanagement.api.ApiManager;
 import com.example.studentmanagement.api.ResponseObject;
-import com.example.studentmanagement.models.view.FacultyItemLv;
+import com.example.studentmanagement.models.entity.PracticalClass;
+import com.example.studentmanagement.models.view.FacultyItem;
+import com.example.studentmanagement.models.view.PracticalClassItem;
 import com.example.studentmanagement.ui.CustomDialog;
 import com.example.studentmanagement.utils.MyFuncButton;
 import com.example.studentmanagement.utils.MyPrefs;
 import com.google.android.material.navigation.NavigationView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,8 +95,11 @@ public class HomeAdminActivity extends CustomAppCompactActivity {
             return true;
         });
 
-        btnKhoa.setOnClickListener(v -> callKhoa(MyFuncButton.ADMIN_FACULTY_MAGNAGEMENT));
-
+        btnKhoa.setOnClickListener(view -> callFaculty(MyFuncButton.ADMIN_FACULTY_MANAGEMENT));
+        btnHocPhan.setOnClickListener(view-> callFaculty(MyFuncButton.ADMIN_COURSE_MANAGEMENT));
+        btnGiangVien.setOnClickListener(view -> callFaculty(MyFuncButton.ADMIN_LECTURER_MANAGEMENT));
+        btnLop.setOnClickListener(view -> callFaculty(MyFuncButton.ADMIN_PRACTICALCLASS_MANAGEMENT));
+        btnSinhVien.setOnClickListener(view -> callPracticalClass(MyFuncButton.ADMIN_STUDENT_MANAGEMENT));
 //        btnLop.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -218,42 +230,106 @@ public class HomeAdminActivity extends CustomAppCompactActivity {
 //        });
     }
 
-    private void callKhoa(MyFuncButton myFuncButton) {
+    private void callPracticalClass(MyFuncButton myFuncButton) {
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(HomeAdminActivity.this, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
-        Call<ResponseObject<List<List<FacultyItemLv>>>> call = apiManager.getApiService().getAllFaculty(jwt);
-        call.enqueue(new Callback<ResponseObject<List<List<FacultyItemLv>>>>() {
+        Call<ResponseObject<List<List<PracticalClassItem>>>> call = apiManager.getApiService().getAllPracticalClass(jwt);
+        call.enqueue(new Callback<ResponseObject<List<List<PracticalClassItem>>>>() {
             @Override
-            public void onResponse(@NonNull Call<ResponseObject<List<List<FacultyItemLv>>>> call, @NonNull Response<ResponseObject<List<List<FacultyItemLv>>>> response) {
+            public void onResponse(@NonNull Call<ResponseObject<List<List<PracticalClassItem>>>> call,
+                                   @NonNull Response<ResponseObject<List<List<PracticalClassItem>>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    ResponseObject<List<List<FacultyItemLv>>> resData = response.body();
-                    List<FacultyItemLv> data = resData.getRetObj().get(0);
+                    ResponseObject<List<List<PracticalClassItem>>> resData = response.body();
+                    List<PracticalClassItem> data = resData.getRetObj().get(0);
                     Intent intent = null;
-                    if(myFuncButton == MyFuncButton.ADMIN_FACULTY_MAGNAGEMENT) { // Khoa
-                        intent = new Intent(HomeAdminActivity.this, MainFacultyActivity.class);
-                        intent.putExtra("listFacultyItemLv", (ArrayList<FacultyItemLv>) data);
+                    if(myFuncButton == MyFuncButton.ADMIN_STUDENT_MANAGEMENT) {
+                        intent = new Intent(HomeAdminActivity.this, MainStudentActivity.class);
+                        intent.putExtra("listPracticalClassItemSpn", (ArrayList<PracticalClassItem>) data);
                     }
-//                    else{ //Giảngviên
-//                        if(i==1) intent = new Intent(HomeAdminActivity.this, LopActivity.class);
-//                        else if(i==2) intent = new Intent(HomeAdminActivity.this, GiangVienActivity.class);
-//                        else intent = new Intent(HomeAdminActivity.this, HocPhanActivity.class);
-//                        ArrayList<KhoaItemSpinner> listKhoaItemSpn = new ArrayList<>();
-//                        for (Khoa khoa: data) {
-//                            KhoaItemSpinner khoaItemSpinner = new KhoaItemSpinner(khoa.getMaKhoa(), khoa.getTenKhoa());
-//                            listKhoaItemSpn.add(khoaItemSpinner);
-//                        }
-//                        intent.putExtra("listFaculty", listKhoaItemSpn);
-//                    }
+                    else{ //Practical class
+
+                    }
                     startActivity(intent);
                 } else {
-
+                    if (response.errorBody() != null) {
+                        ResponseObject<Object> errorResponse = new Gson().fromJson(
+                                response.errorBody().charStream(),
+                                new TypeToken<ResponseObject<Object>>() {
+                                }.getType()
+                        );
+                        new CustomDialog.BuliderOKDialog(HomeAdminActivity.this)
+                                .setMessage("Lỗi" + errorResponse.getMessage())
+                                .setSuccessful(false)
+                                .build()
+                                .show();
+                    }
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<ResponseObject<List<List<FacultyItemLv>>>> call, @NonNull Throwable t) {
-//                Toast.makeText(getApplicationContext(), "Lỗi kết nối dữ liệu!", Toast.LENGTH_LONG).show();
+            public void onFailure(@NonNull Call<ResponseObject<List<List<PracticalClassItem>>>> call, @NonNull Throwable t) {
+                new CustomDialog.BuliderOKDialog(HomeAdminActivity.this)
+                        .setMessage("Lỗi kết nối! " + t.getMessage())
+                        .setSuccessful(false)
+                        .build()
+                        .show();
+            }
+        });
+    }
+
+    private void callFaculty(MyFuncButton myFuncButton) {
+        MyPrefs myPrefs = MyPrefs.getInstance();
+        String jwt = myPrefs.getString(HomeAdminActivity.this, "jwt", "");
+        ApiManager apiManager = ApiManager.getInstance();
+        Call<ResponseObject<List<List<FacultyItem>>>> call = apiManager.getApiService().getAllFaculty(jwt);
+        call.enqueue(new Callback<ResponseObject<List<List<FacultyItem>>>>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseObject<List<List<FacultyItem>>>> call, @NonNull Response<ResponseObject<List<List<FacultyItem>>>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ResponseObject<List<List<FacultyItem>>> resData = response.body();
+                    List<FacultyItem> data = resData.getRetObj().get(0);
+                    Intent intent = null;
+                    if(myFuncButton == MyFuncButton.ADMIN_FACULTY_MANAGEMENT) {
+                        intent = new Intent(HomeAdminActivity.this, MainFacultyActivity.class);
+                        intent.putExtra("listFacultyItemLv", (ArrayList<FacultyItem>) data);
+                    }
+                    else if(myFuncButton == MyFuncButton.ADMIN_COURSE_MANAGEMENT){
+                        intent = new Intent(HomeAdminActivity.this, MainCourseActivity.class);
+                        intent.putExtra("listFacultyItemSpn", (ArrayList<FacultyItem>) data );
+                    }
+                   else if(myFuncButton == MyFuncButton.ADMIN_LECTURER_MANAGEMENT){
+                        intent = new Intent(HomeAdminActivity.this, MainLecturerActivity.class);
+                        intent.putExtra("listFacultyItemSpn", (ArrayList<FacultyItem>) data );
+                    }
+                   else{ //Practical class
+                       intent = new Intent(HomeAdminActivity.this, MainPracticalClassActivity.class);
+                       intent.putExtra("listFacultyItemSpn", (ArrayList<FacultyItem>) data);
+                    }
+                    startActivity(intent);
+                } else {
+                    if (response.errorBody() != null) {
+                        ResponseObject<Object> errorResponse = new Gson().fromJson(
+                                response.errorBody().charStream(),
+                                new TypeToken<ResponseObject<Object>>() {
+                                }.getType()
+                        );
+                        new CustomDialog.BuliderOKDialog(HomeAdminActivity.this)
+                                .setMessage("Lỗi" + errorResponse.getMessage())
+                                .setSuccessful(false)
+                                .build()
+                                .show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseObject<List<List<FacultyItem>>>> call, @NonNull Throwable t) {
+                new CustomDialog.BuliderOKDialog(HomeAdminActivity.this)
+                        .setMessage("Lỗi kết nối! " + t.getMessage())
+                        .setSuccessful(false)
+                        .build()
+                        .show();
             }
         });
     }
@@ -273,9 +349,9 @@ public class HomeAdminActivity extends CustomAppCompactActivity {
     private void setActionBarDrawerToggle() {
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_open, R.string.navigation_close);
         actionBarDrawerToggle.getDrawerArrowDrawable().setColor(Color.WHITE);
-        actionBarDrawerToggle.getDrawerArrowDrawable().setGapSize(20);
-        actionBarDrawerToggle.getDrawerArrowDrawable().setBarLength(100);
-        actionBarDrawerToggle.getDrawerArrowDrawable().setBarThickness(15);
+        actionBarDrawerToggle.getDrawerArrowDrawable().setGapSize(10);
+        actionBarDrawerToggle.getDrawerArrowDrawable().setBarLength(50);
+        actionBarDrawerToggle.getDrawerArrowDrawable().setBarThickness(10);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
     }
