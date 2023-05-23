@@ -27,6 +27,7 @@ import com.example.studentmanagement.activities.authen.LoginActivity;
 import com.example.studentmanagement.activities.customactivity.CustomAppCompactActivity;
 import com.example.studentmanagement.activities.lecturer.MainLecturerActivity;
 import com.example.studentmanagement.activities.practicalclass.MainPracticalClassActivity;
+import com.example.studentmanagement.activities.statistic.MainStatisticActivity;
 import com.example.studentmanagement.activities.student.MainStudentActivity;
 import com.example.studentmanagement.adapter.LecturerAdapter;
 import com.example.studentmanagement.api.ApiManager;
@@ -34,6 +35,7 @@ import com.example.studentmanagement.api.ResponseObject;
 import com.example.studentmanagement.models.entity.PracticalClass;
 import com.example.studentmanagement.models.view.FacultyItem;
 import com.example.studentmanagement.models.view.PracticalClassItem;
+import com.example.studentmanagement.models.view.SemesterItem;
 import com.example.studentmanagement.ui.CustomDialog;
 import com.example.studentmanagement.utils.MyFuncButton;
 import com.example.studentmanagement.utils.MyPrefs;
@@ -100,6 +102,7 @@ public class HomeAdminActivity extends CustomAppCompactActivity {
         btnGiangVien.setOnClickListener(view -> callFaculty(MyFuncButton.ADMIN_LECTURER_MANAGEMENT));
         btnLop.setOnClickListener(view -> callFaculty(MyFuncButton.ADMIN_PRACTICALCLASS_MANAGEMENT));
         btnSinhVien.setOnClickListener(view -> callPracticalClass(MyFuncButton.ADMIN_STUDENT_MANAGEMENT));
+        btnThongke.setOnClickListener(view -> callPracticalClass(MyFuncButton.ADMIN_STATISTIC));
 //        btnLop.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -229,6 +232,53 @@ public class HomeAdminActivity extends CustomAppCompactActivity {
 //            }
 //        });
     }
+    private void callScheme(MyFuncButton myFuncButton, List<PracticalClassItem> practicalClassItemList) {
+        MyPrefs myPrefs = MyPrefs.getInstance();
+        String jwt = myPrefs.getString(HomeAdminActivity.this, "jwt", "");
+        ApiManager apiManager = ApiManager.getInstance();
+        Call<ResponseObject<List<List<SemesterItem>>>> call = apiManager.getApiService().getAllScheme(jwt);
+        call.enqueue(new Callback<ResponseObject<List<List<SemesterItem>>>>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseObject<List<List<SemesterItem>>>> call, @NonNull Response<ResponseObject<List<List<SemesterItem>>>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ResponseObject<List<List<SemesterItem>>> resData = response.body();
+                    List<SemesterItem> data = resData.getRetObj().get(0);
+                    Intent intent;
+                    if(myFuncButton == MyFuncButton.ADMIN_STATISTIC){
+                        intent = new Intent(HomeAdminActivity.this, MainStatisticActivity.class);
+                        intent.putExtra("listSemeterItemSpn", (ArrayList<SemesterItem>)data);
+                        intent.putExtra("listPracticalClassItemSpn", (ArrayList<PracticalClassItem>) practicalClassItemList);
+                    }
+                    else{
+                        intent = null;
+                    }
+                    startActivity(intent);
+                } else {
+                    if (response.errorBody() != null) {
+                        ResponseObject<Object> errorResponse = new Gson().fromJson(
+                                response.errorBody().charStream(),
+                                new TypeToken<ResponseObject<Object>>() {
+                                }.getType()
+                        );
+                        new CustomDialog.BuliderOKDialog(HomeAdminActivity.this)
+                                .setMessage("Lỗi" + errorResponse.getMessage())
+                                .setSuccessful(false)
+                                .build()
+                                .show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseObject<List<List<SemesterItem>>>> call, @NonNull Throwable t) {
+                new CustomDialog.BuliderOKDialog(HomeAdminActivity.this)
+                        .setMessage("Lỗi kết nối! " + t.getMessage())
+                        .setSuccessful(false)
+                        .build()
+                        .show();
+            }
+        });
+    }
 
     private void callPracticalClass(MyFuncButton myFuncButton) {
         MyPrefs myPrefs = MyPrefs.getInstance();
@@ -242,15 +292,18 @@ public class HomeAdminActivity extends CustomAppCompactActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     ResponseObject<List<List<PracticalClassItem>>> resData = response.body();
                     List<PracticalClassItem> data = resData.getRetObj().get(0);
-                    Intent intent = null;
+                    Intent intent;
                     if(myFuncButton == MyFuncButton.ADMIN_STUDENT_MANAGEMENT) {
                         intent = new Intent(HomeAdminActivity.this, MainStudentActivity.class);
                         intent.putExtra("listPracticalClassItemSpn", (ArrayList<PracticalClassItem>) data);
+                        startActivity(intent);
+                    }
+                    else if(myFuncButton == MyFuncButton.ADMIN_STATISTIC){
+                        callScheme(myFuncButton, data);
                     }
                     else{ //Practical class
 
                     }
-                    startActivity(intent);
                 } else {
                     if (response.errorBody() != null) {
                         ResponseObject<Object> errorResponse = new Gson().fromJson(

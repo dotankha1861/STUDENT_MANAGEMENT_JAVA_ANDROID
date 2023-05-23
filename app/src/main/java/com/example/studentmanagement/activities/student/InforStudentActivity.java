@@ -2,6 +2,7 @@ package com.example.studentmanagement.activities.student;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -22,7 +23,7 @@ public class InforStudentActivity extends CustomAppCompactActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_student);
+        setContentView(R.layout.layout_infor_student_view);
         setControl();
         setEvent();
     }

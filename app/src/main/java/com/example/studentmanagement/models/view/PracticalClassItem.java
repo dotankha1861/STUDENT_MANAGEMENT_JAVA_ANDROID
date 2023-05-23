@@ -12,6 +12,11 @@ public class PracticalClassItem implements Serializable {
 
     public PracticalClassItem() {}
 
+    public PracticalClassItem(String maLop, String tenLop) {
+        this.maLop = maLop;
+        this.tenLop = tenLop;
+    }
+
     public String getId() {
         return id;
     }

@@ -20,4 +20,8 @@
     <string name="imb_contDes_btnEdit">Btn Edit</string>
     <string name="tv_title_themhp_text">THÊM HỌC PHẦN</string>
     <string name="tv_mahp_title_text">Mã học phần</string>
+    <array name="filter_credit_class">
+        <item name="item1">Lớp</item>
+        <item name="item2">Môn</item>
+    </array>
 </resources>

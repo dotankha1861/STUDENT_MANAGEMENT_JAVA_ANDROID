@@ -58,6 +58,10 @@
             android:exported="true"/>
         <activity android:name=".activities.student.InforStudentActivity"
             android:exported="true"/>
+        <activity android:name=".activities.statistic.MainStatisticActivity"
+            android:exported="true"/>
+        <activity android:name=".activities.statistic.ViewStatisticActivity"
+            android:exported="true"/>
         <activity
             android:name=".activities.authen.SplashScreen"
             android:exported="true">

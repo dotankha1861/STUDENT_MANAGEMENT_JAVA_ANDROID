@@ -8,7 +8,7 @@ public class StatusStudent {
 
     static {
         status = new HashMap<>();
-        status.put(0, "Còn học");
         status.put(1, "Đã nghỉ");
+        status.put(0, "Còn học");
     }
 }

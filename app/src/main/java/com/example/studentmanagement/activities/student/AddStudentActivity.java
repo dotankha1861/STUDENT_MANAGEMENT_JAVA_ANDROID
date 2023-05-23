@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -64,15 +65,21 @@ public class AddStudentActivity extends CustomAppCompactActivity {
         setContentView(R.layout.layout_infor_student_edit);
         setControl();
         setEvent();
-
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        spnStatus.setDropDownWidth(spnStatus.getWidth());
+        return super.onCreateOptionsMenu(menu);
+    }
+
     private void setEvent() {
         setSupportActionBar(toolbar);
 
         ArrayAdapter<String> adapterStatus = new ArrayAdapter<>(AddStudentActivity.this, R.layout.item_selected_spinner, new ArrayList<>(StatusStudent.status.values()));
         adapterStatus.setDropDownViewResource(R.layout.item_dropdown_spinner);
         spnStatus.setAdapter(adapterStatus);
-
+        spnStatus.setSelection(0);
 
         spnStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -200,7 +207,7 @@ public class AddStudentActivity extends CustomAppCompactActivity {
                 .format()
         );
         student.setTrangThai(crtStatus);
-        student.setMaLop(getIntent().getStringExtra("crtPracticalClass"));
+        student.setMaLop(getIntent().getStringExtra("crtPracticalClassCode"));
         callAddStudent(student);
     }
 

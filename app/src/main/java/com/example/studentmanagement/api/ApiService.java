@@ -10,10 +10,13 @@ import com.example.studentmanagement.models.entity.Student;
 import com.example.studentmanagement.models.requestbody.RequestBodyChangePassword;
 import com.example.studentmanagement.models.requestbody.RequestBodyLogin;
 import com.example.studentmanagement.models.responsebody.ResponseBodyLogin;
+import com.example.studentmanagement.models.responsebody.ScoreStatistic;
 import com.example.studentmanagement.models.view.CourseItem;
+import com.example.studentmanagement.models.view.CreditClassItem;
 import com.example.studentmanagement.models.view.FacultyItem;
 import com.example.studentmanagement.models.view.LecturerItem;
 import com.example.studentmanagement.models.view.PracticalClassItem;
+import com.example.studentmanagement.models.view.SemesterItem;
 import com.example.studentmanagement.models.view.StudentItem;
 
 import java.util.List;
@@ -26,6 +29,7 @@ import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface ApiService {
     // Authentication
@@ -74,6 +78,8 @@ public interface ApiService {
     @GET("admin/lop")
     Call<ResponseObject<List<List<PracticalClassItem>>>> getAllPracticalClass(@Header("Authorization") String jwt);
 //    // Học phần
+    @GET("admin/monHoc")
+    Call<ResponseObject<List<List<CourseItem>>>> getAllCourse(@Header("Authorization") String jwt);
     @GET("admin/monHoc/khoa/{maKhoa}?page=0&size=999999")
     Call<ResponseObject<List<CourseItem>>> getAllCourseByFacultyCode(@Header("Authorization") String jwt, @Path("maKhoa") String maKhoa);
     @GET("admin/monHoc/{id}")
@@ -96,15 +102,16 @@ public interface ApiService {
     Call<ResponseObject<Student>> updateStudent(@Header("Authorization") String jwt, @Body Student student);
     @HTTP(method = "DELETE", path = "admin/sinhVien", hasBody = true)
     Call<ResponseObject<List<String>>> removeStudent(@Header("Authorization") String jwt, @Body List<String> listMaSinhVien);
-//    @GET("admin/monHoc")
-//    Call<ResponseObject<List<List<HocPhan>>>> getAllHocPhan(@Header("Authorization") String jwt);
-//    @GET("admin/monHoc/{id}")
-//    Call<ResponseObject<HocPhan>> getHPById(@Header("Authorization") String jwt, @Path("id") String id);
-//    // Kế hoạch
-//    @GET("admin/keHoachNam")
-//    Call<ResponseObject<List<List<KyItemSpinner>>>> getAllKeHoach(@Header("Authorization") String jwt);
-//
-//    // Lớp tín chỉ
+
+    // Kế hoạch
+    @GET("admin/keHoachNam")
+    Call<ResponseObject<List<List<SemesterItem>>>> getAllScheme(@Header("Authorization") String jwt);
+
+    // Lớp tín chỉ
+    @GET("admin/dsLopTc/monHoc")
+    Call<ResponseObject<List<CreditClassItem>>> getAllCreditClassByCourseCode(@Header("Authorization") String jwt, @Query("maKeHoach") String maKeHoach, @Query("maMh") String maMh);
+    @GET("admin/dsLopTc")
+    Call<ResponseObject<List<CreditClassItem>>> getAllCreditClassByPracticalClass(@Header("Authorization") String jwt, @Query("maKeHoach") String maKeHoach, @Query("maLop") String maLop);
 //    @GET("admin/dsLopTc")
 //    Call<ResponseObject<List<LopTCItemLv>>> getDsLopTcByMaKHMaLop(@Header("Authorization") String jwt, @Query("maKeHoach") String maKeHoach, @Query("maLop") String maLop);
 //    @GET("admin/dsLopTc/{id}")
@@ -114,10 +121,10 @@ public interface ApiService {
 //    //Chi tiet LTC
 //    @GET("admin/chiTietLopTc/lopTc/{maLTC}")
 //    Call<ResponseObject<List<CTLopTC>>> getCTLTCByMaLTC(@Header("Authorization") String jwt, @Path("maLTC") String maLTC);
-//    // Lấy thống kê điểm 1 lớp TC theo cột
-//    @GET("admin/diem/thong-ke")
-//    Call<ResponseObject<List<ScoreStatistic>>> getTKDiemLopTCByCol(@Header("Authorization") String jwt, @Query("idLopTc") String idLopTc, @Query("col") String col);
-//    //Diểm
+    // Lấy thống kê điểm 1 lớp TC theo cột
+    @GET("admin/diem/thong-ke")
+    Call<ResponseObject<List<ScoreStatistic>>> getScoreStatisticByCreditClassCode(@Header("Authorization") String jwt, @Query("idLopTc") String idLopTc, @Query("col") String col);
+    //Diểm
 //    @GET("admin/diem/lopTc/detail/{maLTC}")
 //    Call<ResponseObject<List<DiemSinhVien>>> getDiemByMaLTC(@Header("Authorization") String jwt, @Path("maLTC") String maLTC);
 //
