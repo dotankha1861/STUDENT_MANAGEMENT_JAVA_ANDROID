@@ -3,6 +3,8 @@ package com.example.studentmanagement.api;
 import com.airbnb.lottie.L;
 import com.example.studentmanagement.adapter.PracticalClassAdapter;
 import com.example.studentmanagement.models.entity.Course;
+import com.example.studentmanagement.models.entity.CreditClass;
+import com.example.studentmanagement.models.entity.DetailCreditClass;
 import com.example.studentmanagement.models.entity.Faculty;
 import com.example.studentmanagement.models.entity.Lecturer;
 import com.example.studentmanagement.models.entity.PracticalClass;
@@ -10,7 +12,9 @@ import com.example.studentmanagement.models.entity.Student;
 import com.example.studentmanagement.models.requestbody.RequestBodyChangePassword;
 import com.example.studentmanagement.models.requestbody.RequestBodyLogin;
 import com.example.studentmanagement.models.responsebody.ResponseBodyLogin;
+import com.example.studentmanagement.models.responsebody.ScoreCreditClass;
 import com.example.studentmanagement.models.responsebody.ScoreStatistic;
+import com.example.studentmanagement.models.responsebody.ScoreStudent;
 import com.example.studentmanagement.models.view.CourseItem;
 import com.example.studentmanagement.models.view.CreditClassItem;
 import com.example.studentmanagement.models.view.FacultyItem;
@@ -80,6 +84,8 @@ public interface ApiService {
 //    // Học phần
     @GET("admin/monHoc")
     Call<ResponseObject<List<List<CourseItem>>>> getAllCourse(@Header("Authorization") String jwt);
+    @GET("admin/monHoc")
+    Call<ResponseObject<List<List<Course>>>> getAllCourseFull(@Header("Authorization") String jwt);
     @GET("admin/monHoc/khoa/{maKhoa}?page=0&size=999999")
     Call<ResponseObject<List<CourseItem>>> getAllCourseByFacultyCode(@Header("Authorization") String jwt, @Path("maKhoa") String maKhoa);
     @GET("admin/monHoc/{id}")
@@ -114,13 +120,13 @@ public interface ApiService {
     Call<ResponseObject<List<CreditClassItem>>> getAllCreditClassByPracticalClass(@Header("Authorization") String jwt, @Query("maKeHoach") String maKeHoach, @Query("maLop") String maLop);
 //    @GET("admin/dsLopTc")
 //    Call<ResponseObject<List<LopTCItemLv>>> getDsLopTcByMaKHMaLop(@Header("Authorization") String jwt, @Query("maKeHoach") String maKeHoach, @Query("maLop") String maLop);
-//    @GET("admin/dsLopTc/{id}")
-//    Call<ResponseObject<LopTinChi>> getLopTCById(@Header("Authorization") String jwt, @Path("id") String id);
+    @GET("admin/dsLopTc/{id}")
+    Call<ResponseObject<CreditClass>> getCreditClassById(@Header("Authorization") String jwt, @Path("id") String id);
 //    @POST("admin/dsLopTc/giangVien/{maGV}")
 //    Call<ResponseObject<List<LopTCItemLv>>> getDsLTCByMaGVMaKH(@Header("Authorization") String jwt, @Path("maGV") String maGV, @Query("maKeHoach") String maKeHoach);
 //    //Chi tiet LTC
-//    @GET("admin/chiTietLopTc/lopTc/{maLTC}")
-//    Call<ResponseObject<List<CTLopTC>>> getCTLTCByMaLTC(@Header("Authorization") String jwt, @Path("maLTC") String maLTC);
+    @GET("admin/chiTietLopTc/lopTc/{maLTC}")
+    Call<ResponseObject<List<DetailCreditClass>>> getDetailByCreditClassCode(@Header("Authorization") String jwt, @Path("maLTC") String maLTC);
     // Lấy thống kê điểm 1 lớp TC theo cột
     @GET("admin/diem/thong-ke")
     Call<ResponseObject<List<ScoreStatistic>>> getScoreStatisticByCreditClassCode(@Header("Authorization") String jwt, @Query("idLopTc") String idLopTc, @Query("col") String col);
@@ -134,4 +140,9 @@ public interface ApiService {
 //    // Thời khóa biểu
 //    @GET("admin/tkb/sinhVien/{maSV}")
 //    Call<ResponseObject<List<TKBItem>>> getTKBSVByTuan(@Header("Authorization") String jwt, @Path("maSV") String maSV, @Query("tuan") int tuan);
+    // Điểm
+    @POST("admin/diem/{maSV}")
+    Call<ResponseObject<List<ScoreStudent>>> getScoreByStudentCode(@Header("Authorization") String jwt, @Path("maSV") String maSV, @Query("maKeHoach") String maKeHoach);
+    @GET("admin/diem/lopTc/detail/{maLTC}")
+    Call<ResponseObject<List<ScoreCreditClass>>> getScoreByCreditClassCode(@Header("Authorization") String jwt, @Path("maLTC") String maLTC);
 }

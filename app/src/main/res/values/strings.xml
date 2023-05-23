@@ -24,4 +24,8 @@
         <item name="item1">Lớp</item>
         <item name="item2">Môn</item>
     </array>
+    <array name="view_mode">
+        <item name="item1">Lớp TC</item>
+        <item name="item2">Sinh viên</item>
+    </array>
 </resources>

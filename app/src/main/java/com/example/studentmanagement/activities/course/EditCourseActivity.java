@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.studentmanagement.R;
+import com.example.studentmanagement.activities.customactivity.CustomAppCompactActivity;
 import com.example.studentmanagement.activities.faculty.EditFacultyActivity;
 import com.example.studentmanagement.api.ApiManager;
 import com.example.studentmanagement.api.ResponseObject;
@@ -29,7 +30,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class EditCourseActivity extends AppCompatActivity {
+public class EditCourseActivity extends CustomAppCompactActivity {
     Button btnLuu;
     Boolean error = false;
     EditText edtTenHP, edtMaHP, edtSTC, edtSoTietLT, edtSoTietTH, edtHeSoCC, edtHeSoGK, edtHeSoCK;

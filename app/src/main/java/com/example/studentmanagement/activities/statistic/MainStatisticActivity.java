@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -30,9 +29,7 @@ import com.example.studentmanagement.utils.MyPrefs;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.LongPredicate;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -40,7 +37,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainStatisticActivity extends CustomAppCompactActivitySearch {
-    int cheDoLoc;
     Toolbar toolbar;
     Spinner spnPracticalClass, spnSemester, spnFilter;
     ArrayAdapter<PracticalClassItem> adapterPracticalClassSpinner;
@@ -55,7 +51,7 @@ public class MainStatisticActivity extends CustomAppCompactActivitySearch {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_statistic);
+        setContentView(R.layout.layout_statistic_admin);
         setControl();
         setEvent();
     }
@@ -90,7 +86,7 @@ public class MainStatisticActivity extends CustomAppCompactActivitySearch {
     }
 
     private void setDataSourceSemesterSpinner() {
-        List<SemesterItem> semesterItemList = (List<SemesterItem>) getIntent().getSerializableExtra("listSemeterItemSpn");
+        List<SemesterItem> semesterItemList = (List<SemesterItem>) getIntent().getSerializableExtra("listSemesterItemSpn");
         adapterSemesterSpinner = new ArrayAdapter<>(MainStatisticActivity.this, R.layout.item_selected_spinner, semesterItemList);
         adapterSemesterSpinner.setDropDownViewResource(R.layout.item_dropdown_spinner);
         spnSemester.setAdapter(adapterSemesterSpinner);
