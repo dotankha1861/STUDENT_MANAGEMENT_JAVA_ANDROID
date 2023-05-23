@@ -58,6 +58,7 @@ public class ScoreStudentAdapter extends ArrayAdapter implements Filterable {
         ScoreStudent scoreStudent = data_view.get(position);
         viewHolder.tvMaMH.setText(scoreStudent.getMaMh());
         viewHolder.tvTenMH.setText(scoreStudent.getTenMh());
+        viewHolder.tvCC.setText(String.valueOf(scoreStudent.getCc()));
         viewHolder.tvGK.setText(String.valueOf(scoreStudent.getGk()));
         viewHolder.tvCK.setText(String.valueOf(scoreStudent.getCk()));
         viewHolder.tvPerCC.setText("(" + scoreStudent.getPercentCc() + ")");
