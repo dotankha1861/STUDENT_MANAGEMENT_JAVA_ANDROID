@@ -2,28 +2,20 @@ package com.example.studentmanagement.activities.score;
 
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 
 import com.example.studentmanagement.R;
 import com.example.studentmanagement.activities.customactivity.CustomAppCompactActivitySearch;
-import com.example.studentmanagement.activities.statistic.MainStatisticActivity;
-import com.example.studentmanagement.activities.student.MainStudentActivity;
 import com.example.studentmanagement.adapter.CreditClassForScoreAdapter;
 import com.example.studentmanagement.adapter.StudentForScoreAdapter;
 import com.example.studentmanagement.api.ApiManager;
@@ -37,14 +29,13 @@ import com.example.studentmanagement.utils.MyPrefs;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainScoreActivity extends CustomAppCompactActivitySearch {
+public class MainScoreAdminActivity extends CustomAppCompactActivitySearch {
     Toolbar toolbar;
     Spinner spnPracticalClass, spnSemester, spnViewMode;
     ArrayAdapter<PracticalClassItem> adapterPracticalClassSpinner;
@@ -94,7 +85,7 @@ public class MainScoreActivity extends CustomAppCompactActivitySearch {
 
     private void setDataSourcsePracticalClassSpinner() {
         List<PracticalClassItem> practicalClassItemList = (List<PracticalClassItem>) getIntent().getSerializableExtra("listPracticalClassItemSpn");
-        adapterPracticalClassSpinner = new ArrayAdapter<>(MainScoreActivity.this, R.layout.item_selected_spinner, practicalClassItemList);
+        adapterPracticalClassSpinner = new ArrayAdapter<>(MainScoreAdminActivity.this, R.layout.item_selected_spinner, practicalClassItemList);
         adapterPracticalClassSpinner.setDropDownViewResource(R.layout.item_dropdown_spinner);
         spnPracticalClass.setAdapter(adapterPracticalClassSpinner);
         spnPracticalClass.setDropDownWidth(spnPracticalClass.getWidth());
@@ -102,7 +93,7 @@ public class MainScoreActivity extends CustomAppCompactActivitySearch {
 
     private void setDataSourceSemesterSpinner() {
         List<SemesterItem> semesterItemList = (List<SemesterItem>) getIntent().getSerializableExtra("listSemesterItemSpn");
-        adapterSemesterSpinner = new ArrayAdapter<>(MainScoreActivity.this, R.layout.item_selected_spinner, semesterItemList);
+        adapterSemesterSpinner = new ArrayAdapter<>(MainScoreAdminActivity.this, R.layout.item_selected_spinner, semesterItemList);
         adapterSemesterSpinner.setDropDownViewResource(R.layout.item_dropdown_spinner);
         studentForScoreAdapter.setSemesterItemList(semesterItemList);
         spnSemester.setAdapter(adapterSemesterSpinner);
@@ -119,8 +110,8 @@ public class MainScoreActivity extends CustomAppCompactActivitySearch {
 
     private void setEvent() {
         setSupportActionBar(toolbar);
-        studentForScoreAdapter = new StudentForScoreAdapter(MainScoreActivity.this, R.layout.item_listview_student_score);
-        creditClassForScoreAdapter = new CreditClassForScoreAdapter(MainScoreActivity.this, R.layout.item_listview_credit_class_score);
+        studentForScoreAdapter = new StudentForScoreAdapter(MainScoreAdminActivity.this, R.layout.item_listview_student_score);
+        creditClassForScoreAdapter = new CreditClassForScoreAdapter(MainScoreAdminActivity.this, R.layout.item_listview_credit_class_score);
 
         spnSemester.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -167,7 +158,7 @@ public class MainScoreActivity extends CustomAppCompactActivitySearch {
 
     private void callStudent() {
         MyPrefs myPrefs = MyPrefs.getInstance();
-        String jwt = myPrefs.getString(MainScoreActivity.this, "jwt", "");
+        String jwt = myPrefs.getString(MainScoreAdminActivity.this, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
         Call<ResponseObject<List<StudentItem>>> call = apiManager.getApiService().getAllStudentByPracticalClassCode(jwt, crtPracticalClassCode);
         call.enqueue(new Callback<ResponseObject<List<StudentItem>>>() {
@@ -178,7 +169,7 @@ public class MainScoreActivity extends CustomAppCompactActivitySearch {
 
                     studentForScoreAdapter.clear();
                     if(resData.getRetObj()==null || resData.getRetObj().size()==0)
-                        Toast.makeText(MainScoreActivity.this, "Lớp chưa có sinh viên nào", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainScoreAdminActivity.this, "Lớp chưa có sinh viên nào", Toast.LENGTH_LONG).show();
                     else studentForScoreAdapter.addAll(resData.getRetObj());
                     lvObject.setAdapter(studentForScoreAdapter);
                     studentForScoreAdapter.notifyDataSetChanged();
@@ -189,7 +180,7 @@ public class MainScoreActivity extends CustomAppCompactActivitySearch {
                                 new TypeToken<ResponseObject<Object>>() {
                                 }.getType()
                         );
-                        new CustomDialog.BuliderOKDialog(MainScoreActivity.this)
+                        new CustomDialog.BuliderOKDialog(MainScoreAdminActivity.this)
                                 .setMessage("Lỗi" + errorResponse.getMessage())
                                 .setSuccessful(false)
                                 .build()
@@ -200,7 +191,7 @@ public class MainScoreActivity extends CustomAppCompactActivitySearch {
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<List<StudentItem>>> call, @NonNull Throwable t) {
-                new CustomDialog.BuliderOKDialog(MainScoreActivity.this)
+                new CustomDialog.BuliderOKDialog(MainScoreAdminActivity.this)
                         .setMessage("Lỗi kết nối! " + t.getMessage())
                         .setSuccessful(false)
                         .build()
@@ -211,7 +202,7 @@ public class MainScoreActivity extends CustomAppCompactActivitySearch {
 
     private void callCreditClass() {
         MyPrefs myPrefs = MyPrefs.getInstance();
-        String jwt = myPrefs.getString(MainScoreActivity.this, "jwt", "");
+        String jwt = myPrefs.getString(MainScoreAdminActivity.this, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
         Call<ResponseObject<List<CreditClassItem>>> call = apiManager.getApiService().getAllCreditClassByPracticalClass(jwt, crtSemesterCode, crtPracticalClassCode);
         call.enqueue(new Callback<ResponseObject<List<CreditClassItem>>>() {
@@ -231,7 +222,7 @@ public class MainScoreActivity extends CustomAppCompactActivitySearch {
                                 new TypeToken<ResponseObject<Object>>() {
                                 }.getType()
                         );
-                        new CustomDialog.BuliderOKDialog(MainScoreActivity.this)
+                        new CustomDialog.BuliderOKDialog(MainScoreAdminActivity.this)
                                 .setMessage("Lỗi" + errorResponse.getMessage())
                                 .setSuccessful(false)
                                 .build()
@@ -242,7 +233,7 @@ public class MainScoreActivity extends CustomAppCompactActivitySearch {
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<List<CreditClassItem>>> call, @NonNull Throwable t) {
-                new CustomDialog.BuliderOKDialog(MainScoreActivity.this)
+                new CustomDialog.BuliderOKDialog(MainScoreAdminActivity.this)
                         .setMessage("Lỗi kết nối! " + t.getMessage())
                         .setSuccessful(false)
                         .build()

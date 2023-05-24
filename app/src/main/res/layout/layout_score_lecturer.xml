@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary_color"
+        android:minHeight="?attr/actionBarSize"
+        android:paddingVertical="20dp"
+        app:buttonGravity="center_vertical"
+        app:maxButtonHeight="50dp"
+        app:theme="@style/BaseTheme"
+        app:titleTextColor="@color/white">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="ĐIỂM"
+            android:textColor="@color/white"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bar_control">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="20dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:gravity="center"
+                android:text="Kỳ: "
+                android:textColor="@color/primary_color"
+                android:textSize="23sp"
+                android:textStyle="bold" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/spinner_shadow"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+                <Spinner
+                    android:id="@+id/spnListKy"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:overlapAnchor="false"
+                    android:spinnerMode="dropdown" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+    <ListView
+        android:layout_marginTop="20dp"
+        android:id="@+id/lvDsloptinchi"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@color/white"
+        android:dividerHeight="10dp"/>
+</LinearLayout>

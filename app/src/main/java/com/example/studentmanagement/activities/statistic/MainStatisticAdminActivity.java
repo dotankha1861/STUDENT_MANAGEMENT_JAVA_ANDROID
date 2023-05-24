@@ -36,7 +36,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainStatisticActivity extends CustomAppCompactActivitySearch {
+public class MainStatisticAdminActivity extends CustomAppCompactActivitySearch {
     Toolbar toolbar;
     Spinner spnPracticalClass, spnSemester, spnFilter;
     ArrayAdapter<PracticalClassItem> adapterPracticalClassSpinner;
@@ -87,7 +87,7 @@ public class MainStatisticActivity extends CustomAppCompactActivitySearch {
 
     private void setDataSourceSemesterSpinner() {
         List<SemesterItem> semesterItemList = (List<SemesterItem>) getIntent().getSerializableExtra("listSemesterItemSpn");
-        adapterSemesterSpinner = new ArrayAdapter<>(MainStatisticActivity.this, R.layout.item_selected_spinner, semesterItemList);
+        adapterSemesterSpinner = new ArrayAdapter<>(MainStatisticAdminActivity.this, R.layout.item_selected_spinner, semesterItemList);
         adapterSemesterSpinner.setDropDownViewResource(R.layout.item_dropdown_spinner);
         spnSemester.setAdapter(adapterSemesterSpinner);
         spnSemester.setDropDownWidth(spnSemester.getWidth());
@@ -97,7 +97,7 @@ public class MainStatisticActivity extends CustomAppCompactActivitySearch {
     private void setEvent() {
         setSupportActionBar(toolbar);
 
-        creditClassForStatisticAdapter = new CreditClassForStatisticAdapter(MainStatisticActivity.this, R.layout.item_listview_credit_class_statistic);
+        creditClassForStatisticAdapter = new CreditClassForStatisticAdapter(MainStatisticAdminActivity.this, R.layout.item_listview_credit_class_statistic);
         lvCreditClass.setAdapter(creditClassForStatisticAdapter);
 
         spnSemester.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -143,7 +143,7 @@ public class MainStatisticActivity extends CustomAppCompactActivitySearch {
 
     private void callAllCourse() {
         MyPrefs myPrefs = MyPrefs.getInstance();
-        String jwt = myPrefs.getString(MainStatisticActivity.this, "jwt", "");
+        String jwt = myPrefs.getString(MainStatisticAdminActivity.this, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
         Call<ResponseObject<List<List<CourseItem>>>> call = apiManager.getApiService().getAllCourse(jwt);
         call.enqueue(new Callback<ResponseObject<List<List<CourseItem>>>>() {
@@ -157,7 +157,7 @@ public class MainStatisticActivity extends CustomAppCompactActivitySearch {
                             .map(courseItem -> new PracticalClassItem(courseItem.getMaMh(), courseItem.getTenMh()))
                             .collect(Collectors.toList());
 
-                    adapterPracticalClassSpinner = new ArrayAdapter<>(MainStatisticActivity.this, R.layout.item_selected_spinner, practicalClassItemList);
+                    adapterPracticalClassSpinner = new ArrayAdapter<>(MainStatisticAdminActivity.this, R.layout.item_selected_spinner, practicalClassItemList);
                     adapterPracticalClassSpinner.setDropDownViewResource(R.layout.item_dropdown_spinner);
                     spnPracticalClass.setAdapter(adapterPracticalClassSpinner);
                 }
@@ -168,7 +168,7 @@ public class MainStatisticActivity extends CustomAppCompactActivitySearch {
                                 new TypeToken<ResponseObject<Object>>() {
                                 }.getType()
                         );
-                        new CustomDialog.BuliderOKDialog(MainStatisticActivity.this)
+                        new CustomDialog.BuliderOKDialog(MainStatisticAdminActivity.this)
                                 .setMessage("Lỗi" + errorResponse.getMessage())
                                 .setSuccessful(false)
                                 .build()
@@ -179,7 +179,7 @@ public class MainStatisticActivity extends CustomAppCompactActivitySearch {
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<List<List<CourseItem>>>> call, @NonNull Throwable t) {
-                new CustomDialog.BuliderOKDialog(MainStatisticActivity.this)
+                new CustomDialog.BuliderOKDialog(MainStatisticAdminActivity.this)
                         .setMessage("Lỗi kết nối! " + t.getMessage())
                         .setSuccessful(false)
                         .build()
@@ -190,7 +190,7 @@ public class MainStatisticActivity extends CustomAppCompactActivitySearch {
 
     private void calAllPracticalClass() {
         MyPrefs myPrefs = MyPrefs.getInstance();
-        String jwt = myPrefs.getString(MainStatisticActivity.this, "jwt", "");
+        String jwt = myPrefs.getString(MainStatisticAdminActivity.this, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
         Call<ResponseObject<List<List<PracticalClassItem>>>> call = apiManager.getApiService().getAllPracticalClass(jwt);
         call.enqueue(new Callback<ResponseObject<List<List<PracticalClassItem>>>>() {
@@ -199,7 +199,7 @@ public class MainStatisticActivity extends CustomAppCompactActivitySearch {
                 if (response.isSuccessful() && response.body() != null) {
                     ResponseObject<List<List<PracticalClassItem>>> resData = response.body();
                     List<PracticalClassItem> data = resData.getRetObj().get(0);
-                    adapterPracticalClassSpinner = new ArrayAdapter<>(MainStatisticActivity.this, R.layout.item_selected_spinner, data);
+                    adapterPracticalClassSpinner = new ArrayAdapter<>(MainStatisticAdminActivity.this, R.layout.item_selected_spinner, data);
                     adapterPracticalClassSpinner.setDropDownViewResource(R.layout.item_dropdown_spinner);
                     spnPracticalClass.setAdapter(adapterPracticalClassSpinner);
                 } else {
@@ -209,7 +209,7 @@ public class MainStatisticActivity extends CustomAppCompactActivitySearch {
                                 new TypeToken<ResponseObject<Object>>() {
                                 }.getType()
                         );
-                        new CustomDialog.BuliderOKDialog(MainStatisticActivity.this)
+                        new CustomDialog.BuliderOKDialog(MainStatisticAdminActivity.this)
                                 .setMessage("Lỗi" + errorResponse.getMessage())
                                 .setSuccessful(false)
                                 .build()
@@ -220,7 +220,7 @@ public class MainStatisticActivity extends CustomAppCompactActivitySearch {
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<List<List<PracticalClassItem>>>> call, @NonNull Throwable t) {
-                new CustomDialog.BuliderOKDialog(MainStatisticActivity.this)
+                new CustomDialog.BuliderOKDialog(MainStatisticAdminActivity.this)
                         .setMessage("Lỗi kết nối! " + t.getMessage())
                         .setSuccessful(false)
                         .build()
@@ -230,7 +230,7 @@ public class MainStatisticActivity extends CustomAppCompactActivitySearch {
     }
     private void callCreditClass() {
         MyPrefs myPrefs = MyPrefs.getInstance();
-        String jwt = myPrefs.getString(MainStatisticActivity.this, "jwt", "");
+        String jwt = myPrefs.getString(MainStatisticAdminActivity.this, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
         Call<ResponseObject<List<CreditClassItem>>> call = filterMode == 0 ?
                 apiManager.getApiService().getAllCreditClassByPracticalClass(jwt, crtSchemeCode, crtPracticalClassCode) :
@@ -251,7 +251,7 @@ public class MainStatisticActivity extends CustomAppCompactActivitySearch {
                                 new TypeToken<ResponseObject<Object>>() {
                                 }.getType()
                         );
-                        new CustomDialog.BuliderOKDialog(MainStatisticActivity.this)
+                        new CustomDialog.BuliderOKDialog(MainStatisticAdminActivity.this)
                                 .setMessage("Lỗi" + errorResponse.getMessage())
                                 .setSuccessful(false)
                                 .build()
@@ -262,7 +262,7 @@ public class MainStatisticActivity extends CustomAppCompactActivitySearch {
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<List<CreditClassItem>>> call, @NonNull Throwable t) {
-                new CustomDialog.BuliderOKDialog(MainStatisticActivity.this)
+                new CustomDialog.BuliderOKDialog(MainStatisticAdminActivity.this)
                         .setMessage("Lỗi kết nối! " + t.getMessage())
                         .setSuccessful(false)
                         .build()

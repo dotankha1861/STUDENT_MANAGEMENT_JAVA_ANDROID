@@ -17,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.studentmanagement.R;
 import com.example.studentmanagement.activities.home.HomeAdminActivity;
+import com.example.studentmanagement.activities.home.HomeLecturerActivity;
+import com.example.studentmanagement.activities.home.HomeStudentActivity;
 import com.example.studentmanagement.api.ApiManager;
 import com.example.studentmanagement.api.ERole;
 import com.example.studentmanagement.api.ResponseObject;
@@ -137,10 +139,10 @@ public class LoginActivity extends AppCompatActivity {
                         myPrefs.putString(getApplicationContext(), "idLogin", data.getUserDetail().getIdLogin());
                         myPrefs.putString(getApplicationContext(), "role", role.toString());
 
-                        Intent intent = null;
+                        Intent intent;
                         if(role == ERole.ADMIN) intent = new Intent(getApplicationContext(), HomeAdminActivity.class);
-//                        else if(role == ERole.GIANGVIEN) intent = new Intent(getApplicationContext(),HomeGVActivity.class);
-//                        else intent = new Intent(getApplicationContext(),HomeSVActivity.class);
+                        else if(role == ERole.GIANGVIEN) intent = new Intent(getApplicationContext(), HomeLecturerActivity.class);
+                        else intent = new Intent(getApplicationContext(), HomeStudentActivity.class);
                         startActivity(intent);
                     }
                 } else {

@@ -2,8 +2,6 @@ package com.example.studentmanagement.activities.creditclass;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,13 +9,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
@@ -25,9 +19,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.example.studentmanagement.R;
 import com.example.studentmanagement.activities.customactivity.CustomAppCompactActivitySearchAdd;
-import com.example.studentmanagement.activities.statistic.MainStatisticActivity;
 import com.example.studentmanagement.activities.student.AddStudentActivity;
-import com.example.studentmanagement.activities.student.MainStudentActivity;
 import com.example.studentmanagement.adapter.CreditClassAdapter;
 import com.example.studentmanagement.api.ApiManager;
 import com.example.studentmanagement.api.ResponseObject;
@@ -39,8 +31,6 @@ import com.example.studentmanagement.utils.MyPrefs;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;

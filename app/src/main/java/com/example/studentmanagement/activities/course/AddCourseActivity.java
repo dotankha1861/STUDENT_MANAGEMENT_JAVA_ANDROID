@@ -114,7 +114,7 @@ public class AddCourseActivity extends CustomAppCompactActivity {
             error = true;
         }
         else if(Integer.parseInt(soTC) <= 0 || Integer.parseInt(soTC) >10){
-            edtSTC.setError("Hệ số chuyên cần > 0 và <= 10");
+            edtSTC.setError("Số tín chỉ > 0 và <= 10");
             edtSTC.requestFocus();
             error = true;
         }

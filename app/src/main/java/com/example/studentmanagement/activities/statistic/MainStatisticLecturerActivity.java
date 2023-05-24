@@ -1,7 +1,7 @@
-package com.example.studentmanagement.activities.score;
+package com.example.studentmanagement.activities.statistic;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,22 +14,20 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
 import com.example.studentmanagement.R;
-import com.example.studentmanagement.activities.customactivity.CustomAppCompactActivity;
-import com.example.studentmanagement.adapter.ScoreStudentAdapter;
-import com.example.studentmanagement.adapter.StudentForScoreAdapter;
+import com.example.studentmanagement.activities.customactivity.CustomAppCompactActivitySearch;
+import com.example.studentmanagement.activities.score.MainScoreLecturerActivity;
+import com.example.studentmanagement.adapter.CreditClassForStatisticAdapter;
 import com.example.studentmanagement.api.ApiManager;
 import com.example.studentmanagement.api.ResponseObject;
-import com.example.studentmanagement.models.entity.Student;
-import com.example.studentmanagement.models.responsebody.ScoreStudent;
+import com.example.studentmanagement.models.view.CreditClassItem;
 import com.example.studentmanagement.models.view.SemesterItem;
-import com.example.studentmanagement.models.view.StudentItem;
 import com.example.studentmanagement.ui.CustomDialog;
 import com.example.studentmanagement.utils.MyPrefs;
 import com.google.gson.Gson;
@@ -42,51 +40,61 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-@SuppressLint("SetTextI18n")
-public class ViewScoreStudentActivity extends CustomAppCompactActivity {
+public class MainStatisticLecturerActivity extends CustomAppCompactActivitySearch {
     Toolbar toolbar;
-    TextView tvMaSV, tvTenSV;
-    Spinner  spnSemester;
-    ListView lvScore;
+    Spinner spnSemester;
     ArrayAdapter<SemesterItem> adapterSemesterSpinner;
-    ScoreStudentAdapter scoreStudentAdapter;
-
-    String crtSemesterCode;
+    CreditClassForStatisticAdapter creditClassForStatisticAdapter;
+    ListView lvCreditClass;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_score_student_view);
+        setContentView(R.layout.layout_statistic_lecturer);
         setControl();
         setEvent();
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         setDataSourceSemesterSpinner();
-        return super.onCreateOptionsMenu(menu);
+        if(!super.onCreateOptionsMenu(menu)) return false;
+        getSearchView().setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                creditClassForStatisticAdapter.setSearchQuery(s);
+                creditClassForStatisticAdapter.notifyDataSetChanged();
+                return false;
+            }
+        });
+        return true;
     }
+
     private void setDataSourceSemesterSpinner() {
         List<SemesterItem> semesterItemList = (List<SemesterItem>) getIntent().getSerializableExtra("listSemesterItemSpn");
-        adapterSemesterSpinner = new ArrayAdapter<>(ViewScoreStudentActivity.this, R.layout.item_selected_spinner, semesterItemList);
+        adapterSemesterSpinner = new ArrayAdapter<>(MainStatisticLecturerActivity.this, R.layout.item_selected_spinner, semesterItemList);
         adapterSemesterSpinner.setDropDownViewResource(R.layout.item_dropdown_spinner);
         spnSemester.setAdapter(adapterSemesterSpinner);
-        spnSemester.setSelection(getIntent().getIntExtra("crtSemester", 0));
         spnSemester.setDropDownWidth(spnSemester.getWidth());
     }
+
     private void setEvent() {
         setSupportActionBar(toolbar);
-        setInforStudent();
 
-        List<ScoreStudent> scoreStudentList = (List<ScoreStudent>) getIntent().getSerializableExtra("scoreItemLv");
-        scoreStudentAdapter = new ScoreStudentAdapter(ViewScoreStudentActivity.this, R.layout.item_listview_score_student, (ArrayList<ScoreStudent>) scoreStudentList);
-        lvScore.setAdapter(scoreStudentAdapter);
-        scoreStudentAdapter.notifyDataSetChanged();
+        MyPrefs myPrefs = MyPrefs.getInstance();
+        creditClassForStatisticAdapter = new CreditClassForStatisticAdapter(MainStatisticLecturerActivity.this, R.layout.item_listview_credit_class_statistic);
+        creditClassForStatisticAdapter.setLecturerName(myPrefs.getString(MainStatisticLecturerActivity.this,"userFullName",""));
+        lvCreditClass.setAdapter(creditClassForStatisticAdapter);
 
         spnSemester.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 SemesterItem semesterItem = (SemesterItem) adapterView.getItemAtPosition(i);
-                crtSemesterCode = semesterItem.getMaKeHoach();
-                callScoreStudent();
+                String semesterCode = semesterItem.getMaKeHoach();
+                callCreditClass(semesterCode);
             }
 
             @Override
@@ -96,20 +104,22 @@ public class ViewScoreStudentActivity extends CustomAppCompactActivity {
         });
     }
 
-    private void callScoreStudent() {
-        StudentItem studentItem = (StudentItem) getIntent().getSerializableExtra("studentItem");
+    private void callCreditClass(String semesterCode) {
         MyPrefs myPrefs = MyPrefs.getInstance();
-        String jwt = myPrefs.getString(ViewScoreStudentActivity.this, "jwt", "");
+        String jwt = myPrefs.getString(MainStatisticLecturerActivity.this, "jwt", "");
+        String lecturerCode = myPrefs.getString(MainStatisticLecturerActivity.this, "username", "");
         ApiManager apiManager = ApiManager.getInstance();
-        Call<ResponseObject<List<ScoreStudent>>> call = apiManager.getApiService().getScoreByStudentCode(jwt, studentItem.getMaSv(), crtSemesterCode);
-        call.enqueue(new Callback<ResponseObject<List<ScoreStudent>>>() {
+        Call<ResponseObject<List<CreditClassItem>>> call = apiManager.getApiService().getAllCreditClassByLecturerCode(jwt, lecturerCode, semesterCode);
+        call.enqueue(new Callback<ResponseObject<List<CreditClassItem>>>() {
             @Override
-            public void onResponse(@NonNull Call<ResponseObject<List<ScoreStudent>>> call, @NonNull Response<ResponseObject<List<ScoreStudent>>> response) {
+            public void onResponse(@NonNull Call<ResponseObject<List<CreditClassItem>>> call, @NonNull Response<ResponseObject<List<CreditClassItem>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    ResponseObject<List<ScoreStudent>> resData = response.body();
-                    scoreStudentAdapter.clear();
-                    scoreStudentAdapter.addAll(resData.getRetObj());
-                    scoreStudentAdapter.notifyDataSetChanged();
+                    ResponseObject<List<CreditClassItem>> resData = response.body();
+
+                    creditClassForStatisticAdapter.clear();
+                    creditClassForStatisticAdapter.addAll(resData.getRetObj());
+                    lvCreditClass.setAdapter(creditClassForStatisticAdapter);
+                    creditClassForStatisticAdapter.notifyDataSetChanged();
                 } else {
                     if (response.errorBody() != null) {
                         ResponseObject<Object> errorResponse = new Gson().fromJson(
@@ -117,7 +127,7 @@ public class ViewScoreStudentActivity extends CustomAppCompactActivity {
                                 new TypeToken<ResponseObject<Object>>() {
                                 }.getType()
                         );
-                        new CustomDialog.BuliderOKDialog(ViewScoreStudentActivity.this)
+                        new CustomDialog.BuliderOKDialog(MainStatisticLecturerActivity.this)
                                 .setMessage("Lỗi" + errorResponse.getMessage())
                                 .setSuccessful(false)
                                 .build()
@@ -127,9 +137,9 @@ public class ViewScoreStudentActivity extends CustomAppCompactActivity {
             }
 
             @Override
-            public void onFailure(@NonNull Call<ResponseObject<List<ScoreStudent>>> call, @NonNull Throwable t) {
-                new CustomDialog.BuliderOKDialog(ViewScoreStudentActivity.this)
-                        .setMessage("Lỗi kết nối!" + t.getMessage())
+            public void onFailure(@NonNull Call<ResponseObject<List<CreditClassItem>>> call, @NonNull Throwable t) {
+                new CustomDialog.BuliderOKDialog(MainStatisticLecturerActivity.this)
+                        .setMessage("Lỗi kết nối! " + t.getMessage())
                         .setSuccessful(false)
                         .build()
                         .show();
@@ -137,17 +147,9 @@ public class ViewScoreStudentActivity extends CustomAppCompactActivity {
         });
     }
 
-    private void setInforStudent() {
-        StudentItem studentItem = (StudentItem) getIntent().getSerializableExtra("studentItem");
-        tvMaSV.setText(studentItem.getMaSv());
-        tvTenSV.setText(studentItem.getHo() + " " + studentItem.getTen());
-    }
-
     private void setControl() {
         toolbar = findViewById(R.id.toolbar);
         spnSemester = findViewById(R.id.spnListKy);
-        lvScore = findViewById(R.id.lvDiem);
-        tvMaSV = findViewById(R.id.tvMaSV);
-        tvTenSV = findViewById(R.id.tvTenSV);
+        lvCreditClass = findViewById(R.id.lvDsloptinchi);
     }
 }

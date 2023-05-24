@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginVertical="5dp"
+        android:layout_marginHorizontal="15dp"
+        android:background="@drawable/main_icon"
+        android:padding="15dp">
+        <TextView
+            android:id="@+id/tvTenHP"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Toán rời rạc"
+            android:textColor="@color/black"
+            android:gravity="left"
+            android:textStyle="bold"
+            android:textSize="20sp" />
+        <TextView
+            android:id="@+id/tvTietBD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/baseline_access_time_24"
+            android:drawablePadding="10dp"
+            android:text="Tiết bắt đầu: 1"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:textSize="17sp"
+            android:paddingHorizontal="5dp"/>
+        <TextView
+            android:id="@+id/tvPhong"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Phòng học: 2B32"
+            android:drawableLeft="@drawable/baseline_bungalow_24"
+            android:drawablePadding="10dp"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:textSize="17sp"
+            android:paddingHorizontal="5dp"/>
+    </LinearLayout>
+
+</LinearLayout>

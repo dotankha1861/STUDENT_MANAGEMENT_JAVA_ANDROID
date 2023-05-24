@@ -5,6 +5,7 @@
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
+        android:usesCleartextTraffic="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/icon_app_foreground"
@@ -58,11 +59,11 @@
             android:exported="true"/>
         <activity android:name=".activities.student.InforStudentActivity"
             android:exported="true"/>
-        <activity android:name=".activities.statistic.MainStatisticActivity"
+        <activity android:name=".activities.statistic.MainStatisticAdminActivity"
             android:exported="true"/>
         <activity android:name=".activities.statistic.ViewStatisticActivity"
             android:exported="true"/>
-        <activity android:name=".activities.score.MainScoreActivity"
+        <activity android:name=".activities.score.MainScoreAdminActivity"
             android:exported="true"/>
         <activity android:name=".activities.score.ViewScoreCreditClassActivity"
             android:exported="true"/>
@@ -73,6 +74,22 @@
         <activity android:name=".activities.creditclass.AddCreditClassClassActicity"
             android:exported="true"/>
         <activity android:name=".activities.creditclass.InforCreditClassActivity"
+            android:exported="true"/>
+        <activity android:name=".activities.home.HomeLecturerActivity"
+            android:exported="true"/>
+        <activity android:name=".activities.authen.UserInforActivity"
+            android:exported="true"/>
+        <activity android:name=".activities.timetable.TimeTableActivity"
+            android:exported="true"/>
+        <activity android:name=".activities.score.MainScoreLecturerActivity"
+            android:exported="true"/>
+        <activity android:name=".activities.statistic.MainStatisticLecturerActivity"
+            android:exported="true"/>
+        <activity android:name=".activities.home.HomeStudentActivity"
+            android:exported="true"/>
+        <activity android:name=".activities.enrollcourse.EnrollCourseActivity"
+            android:exported="true"/>
+        <activity android:name=".activities.enrollcourse.ListChoseCourseActivity"
             android:exported="true"/>
         <activity
             android:name=".activities.authen.SplashScreen"

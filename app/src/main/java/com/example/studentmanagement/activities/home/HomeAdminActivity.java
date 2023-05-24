@@ -28,8 +28,8 @@ import com.example.studentmanagement.activities.authen.LoginActivity;
 import com.example.studentmanagement.activities.customactivity.CustomAppCompactActivity;
 import com.example.studentmanagement.activities.lecturer.MainLecturerActivity;
 import com.example.studentmanagement.activities.practicalclass.MainPracticalClassActivity;
-import com.example.studentmanagement.activities.score.MainScoreActivity;
-import com.example.studentmanagement.activities.statistic.MainStatisticActivity;
+import com.example.studentmanagement.activities.score.MainScoreAdminActivity;
+import com.example.studentmanagement.activities.statistic.MainStatisticAdminActivity;
 import com.example.studentmanagement.activities.student.MainStudentActivity;
 import com.example.studentmanagement.api.ApiManager;
 import com.example.studentmanagement.api.ResponseObject;
@@ -118,9 +118,9 @@ public class HomeAdminActivity extends CustomAppCompactActivity {
                     List<SemesterItem> data = resData.getRetObj().get(0);
                     Intent intent;
                     if (myFuncButton == MyFuncButton.ADMIN_STATISTIC) {
-                        intent = new Intent(HomeAdminActivity.this, MainStatisticActivity.class);
+                        intent = new Intent(HomeAdminActivity.this, MainStatisticAdminActivity.class);
                     } else if(myFuncButton == MyFuncButton.ADMIN_SCORE){
-                        intent = new Intent(HomeAdminActivity.this, MainScoreActivity.class);
+                        intent = new Intent(HomeAdminActivity.this, MainScoreAdminActivity.class);
                         intent.putExtra("listPracticalClassItemSpn", (ArrayList<PracticalClassItem>) practicalClassItemList);
                     } else { // myFuncButton == MyFuncButton.ADMIN_CREDIT_CLASS_MANAGEMENT
                         intent = new Intent(HomeAdminActivity.this, MainCreditClassActivity.class);

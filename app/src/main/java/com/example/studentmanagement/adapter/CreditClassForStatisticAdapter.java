@@ -34,7 +34,7 @@ public class CreditClassForStatisticAdapter extends ArrayAdapter implements Filt
     private ArrayList<CreditClassItem> data_view;
     private String searchQuery;
 
-    ActivityResultLauncher<Intent> mUpdateKhoaLauncher;
+    String lecturerName;
 
     public CreditClassForStatisticAdapter(Context context, int resource) {
         super(context, resource);
@@ -43,14 +43,15 @@ public class CreditClassForStatisticAdapter extends ArrayAdapter implements Filt
         this.data_org = new ArrayList<>();
         this.data_view = new ArrayList<>();
         this.searchQuery = "";
+        this.lecturerName = null;
     }
 
     public void setSearchQuery(String searchQuery) {
         this.searchQuery = searchQuery;
     }
 
-    public void setmUpdateKhoaLauncher(ActivityResultLauncher<Intent> mUpdateKhoaLauncher) {
-        this.mUpdateKhoaLauncher = mUpdateKhoaLauncher;
+    public void setLecturerName(String lecturerName) {
+        this.lecturerName = lecturerName;
     }
 
     @Override
@@ -133,7 +134,7 @@ public class CreditClassForStatisticAdapter extends ArrayAdapter implements Filt
         CreditClassItem creditClassItem = data_view.get(position);
         viewHolder.tvMaLTC.setText("Mã LTC: " + creditClassItem.getMaLopTc());
         viewHolder.tvTenHP.setText("Tên HP: " + creditClassItem.getTenMh());
-        viewHolder.tvTenGV.setText("Tên GV: " + creditClassItem.getTenGv());
+        viewHolder.tvTenGV.setText(lecturerName!=null?lecturerName:"Tên GV: " + creditClassItem.getTenGv());
 
         viewHolder.btnThongKe.setOnClickListener(view -> {
             Intent intent = new Intent(context, ViewStatisticActivity.class);

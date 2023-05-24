@@ -162,7 +162,7 @@ public class FacultyAdapter extends ArrayAdapter implements Filterable {
 
     private void handleXoa(FacultyItem facultyItem) {
         new CustomDialog.BuliderPosNegDialog(context)
-                .setMessage("Bạn chắc chắn muốn xóa học phần này?")
+                .setMessage("Bạn chắc chắn muốn xóa khoa này?")
                 .setPositiveButton("Đồng ý", (view) -> handleAgreeDelete(facultyItem), dismiss -> true)
                 .setNegativeButton("Hủy", null, dismiss -> true)
                 .build()

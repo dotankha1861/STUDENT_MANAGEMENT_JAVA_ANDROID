@@ -79,7 +79,7 @@ public class EditPracticalClassActivity extends CustomAppCompactActivity {
 
         PracticalClass practicalClass = new PracticalClass();
         practicalClass.setMaLop(maLop);
-        practicalClass.setTenLop(maLop);
+        practicalClass.setTenLop(tenLop);
         practicalClass.setMaKhoa(((PracticalClass) getIntent().getSerializableExtra("practicalClass")).getMaKhoa());
         practicalClass.setId(((PracticalClass) getIntent().getSerializableExtra("practicalClass")).getId());
 

@@ -62,7 +62,7 @@
                 android:paddingRight="10dp"
                 android:paddingLeft="10dp"
                 android:textColor="@color/white"
-                android:background="@drawable/bg_icon_detail"/>
+                android:background="@drawable/custom_button_green"/>
         </LinearLayout>
     </LinearLayout>
 

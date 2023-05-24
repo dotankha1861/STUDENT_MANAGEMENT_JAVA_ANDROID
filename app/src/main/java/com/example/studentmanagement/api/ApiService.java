@@ -10,18 +10,22 @@ import com.example.studentmanagement.models.entity.Lecturer;
 import com.example.studentmanagement.models.entity.PracticalClass;
 import com.example.studentmanagement.models.entity.Student;
 import com.example.studentmanagement.models.requestbody.RequestBodyChangePassword;
+import com.example.studentmanagement.models.requestbody.RequestBodyEnroll;
 import com.example.studentmanagement.models.requestbody.RequestBodyLogin;
+import com.example.studentmanagement.models.responsebody.ResponseBodyEnroll;
 import com.example.studentmanagement.models.responsebody.ResponseBodyLogin;
 import com.example.studentmanagement.models.responsebody.ScoreCreditClass;
 import com.example.studentmanagement.models.responsebody.ScoreStatistic;
 import com.example.studentmanagement.models.responsebody.ScoreStudent;
 import com.example.studentmanagement.models.view.CourseItem;
 import com.example.studentmanagement.models.view.CreditClassItem;
+import com.example.studentmanagement.models.view.EnrollCourseItem;
 import com.example.studentmanagement.models.view.FacultyItem;
 import com.example.studentmanagement.models.view.LecturerItem;
 import com.example.studentmanagement.models.view.PracticalClassItem;
 import com.example.studentmanagement.models.view.SemesterItem;
 import com.example.studentmanagement.models.view.StudentItem;
+import com.example.studentmanagement.models.view.TimeTableItem;
 
 import java.util.List;
 
@@ -81,6 +85,8 @@ public interface ApiService {
     Call<ResponseObject<PracticalClass>> getPracticalClassById(@Header("Authorization") String jwt, @Path("id") String id);
     @GET("admin/lop")
     Call<ResponseObject<List<List<PracticalClassItem>>>> getAllPracticalClass(@Header("Authorization") String jwt);
+    @GET("admin/lop")
+    Call<ResponseObject<List<List<PracticalClass>>>> getAllPracticalClassFull(@Header("Authorization") String jwt);
 //    // Học phần
     @GET("admin/monHoc")
     Call<ResponseObject<List<List<CourseItem>>>> getAllCourse(@Header("Authorization") String jwt);
@@ -118,10 +124,16 @@ public interface ApiService {
     Call<ResponseObject<List<CreditClassItem>>> getAllCreditClassByCourseCode(@Header("Authorization") String jwt, @Query("maKeHoach") String maKeHoach, @Query("maMh") String maMh);
     @GET("admin/dsLopTc")
     Call<ResponseObject<List<CreditClassItem>>> getAllCreditClassByPracticalClass(@Header("Authorization") String jwt, @Query("maKeHoach") String maKeHoach, @Query("maLop") String maLop);
+    @GET("admin/dsLopTc/monHoc")
+    Call<ResponseObject<List<EnrollCourseItem>>> getAllEnrollCourseByCourseCode(@Header("Authorization") String jwt, @Query("maKeHoach") String maKeHoach, @Query("maMh") String maMh);
+    @GET("admin/dsLopTc")
+    Call<ResponseObject<List<EnrollCourseItem>>> getAllEnrollCourseByPracticalClass(@Header("Authorization") String jwt, @Query("maKeHoach") String maKeHoach, @Query("maLop") String maLop);
 //    @GET("admin/dsLopTc")
 //    Call<ResponseObject<List<LopTCItemLv>>> getDsLopTcByMaKHMaLop(@Header("Authorization") String jwt, @Query("maKeHoach") String maKeHoach, @Query("maLop") String maLop);
     @GET("admin/dsLopTc/{id}")
     Call<ResponseObject<CreditClass>> getCreditClassById(@Header("Authorization") String jwt, @Path("id") String id);
+    @POST("admin/dsLopTc/giangVien/{maGV}")
+    Call<ResponseObject<List<CreditClassItem>>> getAllCreditClassByLecturerCode(@Header("Authorization") String jwt, @Path("maGV") String maGV, @Query("maKeHoach") String maKeHoach);
 //    @POST("admin/dsLopTc/giangVien/{maGV}")
 //    Call<ResponseObject<List<LopTCItemLv>>> getDsLTCByMaGVMaKH(@Header("Authorization") String jwt, @Path("maGV") String maGV, @Query("maKeHoach") String maKeHoach);
 //    //Chi tiet LTC
@@ -145,4 +157,17 @@ public interface ApiService {
     Call<ResponseObject<List<ScoreStudent>>> getScoreByStudentCode(@Header("Authorization") String jwt, @Path("maSV") String maSV, @Query("maKeHoach") String maKeHoach);
     @GET("admin/diem/lopTc/detail/{maLTC}")
     Call<ResponseObject<List<ScoreCreditClass>>> getScoreByCreditClassCode(@Header("Authorization") String jwt, @Path("maLTC") String maLTC);
+
+    // Thời khóa biểu
+    @GET("admin/tkb/giangVien/{maGV}")
+    Call<ResponseObject<List<TimeTableItem>>> getTimeTableLecturerByWeek(@Header("Authorization") String jwt, @Path("maGV") String maGV, @Query("tuan") int tuan);
+    @GET("admin/tkb/sinhVien/{maSV}")
+    Call<ResponseObject<List<TimeTableItem>>> getTimeTableStudentByWeek(@Header("Authorization") String jwt, @Path("maSV") String maSV, @Query("tuan") int tuan);
+    //Đăng ký môn
+    @GET("admin/dsLopTc/sinhVien")
+    Call<ResponseObject<List<EnrollCourseItem>>> getListEnrolledCourse(@Header("Authorization") String jwt, @Query("maSv") String maSv);
+    @POST("admin/dang-ky-mon")
+    Call<ResponseObject<ResponseBodyEnroll>> enrollCourse(@Header("Authorization") String jwt, @Body RequestBodyEnroll requestBodyEnroll);
+    @HTTP(method = "DELETE", path = "admin/dang-ky-mon", hasBody = true)
+    Call<ResponseObject<ResponseBodyEnroll>> cancelEnrollCourse(@Header("Authorization") String jwt, @Body RequestBodyEnroll HuyDKyRequest);
 }

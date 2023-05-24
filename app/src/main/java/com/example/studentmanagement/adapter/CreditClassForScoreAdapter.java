@@ -45,6 +45,11 @@ public class CreditClassForScoreAdapter extends ArrayAdapter implements Filterab
     private ArrayList<CreditClassItem> data_org;
     private ArrayList<CreditClassItem> data_view;
     private String searchQuery;
+    String lecturerName;
+
+    public void setLecturerName(String lecturerName) {
+        this.lecturerName = lecturerName;
+    }
 
     ActivityResultLauncher<Intent> mUpdateKhoaLauncher;
 
@@ -55,6 +60,7 @@ public class CreditClassForScoreAdapter extends ArrayAdapter implements Filterab
         this.data_org = new ArrayList<>();
         this.data_view = new ArrayList<>();
         this.searchQuery = "";
+        lecturerName = null;
     }
 
     public void setSearchQuery(String searchQuery) {
@@ -145,7 +151,7 @@ public class CreditClassForScoreAdapter extends ArrayAdapter implements Filterab
         CreditClassItem creditClassItem = data_view.get(position);
         viewHolder.tvMaLTC.setText("Mã LTC: " + creditClassItem.getMaLopTc());
         viewHolder.tvTenHP.setText("Tên HP: " + creditClassItem.getTenMh());
-        viewHolder.tvTenGV.setText("Tên GV: " + creditClassItem.getTenGv());
+        viewHolder.tvTenGV.setText(lecturerName!=null?lecturerName:"Tên GV: " + creditClassItem.getTenGv());
 
         viewHolder.btnXemDiem.setOnClickListener(view -> callCourse(creditClassItem));
         return convertView;

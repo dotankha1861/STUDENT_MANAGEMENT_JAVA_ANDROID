@@ -175,6 +175,7 @@ public class StudentForScoreAdapter extends ArrayAdapter implements Filterable {
                     Intent intent = new Intent(context, ViewScoreStudentActivity.class);
                     intent.putExtra("studentItem", studentItem);
                     intent.putExtra("scoreItemLv", (ArrayList<ScoreStudent>)resData.getRetObj());
+                    intent.putExtra("crtSemester", crtSemester);
                     intent.putExtra("listSemesterItemSpn", (ArrayList<SemesterItem>)semesterItemList);
                     context.startActivity(intent);
                 } else {

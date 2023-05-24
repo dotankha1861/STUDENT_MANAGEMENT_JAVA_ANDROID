@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary_color"
+        android:minHeight="?attr/actionBarSize"
+        android:paddingVertical="20dp"
+        app:buttonGravity="center_vertical"
+        app:maxButtonHeight="50dp"
+        app:theme="@style/BaseTheme"
+        app:titleTextColor="@color/white">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="THỜI KHÓA BIỂU"
+            android:textColor="@color/white"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+    </androidx.appcompat.widget.Toolbar>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bar_control">
+        <TextView
+            android:id="@+id/tvHK"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="10dp"
+            android:textSize="23sp"
+            android:textStyle="bold"
+            android:textColor="@color/primary_color"
+            android:text="Học kì 1 - (2023-2024)"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:paddingVertical="15dp"
+            android:gravity="left|center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/spinner_shadow"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <Spinner
+                    android:id="@+id/spnListTuan"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:dropDownWidth="match_parent"
+                    android:overlapAnchor="false"
+                    android:paddingVertical="10dp"
+                    android:spinnerMode="dropdown" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ListView
+        android:layout_marginTop="20dp"
+        android:dividerHeight="10dp"
+        android:id="@+id/lvTKB"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@color/white" />
+
+</LinearLayout>
