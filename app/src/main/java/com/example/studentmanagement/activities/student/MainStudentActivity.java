@@ -145,6 +145,7 @@ public class MainStudentActivity extends CustomAppCompactActivitySearchAdd {
                             studentItem.setHo(student.getHo());
                             studentItem.setTen(student.getTen());
                             studentItem.setPhai(student.getPhai());
+                            studentItem.setHinhAnh(student.getHinhAnh());
                             studentAdapter.insert(studentItem, 0);
                             studentAdapter.notifyDataSetChanged();
 
@@ -168,6 +169,7 @@ public class MainStudentActivity extends CustomAppCompactActivitySearchAdd {
                             studentItem.setHo(student.getHo());
                             studentItem.setTen(student.getTen());
                             studentItem.setPhai(student.getPhai());
+                            studentItem.setHinhAnh(student.getHinhAnh());
                             studentAdapter.setItem(studentItem, studentAdapter.getPosition(studentItem));
                             studentAdapter.notifyDataSetChanged();
 

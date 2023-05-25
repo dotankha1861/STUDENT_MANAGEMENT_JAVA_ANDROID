@@ -91,6 +91,13 @@
             android:exported="true"/>
         <activity android:name=".activities.enrollcourse.ListChoseCourseActivity"
             android:exported="true"/>
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
         <activity
             android:name=".activities.authen.SplashScreen"
             android:exported="true">

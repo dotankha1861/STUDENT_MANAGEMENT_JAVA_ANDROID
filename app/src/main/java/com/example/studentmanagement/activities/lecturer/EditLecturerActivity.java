@@ -3,13 +3,17 @@ package com.example.studentmanagement.activities.lecturer;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 
@@ -17,12 +21,17 @@ import com.example.studentmanagement.R;
 import com.example.studentmanagement.activities.customactivity.CustomAppCompactActivity;
 import com.example.studentmanagement.api.ApiManager;
 import com.example.studentmanagement.api.ResponseObject;
+import com.example.studentmanagement.firebase.UpLoadImage;
 import com.example.studentmanagement.models.entity.Lecturer;
 import com.example.studentmanagement.ui.CustomDialog;
+import com.example.studentmanagement.utils.CircleTransformation;
 import com.example.studentmanagement.utils.FormatterDate;
 import com.example.studentmanagement.utils.MyPrefs;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -34,7 +43,8 @@ import retrofit2.Response;
 
 public class EditLecturerActivity extends CustomAppCompactActivity {
 
-    Button btnLuu;
+    Button btnLuu, btnAvatar;
+    ImageView imvAvatar;
     EditText edtMaGV, edtHoGV, edtTenGV, edtSDT, edtEmail, edtNgaySinh;
     RadioButton radNam, radNu;
     TextView tvCalendar;
@@ -42,6 +52,9 @@ public class EditLecturerActivity extends CustomAppCompactActivity {
     DatePickerDialog.OnDateSetListener setListener;
 
     Toolbar toolbar;
+    boolean isSetImage = false;
+    Uri uriPickedImage = null;
+    ActivityResultLauncher<String> pickImageLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +85,32 @@ public class EditLecturerActivity extends CustomAppCompactActivity {
             edtNgaySinh.setText(date);
         };
         btnLuu.setOnClickListener(view -> handleLuu());
+        radNam.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (radNam.isChecked() && !isSetImage)
+                imvAvatar.setImageResource(R.drawable.icon_front_man);
+        });
+        radNu.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (radNu.isChecked() && !isSetImage)
+                imvAvatar.setImageResource(R.drawable.icon_fornt_woman);
+        });
+        pickImageLauncher = registerForActivityResult(
+                new ActivityResultContracts.GetContent(),
+                uri -> {
+                    if (uri != null) {
+                        Picasso.get()
+                                .load(uri)
+                                .transform(new CircleTransformation())
+                                .into(imvAvatar);
+                        isSetImage = true;
+                        uriPickedImage = uri;
+                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                    }
+                }
+        );
+        btnAvatar.setOnClickListener(view -> {
+            pickImageLauncher.launch("image/*");
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        });
     }
 
     private void handleLuu() {
@@ -134,6 +173,25 @@ public class EditLecturerActivity extends CustomAppCompactActivity {
         lecturer.setMaKhoa(((Lecturer) getIntent().getSerializableExtra("lecturer")).getMaKhoa());
         lecturer.setId(((Lecturer) getIntent().getSerializableExtra("lecturer")).getId());
 
+        if (uriPickedImage != null) {
+            UploadTask uploadTask = UpLoadImage.saveImageToDatabase(lecturer.getMaGv(), uriPickedImage);
+            uploadTask.addOnSuccessListener(taskSnapshot -> {
+                        Task<Uri> downloadUrlTask = UpLoadImage.storageRef.child(lecturer.getMaGv()).getDownloadUrl();
+                        downloadUrlTask.addOnSuccessListener(uriImage -> {
+                            lecturer.setHinhAnh(uriImage.toString());
+                            callUpdate(lecturer);
+                        }).addOnFailureListener(exception -> new CustomDialog.BuliderOKDialog(EditLecturerActivity.this)
+                                .setMessage("Hiện tại không thể thêm hình ảnh")
+                                .setSuccessful(false)
+                                .build()
+                                .show()
+                        );
+                    }
+            );
+        } else callUpdate(lecturer);
+    }
+
+    private void callUpdate(Lecturer lecturer) {
         new CustomDialog.BuliderPosNegDialog(EditLecturerActivity.this)
                 .setMessage("Bạn có muốn lưu thay đổi không?")
                 .setPositiveButton("Đồng ý", view -> callUpdateLecturer(lecturer), dismiss -> true)
@@ -204,11 +262,21 @@ public class EditLecturerActivity extends CustomAppCompactActivity {
                 .to(FormatterDate.dd_slash_MM_slash_yyyy)
                 .format()
         );
-
-        if (lecturer.getPhai().equalsIgnoreCase("nam")) radNam.setChecked(true);
+        boolean isMale = lecturer.getPhai().equalsIgnoreCase("nam");
+        if (isMale) radNam.setChecked(true);
         else radNu.setChecked(true);
         edtMaGV.setEnabled(false);
-
+        try {
+            Picasso.get()
+                    .load(lecturer.getHinhAnh())
+                    .transform(new CircleTransformation())
+                    .placeholder(isMale ? R.drawable.icon_front_man : R.drawable.icon_fornt_woman)
+                    .error(isMale ? R.drawable.icon_front_man : R.drawable.icon_fornt_woman)
+                    .into(imvAvatar);
+            isSetImage = true;
+        } catch (Exception ignored) {
+            imvAvatar.setImageResource(isMale ? R.drawable.icon_front_man : R.drawable.icon_fornt_woman);
+        }
     }
 
     private void customToolbar() {
@@ -227,5 +295,7 @@ public class EditLecturerActivity extends CustomAppCompactActivity {
         radNu = findViewById(R.id.radNu);
         btnLuu = findViewById(R.id.btnLuu);
         toolbar = findViewById(R.id.toolbar);
+        btnAvatar = findViewById(R.id.btnAvatar);
+        imvAvatar = findViewById(R.id.imvAvatar);
     }
 }

@@ -16,6 +16,15 @@ public class Student implements Serializable {
     private String sdt;
     private String email;
     private String maLop;
+    private String hinhAnh;
+
+    public String getHinhAnh() {
+        return hinhAnh;
+    }
+
+    public void setHinhAnh(String hinhAnh) {
+        this.hinhAnh = hinhAnh;
+    }
 
     public Student() {
     }
@@ -127,6 +136,25 @@ public class Student implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(maSv);
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id='" + id + '\'' +
+                ", maSv='" + maSv + '\'' +
+                ", ho='" + ho + '\'' +
+                ", ten='" + ten + '\'' +
+                ", ngaySinh='" + ngaySinh + '\'' +
+                ", phai='" + phai + '\'' +
+                ", noiSinh='" + noiSinh + '\'' +
+                ", diaChi='" + diaChi + '\'' +
+                ", trangThai=" + trangThai +
+                ", sdt='" + sdt + '\'' +
+                ", email='" + email + '\'' +
+                ", maLop='" + maLop + '\'' +
+                ", hinhAnh='" + hinhAnh + '\'' +
+                '}';
     }
 }
 

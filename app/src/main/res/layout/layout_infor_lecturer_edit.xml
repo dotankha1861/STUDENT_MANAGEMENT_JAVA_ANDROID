@@ -277,7 +277,31 @@
                     android:textStyle="italic" />
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="left"
+                android:orientation="horizontal">
 
+                <Button
+                    android:id="@+id/btnAvatar"
+                    android:padding="10dp"
+                    android:background="@drawable/custom_button_green"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chọn avatar"
+                    android:textColor="#fff"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+              <ImageView
+                  android:id="@+id/imvAvatar"
+                  android:layout_weight="1"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:src="@drawable/icon_front_man"/>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

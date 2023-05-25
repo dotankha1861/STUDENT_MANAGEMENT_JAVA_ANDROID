@@ -145,6 +145,7 @@ public class MainLecturerActivity extends CustomAppCompactActivitySearchAdd {
                         lecturerItem.setHo(lecturer.getHo());
                         lecturerItem.setTen(lecturer.getTen());
                         lecturerItem.setPhai(lecturer.getPhai());
+                        lecturerItem.setHinhAnh(lecturer.getHinhAnh());
                         lecturerAdapter.insert(lecturerItem, 0);
                         lecturerAdapter.notifyDataSetChanged();
 
@@ -166,6 +167,7 @@ public class MainLecturerActivity extends CustomAppCompactActivitySearchAdd {
                         lecturerItem.setHo(lecturer.getHo());
                         lecturerItem.setTen(lecturer.getTen());
                         lecturerItem.setPhai(lecturer.getPhai());
+                        lecturerItem.setHinhAnh(lecturer.getHinhAnh());
                         lecturerAdapter.setItem(lecturerItem, lecturerAdapter.getPosition(lecturerItem));
                         lecturerAdapter.notifyDataSetChanged();
 

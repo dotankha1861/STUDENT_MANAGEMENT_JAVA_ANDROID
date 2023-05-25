@@ -3,6 +3,8 @@ package com.example.studentmanagement.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,10 +27,13 @@ import com.example.studentmanagement.api.ResponseObject;
 import com.example.studentmanagement.models.entity.Lecturer;
 import com.example.studentmanagement.models.view.LecturerItem;
 import com.example.studentmanagement.ui.CustomDialog;
+import com.example.studentmanagement.utils.CircleTransformation;
 import com.example.studentmanagement.utils.MyFuncButton;
 import com.example.studentmanagement.utils.MyPrefs;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,6 +43,7 @@ import java.util.stream.Collectors;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 @SuppressLint("SetTextI18n")
 public class LecturerAdapter extends ArrayAdapter implements Filterable {
     Context context;
@@ -66,6 +72,7 @@ public class LecturerAdapter extends ArrayAdapter implements Filterable {
     public void setmUpdateGiangVienLauncher(ActivityResultLauncher<Intent> mUpdateGiangVienLauncher) {
         this.mUpdateGiangVienLauncher = mUpdateGiangVienLauncher;
     }
+
     @Override
     public int getCount() {
         return data_view.size();
@@ -86,7 +93,7 @@ public class LecturerAdapter extends ArrayAdapter implements Filterable {
         return data_org.indexOf(item);
     }
 
-    public void setItem(@Nullable Object object, int index){
+    public void setItem(@Nullable Object object, int index) {
         data_org.set(index, (LecturerItem) object);
     }
 
@@ -107,7 +114,6 @@ public class LecturerAdapter extends ArrayAdapter implements Filterable {
     }
 
 
-
     @Override
     public Filter getFilter() {
         return new Filter() {
@@ -121,7 +127,7 @@ public class LecturerAdapter extends ArrayAdapter implements Filterable {
                     filteredList = new ArrayList<>(data_org);
                 } else {
                     filteredList = data_org.stream().filter((giangvien) ->
-                            (giangvien.getMaGv() + " " + giangvien.getHo() + " "+giangvien.getTen())
+                            (giangvien.getMaGv() + " " + giangvien.getHo() + " " + giangvien.getTen())
                                     .toLowerCase().contains(constraint.toString().toLowerCase())).collect(Collectors.toList());
                 }
                 filterResults.values = filteredList;
@@ -135,6 +141,7 @@ public class LecturerAdapter extends ArrayAdapter implements Filterable {
             }
         };
     }
+
     //
 //
     @Override
@@ -149,10 +156,17 @@ public class LecturerAdapter extends ArrayAdapter implements Filterable {
         LecturerItem lecturerItem = data_view.get(position);
         viewHolder.tvTenGV.setText(lecturerItem.getHo() + " " + lecturerItem.getTen());
         viewHolder.tvMaGV.setText("Mã GV: " + lecturerItem.getMaGv());
-        boolean isMale= lecturerItem.getPhai().equalsIgnoreCase("nam");
-
+        boolean isMale = lecturerItem.getPhai().equalsIgnoreCase("nam");
         if(isMale) viewHolder.imvPhai.setImageResource(R.drawable.icon_front_man);
         else viewHolder.imvPhai.setImageResource(R.drawable.icon_fornt_woman);
+        try {
+            Picasso.get()
+                    .load(lecturerItem.getHinhAnh())
+                    .transform(new CircleTransformation())
+                    .placeholder(isMale ? R.drawable.icon_front_man : R.drawable.icon_fornt_woman)
+                    .error(isMale ? R.drawable.icon_front_man : R.drawable.icon_fornt_woman)
+                    .into(viewHolder.imvPhai);
+        } catch (Exception ignored) {}
         viewHolder.ibtXoa.setOnClickListener(view -> handleXoa(lecturerItem));
         viewHolder.ibtSua.setOnClickListener(view -> handleSua(lecturerItem));
         viewHolder.tvDetail.setOnClickListener(view -> hanldeViewDetail(lecturerItem));
@@ -162,6 +176,7 @@ public class LecturerAdapter extends ArrayAdapter implements Filterable {
     private void hanldeViewDetail(LecturerItem lecturerItem) {
         callLecturer(lecturerItem, MyFuncButton.VIEW_LECTURER);
     }
+
     private void handleSua(LecturerItem lecturerItem) {
         callLecturer(lecturerItem, MyFuncButton.EDIT_LECTURER);
     }
@@ -174,6 +189,7 @@ public class LecturerAdapter extends ArrayAdapter implements Filterable {
                 .build()
                 .show();
     }
+
     private void handleAgreeDelete(LecturerItem lecturerItem) {
         List<String> listLecturerCode = new ArrayList<>();
         listLecturerCode.add(lecturerItem.getId());
@@ -184,9 +200,9 @@ public class LecturerAdapter extends ArrayAdapter implements Filterable {
         call.enqueue(new Callback<ResponseObject<List<String>>>() {
             @Override
             public void onResponse(@NonNull Call<ResponseObject<List<String>>> call, @NonNull Response<ResponseObject<List<String>>> response) {
-                if (response.isSuccessful()&&response.body()!=null) {
+                if (response.isSuccessful() && response.body() != null) {
                     ResponseObject<List<String>> resData = response.body();
-                    if (resData.getRetObj()==null || resData.getRetObj().size() == 0) {
+                    if (resData.getRetObj() == null || resData.getRetObj().size() == 0) {
                         new CustomDialog.BuliderOKDialog(context)
                                 .setMessage(resData.getMessage())
                                 .setSuccessful(false)
@@ -201,8 +217,7 @@ public class LecturerAdapter extends ArrayAdapter implements Filterable {
                                 .build()
                                 .show();
                     }
-                }
-                else {
+                } else {
                     if (response.errorBody() != null) {
                         ResponseObject<Object> errorResponse = new Gson().fromJson(
                                 response.errorBody().charStream(),
@@ -249,8 +264,7 @@ public class LecturerAdapter extends ArrayAdapter implements Filterable {
                         intent.putExtra("lecturer", data);
                         mUpdateGiangVienLauncher.launch(intent);
                     }
-                }
-                else{
+                } else {
                     if (response.errorBody() != null) {
                         ResponseObject<Object> errorResponse = new Gson().fromJson(
                                 response.errorBody().charStream(),
@@ -285,7 +299,7 @@ public class LecturerAdapter extends ArrayAdapter implements Filterable {
         ImageButton ibtSua;
         ImageButton ibtXoa;
 
-        public ViewHolder (View view){
+        public ViewHolder(View view) {
             this.tvTenGV = view.findViewById(R.id.tvHoTenGV);
             this.tvMaGV = view.findViewById(R.id.tvMaGV);
             this.imvPhai = view.findViewById(R.id.imvPhai);

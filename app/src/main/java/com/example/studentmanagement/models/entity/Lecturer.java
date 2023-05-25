@@ -13,6 +13,15 @@ public class Lecturer implements Serializable {
     private String sdt;
     private String email;
     private  String maKhoa;
+    private String hinhAnh;
+
+    public String getHinhAnh() {
+        return hinhAnh;
+    }
+
+    public void setHinhAnh(String hinhAnh) {
+        this.hinhAnh = hinhAnh;
+    }
 
     public Lecturer() {
     }

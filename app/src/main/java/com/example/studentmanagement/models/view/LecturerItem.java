@@ -9,6 +9,7 @@ public class LecturerItem implements Serializable {
     private String ho;
     private String ten;
     private String phai;
+    private String hinhAnh;
 
     public LecturerItem() {
     }
@@ -19,6 +20,14 @@ public class LecturerItem implements Serializable {
         this.ho = ho;
         this.ten = ten;
         this.phai = phai;
+    }
+
+    public String getHinhAnh() {
+        return hinhAnh;
+    }
+
+    public void setHinhAnh(String hinhAnh) {
+        this.hinhAnh = hinhAnh;
     }
 
     public String getId() {

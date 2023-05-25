@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,11 +18,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 
@@ -30,13 +34,18 @@ import com.example.studentmanagement.activities.customactivity.CustomAppCompactA
 import com.example.studentmanagement.activities.lecturer.AddLecturerActivity;
 import com.example.studentmanagement.api.ApiManager;
 import com.example.studentmanagement.api.ResponseObject;
+import com.example.studentmanagement.firebase.UpLoadImage;
 import com.example.studentmanagement.models.entity.Student;
 import com.example.studentmanagement.ui.CustomDialog;
+import com.example.studentmanagement.utils.CircleTransformation;
 import com.example.studentmanagement.utils.FormatterDate;
 import com.example.studentmanagement.utils.MyPrefs;
 import com.example.studentmanagement.utils.StatusStudent;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -49,7 +58,8 @@ import retrofit2.Response;
 
 public class AddStudentActivity extends CustomAppCompactActivity {
 
-    Button btnLuu;
+    Button btnLuu, btnAvatar;
+    ImageView imvAvatar;
     EditText edtMaSV, edtHoSV, edtTenSV, edtNgaySinh, edtSDT, edtNoiSinh, edtDiaChi, edtEmail;
     TextView tvCalendar;
     DatePickerDialog.OnDateSetListener setListener;
@@ -58,7 +68,9 @@ public class AddStudentActivity extends CustomAppCompactActivity {
     int crtStatus;
     Toolbar toolbar;
     Boolean error = false;
-
+    boolean isSetImage = false;
+    Uri uriPickedImage = null;
+    ActivityResultLauncher<String> pickImageLauncher;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,6 +122,32 @@ public class AddStudentActivity extends CustomAppCompactActivity {
         };
 
         btnLuu.setOnClickListener( view -> handleLuu());
+        radNam.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (radNam.isChecked() && !isSetImage)
+                imvAvatar.setImageResource(R.drawable.icon_front_man);
+        });
+        radNu.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (radNu.isChecked() && !isSetImage)
+                imvAvatar.setImageResource(R.drawable.icon_fornt_woman);
+        });
+        pickImageLauncher = registerForActivityResult(
+                new ActivityResultContracts.GetContent(),
+                uri -> {
+                    if (uri != null) {
+                        Picasso.get()
+                                .load(uri)
+                                .transform(new CircleTransformation())
+                                .into(imvAvatar);
+                        isSetImage = true;
+                        uriPickedImage = uri;
+                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                    }
+                }
+        );
+        btnAvatar.setOnClickListener(view -> {
+            pickImageLauncher.launch("image/*");
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        });
     }
 
 
@@ -208,7 +246,22 @@ public class AddStudentActivity extends CustomAppCompactActivity {
         );
         student.setTrangThai(crtStatus);
         student.setMaLop(getIntent().getStringExtra("crtPracticalClassCode"));
-        callAddStudent(student);
+        if (uriPickedImage != null) {
+            UploadTask uploadTask = UpLoadImage.saveImageToDatabase(student.getMaSv(), uriPickedImage);
+            uploadTask.addOnSuccessListener(taskSnapshot -> {
+                        Task<Uri> downloadUrlTask = UpLoadImage.storageRef.child(student.getMaSv()).getDownloadUrl();
+                        downloadUrlTask.addOnSuccessListener(uriImage -> {
+                            student.setHinhAnh(uriImage.toString());
+                            callAddStudent(student);
+                        }).addOnFailureListener(exception -> new CustomDialog.BuliderOKDialog(AddStudentActivity.this)
+                                .setMessage("Hiện tại không thể thêm hình ảnh")
+                                .setSuccessful(false)
+                                .build()
+                                .show()
+                        );
+                    }
+            );
+        } else callAddStudent(student);
     }
 
 
@@ -276,5 +329,7 @@ public class AddStudentActivity extends CustomAppCompactActivity {
         toolbar=findViewById(R.id.toolbar);
         radNam=findViewById(R.id.radNam);
         radNu=findViewById(R.id.radNu);
+        imvAvatar = findViewById(R.id.imvAvatar);
+        btnAvatar = findViewById(R.id.btnAvatar);
     }
 }

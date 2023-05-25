@@ -10,6 +10,15 @@ public class StudentItem implements Serializable {
     private String ten;
 
     private String phai;
+    private String hinhAnh;
+
+    public String getHinhAnh() {
+        return hinhAnh;
+    }
+
+    public void setHinhAnh(String hinhAnh) {
+        this.hinhAnh = hinhAnh;
+    }
 
     public StudentItem() {
     }

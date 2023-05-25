@@ -5,29 +5,41 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.studentmanagement.R;
 import com.example.studentmanagement.activities.customactivity.CustomAppCompactActivity;
+import com.example.studentmanagement.activities.lecturer.EditLecturerActivity;
 import com.example.studentmanagement.activities.practicalclass.EditPracticalClassActivity;
 import com.example.studentmanagement.api.ApiManager;
 import com.example.studentmanagement.api.ResponseObject;
+import com.example.studentmanagement.firebase.UpLoadImage;
 import com.example.studentmanagement.models.entity.Student;
 import com.example.studentmanagement.ui.CustomDialog;
+import com.example.studentmanagement.utils.CircleTransformation;
 import com.example.studentmanagement.utils.FormatterDate;
 import com.example.studentmanagement.utils.MyPrefs;
 import com.example.studentmanagement.utils.StatusStudent;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -40,15 +52,18 @@ import retrofit2.Response;
 
 
 public class EditStudentActivity extends CustomAppCompactActivity {
-    Button btnLuu;
+    Button btnLuu, btnAvatar;
+    ImageView imvAvatar;
     Boolean error = false;
     EditText edtMaSV, edtHoSV, edtTenSV, edtSDT, edtNoiSinh, edtDiaChi, edtNgaySinh,  edtEmail;
     RadioButton radNam, radNu;
     TextView tvCalendar;
     Spinner  spnStatus;
     Toolbar toolbar;
-
     int crtStatus;
+    boolean isSetImage = false;
+    Uri uriPickedImage = null;
+    ActivityResultLauncher<String> pickImageLauncher;
 
     DatePickerDialog.OnDateSetListener setListener;
     @Override
@@ -86,7 +101,32 @@ public class EditStudentActivity extends CustomAppCompactActivity {
             edtNgaySinh.setText(date);
         };
         btnLuu.setOnClickListener( view -> handleLuu());
-
+        radNam.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (radNam.isChecked() && !isSetImage)
+                imvAvatar.setImageResource(R.drawable.icon_front_man);
+        });
+        radNu.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (radNu.isChecked() && !isSetImage)
+                imvAvatar.setImageResource(R.drawable.icon_fornt_woman);
+        });
+        pickImageLauncher = registerForActivityResult(
+                new ActivityResultContracts.GetContent(),
+                uri -> {
+                    if (uri != null) {
+                        Picasso.get()
+                                .load(uri)
+                                .transform(new CircleTransformation())
+                                .into(imvAvatar);
+                        isSetImage = true;
+                        uriPickedImage = uri;
+                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                    }
+                }
+        );
+        btnAvatar.setOnClickListener(view -> {
+            pickImageLauncher.launch("image/*");
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        });
     }
     private void handleLuu() {
         String tenSV = edtTenSV.getText().toString().trim();
@@ -175,6 +215,25 @@ public class EditStudentActivity extends CustomAppCompactActivity {
                 .format()
         );
 
+        if (uriPickedImage != null) {
+            UploadTask uploadTask = UpLoadImage.saveImageToDatabase(student.getMaSv(), uriPickedImage);
+            uploadTask.addOnSuccessListener(taskSnapshot -> {
+                        Task<Uri> downloadUrlTask = UpLoadImage.storageRef.child(student.getMaSv()).getDownloadUrl();
+                        downloadUrlTask.addOnSuccessListener(uriImage -> {
+                            student.setHinhAnh(uriImage.toString());
+                            callUpdate(student);
+                        }).addOnFailureListener(exception -> new CustomDialog.BuliderOKDialog(EditStudentActivity.this)
+                                .setMessage("Hiện tại không thể thêm hình ảnh")
+                                .setSuccessful(false)
+                                .build()
+                                .show()
+                        );
+                    }
+            );
+        } else callUpdate(student);
+    }
+
+    private void callUpdate(Student student) {
         new CustomDialog.BuliderPosNegDialog(EditStudentActivity.this)
                 .setMessage("Bạn có muốn lưu thay đổi không?")
                 .setPositiveButton("Đồng ý", view -> callUpdateStudent(student), dismiss -> true)
@@ -248,10 +307,21 @@ public class EditStudentActivity extends CustomAppCompactActivity {
                 .format()
         );
 
-        if (student.getPhai().equalsIgnoreCase("nam")) radNam.setChecked(true);
+        boolean isMale = student.getPhai().equalsIgnoreCase("nam");
+        if (isMale) radNam.setChecked(true);
         else radNu.setChecked(true);
         edtMaSV.setEnabled(false);
-        spnStatus.setSelection(student.getTrangThai());
+        try {
+            Picasso.get()
+                    .load(student.getHinhAnh())
+                    .transform(new CircleTransformation())
+                    .placeholder(isMale ? R.drawable.icon_front_man : R.drawable.icon_fornt_woman)
+                    .error(isMale ? R.drawable.icon_front_man : R.drawable.icon_fornt_woman)
+                    .into(imvAvatar);
+            isSetImage = true;
+        } catch (Exception ignored) {
+            imvAvatar.setImageResource(isMale ? R.drawable.icon_front_man : R.drawable.icon_fornt_woman);
+        }
     }
 
     private void customToolbar() {
@@ -273,5 +343,7 @@ public class EditStudentActivity extends CustomAppCompactActivity {
         btnLuu=findViewById(R.id.btnLuu);
         toolbar=findViewById(R.id.toolbar);
         spnStatus = findViewById(R.id.spinnerListTrangThai);
+        btnAvatar = findViewById(R.id.btnAvatar);
+        imvAvatar = findViewById(R.id.imvAvatar);
     }
 }

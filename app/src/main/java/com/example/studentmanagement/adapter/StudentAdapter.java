@@ -3,6 +3,8 @@ package com.example.studentmanagement.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,10 +27,13 @@ import com.example.studentmanagement.api.ResponseObject;
 import com.example.studentmanagement.models.entity.Student;
 import com.example.studentmanagement.models.view.StudentItem;
 import com.example.studentmanagement.ui.CustomDialog;
+import com.example.studentmanagement.utils.CircleTransformation;
 import com.example.studentmanagement.utils.MyFuncButton;
 import com.example.studentmanagement.utils.MyPrefs;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -143,11 +148,17 @@ public class StudentAdapter extends ArrayAdapter implements Filterable {
         StudentItem studentItem = data_view.get(position);
         viewHolder.tvTenSV.setText(studentItem.getHo() + " " + studentItem.getTen());
         viewHolder.tvMaSV.setText("Mã SV: " + studentItem.getMaSv());
-
-        boolean isMale= studentItem.getPhai().equalsIgnoreCase("nam");
+        boolean isMale = studentItem.getPhai().equalsIgnoreCase("nam");
         if(isMale) viewHolder.imvPhai.setImageResource(R.drawable.icon_front_man);
         else viewHolder.imvPhai.setImageResource(R.drawable.icon_fornt_woman);
-
+        try {
+            Picasso.get()
+                    .load(studentItem.getHinhAnh())
+                    .transform(new CircleTransformation())
+                    .placeholder(isMale ? R.drawable.icon_front_man : R.drawable.icon_fornt_woman)
+                    .error(isMale ? R.drawable.icon_front_man : R.drawable.icon_fornt_woman)
+                    .into(viewHolder.imvPhai);
+        } catch (Exception ignored) {}
         viewHolder.ibtXoa.setOnClickListener(view -> handleXoa(studentItem));
         viewHolder.ibtSua.setOnClickListener(view -> handleSua(studentItem));
         viewHolder.tvDetail.setOnClickListener(view -> hanldeViewDetail(studentItem));
