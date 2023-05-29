@@ -15,7 +15,7 @@
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/primary_color"
+            android:background="@drawable/bg_shadow"
             android:minHeight="?attr/actionBarSize"
             android:paddingVertical="5dp"
             app:buttonGravity="center_vertical"
@@ -24,15 +24,11 @@
             app:titleTextColor="@color/white">
 
             <LinearLayout
+                android:paddingVertical="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/baseline_account_circle_24" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -87,7 +83,7 @@
                         android:id="@+id/btnKhoa"
                         android:layout_width="140dp"
                         android:layout_height="match_parent"
-                        android:background="@drawable/main_icon"
+                        android:background="@drawable/bg_item_lightgray"
                         android:drawableTop="@drawable/khoa_icon"
                         android:drawablePadding="5dp"
                         android:padding="15dp"
@@ -99,7 +95,7 @@
                         android:id="@+id/btnLop"
                         android:layout_width="140dp"
                         android:layout_height="match_parent"
-                        android:background="@drawable/main_icon"
+                        android:background="@drawable/bg_item_lightgray"
                         android:drawableTop="@drawable/lop_icon"
                         android:drawablePadding="5dp"
                         android:layout_marginLeft="30dp"
@@ -118,7 +114,7 @@
                         android:id="@+id/btnGiangVien"
                         android:layout_width="140dp"
                         android:layout_height="match_parent"
-                        android:background="@drawable/main_icon"
+                        android:background="@drawable/bg_item_lightgray"
                         android:drawableTop="@drawable/giangvien_icon"
                         android:drawablePadding="5dp"
                         android:padding="15dp"
@@ -129,7 +125,7 @@
                         android:id="@+id/btnSinhVien"
                         android:layout_width="140dp"
                         android:layout_height="match_parent"
-                        android:background="@drawable/main_icon"
+                        android:background="@drawable/bg_item_lightgray"
                         android:drawableTop="@drawable/sinhvien_icon"
                         android:drawablePadding="5dp"
                         android:layout_marginLeft="30dp"
@@ -148,25 +144,26 @@
                         android:id="@+id/btnHocPhan"
                         android:layout_width="140dp"
                         android:layout_height="match_parent"
-                        android:background="@drawable/main_icon"
+                        android:background="@drawable/bg_item_lightgray"
                         android:drawableTop="@drawable/hocphan_icon"
                         android:drawablePadding="5dp"
                         android:padding="15dp"
                         android:text="HỌC PHẦN"
                         android:textSize="16sp"
                         android:textColor="@color/primary_color"/>
+
                     <Button
                         android:id="@+id/btnLopTinChi"
                         android:layout_width="140dp"
                         android:layout_height="match_parent"
-                        android:background="@drawable/main_icon"
+                        android:layout_marginLeft="30dp"
+                        android:background="@drawable/bg_item_lightgray"
                         android:drawableTop="@drawable/khoa_icon"
                         android:drawablePadding="5dp"
-                        android:layout_marginLeft="30dp"
                         android:padding="15dp"
                         android:text="LỚP TÍN CHỈ"
-                        android:textSize="16sp"
-                        android:textColor="@color/primary_color"/>
+                        android:textColor="@color/primary_color"
+                        android:textSize="16sp" />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -178,7 +175,7 @@
                         android:id="@+id/btnDiem"
                         android:layout_width="140dp"
                         android:layout_height="match_parent"
-                        android:background="@drawable/main_icon"
+                        android:background="@drawable/bg_item_lightgray"
                         android:drawableTop="@drawable/diem_icon"
                         android:drawablePadding="5dp"
                         android:padding="15dp"
@@ -189,7 +186,7 @@
                         android:id="@+id/btnThongKe"
                         android:layout_width="140dp"
                         android:layout_height="match_parent"
-                        android:background="@drawable/main_icon"
+                        android:background="@drawable/bg_item_lightgray"
                         android:drawableTop="@drawable/thongke_icon"
                         android:drawablePadding="5dp"
                         android:layout_marginLeft="30dp"

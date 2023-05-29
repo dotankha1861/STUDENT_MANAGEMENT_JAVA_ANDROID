@@ -1,5 +1,6 @@
 package com.example.studentmanagement.activities.statistic;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.Menu;
 
@@ -11,6 +12,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -229,6 +231,8 @@ public class MainStatisticAdminActivity extends CustomAppCompactActivitySearch {
         });
     }
     private void callCreditClass() {
+        ProgressDialog progressDialog =CustomDialog.LoadingDialog(MainStatisticAdminActivity.this, "Loading...");
+        progressDialog.show();
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(MainStatisticAdminActivity.this, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
@@ -240,9 +244,11 @@ public class MainStatisticAdminActivity extends CustomAppCompactActivitySearch {
             public void onResponse(@NonNull Call<ResponseObject<List<CreditClassItem>>> call, @NonNull Response<ResponseObject<List<CreditClassItem>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     ResponseObject<List<CreditClassItem>> resData = response.body();
-
                     creditClassForStatisticAdapter.clear();
+                    if(resData.getRetObj()==null||resData.getRetObj().size()==0)
+                        Toast.makeText(MainStatisticAdminActivity.this, "Không có lớp tín chỉ nào", Toast.LENGTH_SHORT).show();
                     creditClassForStatisticAdapter.addAll(resData.getRetObj());
+                    progressDialog.dismiss();
                     creditClassForStatisticAdapter.notifyDataSetChanged();
                 } else {
                     if (response.errorBody() != null) {
@@ -251,6 +257,7 @@ public class MainStatisticAdminActivity extends CustomAppCompactActivitySearch {
                                 new TypeToken<ResponseObject<Object>>() {
                                 }.getType()
                         );
+                        progressDialog.dismiss();
                         new CustomDialog.BuliderOKDialog(MainStatisticAdminActivity.this)
                                 .setMessage("Lỗi" + errorResponse.getMessage())
                                 .setSuccessful(false)
@@ -262,6 +269,7 @@ public class MainStatisticAdminActivity extends CustomAppCompactActivitySearch {
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<List<CreditClassItem>>> call, @NonNull Throwable t) {
+                progressDialog.dismiss();
                 new CustomDialog.BuliderOKDialog(MainStatisticAdminActivity.this)
                         .setMessage("Lỗi kết nối! " + t.getMessage())
                         .setSuccessful(false)

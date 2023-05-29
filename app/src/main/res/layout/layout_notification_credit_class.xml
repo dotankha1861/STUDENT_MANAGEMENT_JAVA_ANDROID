@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        app:titleTextColor="@color/white"
+        android:background="@color/primary_color"
+        app:theme="@style/BaseTheme"
+        app:buttonGravity="center_vertical"
+        android:paddingVertical="20dp">
+        <TextView
+            android:gravity="center_vertical"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:text="THÔNG BÁO"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:textColor="@color/white" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <ListView
+        android:id="@+id/lvNotificaton"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+        android:divider="@color/white"
+        android:dividerHeight="10dp" />
+
+</LinearLayout>

@@ -74,6 +74,17 @@ public class AddFacultyActivity extends CustomAppCompactActivity {
             return;
         }
 
+        if(TextUtils.isEmpty(maKhoa)){
+            edtMaKhoa.setError("Vui lòng nhập mã khoa");
+            edtMaKhoa.requestFocus();
+            error = true;
+        }
+        else if(maKhoa.length()<5){
+            edtMaKhoa.setError("Mã khoa phải có tối thiểu 5 kí tự");
+            edtMaKhoa.requestFocus();
+            error = true;
+        }
+
         Faculty faculty= new Faculty();
         faculty.setMaKhoa(maKhoa);
         faculty.setTenKhoa(tenKhoa);

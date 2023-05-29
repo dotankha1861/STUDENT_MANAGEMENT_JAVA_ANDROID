@@ -1,6 +1,7 @@
 package com.example.studentmanagement.activities.timetable;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
@@ -26,6 +27,7 @@ import com.example.studentmanagement.api.ERole;
 import com.example.studentmanagement.api.ResponseObject;
 import com.example.studentmanagement.models.view.SemesterItem;
 import com.example.studentmanagement.models.view.TimeTableItem;
+import com.example.studentmanagement.ui.CustomDialog;
 import com.example.studentmanagement.utils.FormatterDate;
 import com.example.studentmanagement.utils.MyPrefs;
 
@@ -111,6 +113,8 @@ public class TimeTableActivity extends CustomAppCompactActivity {
     }
 
     private void callTimeTable(int weekCode) {
+        ProgressDialog progressDialog = CustomDialog.LoadingDialog(TimeTableActivity.this, "Loading ...");
+        progressDialog.show();
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(TimeTableActivity.this, "jwt", "");
         String code = myPrefs.getString(TimeTableActivity.this, "username", "");
@@ -131,6 +135,7 @@ public class TimeTableActivity extends CustomAppCompactActivity {
                                         FormatterDate.getAnyDayOfWeek(semesterItem.getTimeStudyBegin(), weekCode + 1, index + 1),
                                         FormatterDate.dd_slash_MM_slash_yyyy
                                 ));
+                                tkbItem.setThu(String.valueOf(index+2));
                                 return tkbItem;
                             })
                             .collect(Collectors.toList());
@@ -145,6 +150,7 @@ public class TimeTableActivity extends CustomAppCompactActivity {
                     timeTableAdapter.clear();
                     timeTableAdapter.addAll(dataListView);
                     lvTimeTable.setAdapter(timeTableAdapter);
+                    progressDialog.dismiss();
                     timeTableAdapter.notifyDataSetChanged();
                 } else {
                     Toast.makeText(getApplicationContext(), "Lỗi!", Toast.LENGTH_LONG).show();

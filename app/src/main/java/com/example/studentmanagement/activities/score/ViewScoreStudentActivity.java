@@ -1,6 +1,7 @@
 package com.example.studentmanagement.activities.score;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -76,11 +77,8 @@ public class ViewScoreStudentActivity extends CustomAppCompactActivity {
         setSupportActionBar(toolbar);
         setInforStudent();
 
-        List<ScoreStudent> scoreStudentList = (List<ScoreStudent>) getIntent().getSerializableExtra("scoreItemLv");
-        scoreStudentAdapter = new ScoreStudentAdapter(ViewScoreStudentActivity.this, R.layout.item_listview_score_student, (ArrayList<ScoreStudent>) scoreStudentList);
+        scoreStudentAdapter = new ScoreStudentAdapter(ViewScoreStudentActivity.this, R.layout.item_listview_score_student);
         lvScore.setAdapter(scoreStudentAdapter);
-        scoreStudentAdapter.notifyDataSetChanged();
-
         spnSemester.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -97,6 +95,8 @@ public class ViewScoreStudentActivity extends CustomAppCompactActivity {
     }
 
     private void callScoreStudent() {
+        ProgressDialog progressDialog = CustomDialog.LoadingDialog(ViewScoreStudentActivity.this,"Loading...");
+        progressDialog.show();
         StudentItem studentItem = (StudentItem) getIntent().getSerializableExtra("studentItem");
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(ViewScoreStudentActivity.this, "jwt", "");
@@ -109,6 +109,7 @@ public class ViewScoreStudentActivity extends CustomAppCompactActivity {
                     ResponseObject<List<ScoreStudent>> resData = response.body();
                     scoreStudentAdapter.clear();
                     scoreStudentAdapter.addAll(resData.getRetObj());
+                    progressDialog.dismiss();
                     scoreStudentAdapter.notifyDataSetChanged();
                 } else {
                     if (response.errorBody() != null) {
@@ -117,6 +118,7 @@ public class ViewScoreStudentActivity extends CustomAppCompactActivity {
                                 new TypeToken<ResponseObject<Object>>() {
                                 }.getType()
                         );
+                        progressDialog.dismiss();
                         new CustomDialog.BuliderOKDialog(ViewScoreStudentActivity.this)
                                 .setMessage("Lỗi" + errorResponse.getMessage())
                                 .setSuccessful(false)
@@ -128,6 +130,7 @@ public class ViewScoreStudentActivity extends CustomAppCompactActivity {
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<List<ScoreStudent>>> call, @NonNull Throwable t) {
+                progressDialog.dismiss();
                 new CustomDialog.BuliderOKDialog(ViewScoreStudentActivity.this)
                         .setMessage("Lỗi kết nối!" + t.getMessage())
                         .setSuccessful(false)

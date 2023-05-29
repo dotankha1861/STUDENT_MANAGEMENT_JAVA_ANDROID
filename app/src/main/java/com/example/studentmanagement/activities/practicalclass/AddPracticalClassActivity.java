@@ -53,14 +53,19 @@ public class AddPracticalClassActivity extends CustomAppCompactActivity {
             edtTenLop.requestFocus();
             error = true;
         }
+        else if(tenLop.length()<4){
+            edtTenLop.setError("Tên lớp phải có tối thiểu 4 kí tự");
+            edtTenLop.requestFocus();
+            error = true;
+        }
 
         if(TextUtils.isEmpty(maLop)){
             edtMaLop.setError("Vui lòng nhập mã lớp");
             edtMaLop.requestFocus();
             error = true;
         }
-        else if(maLop.length()<3){
-            edtMaLop.setError("Mã lớp phải có tối thiểu 3 kí tự");
+        else if(maLop.length()<4){
+            edtMaLop.setError("Mã lớp phải có tối thiểu 4 kí tự");
             edtMaLop.requestFocus();
             error = true;
         }

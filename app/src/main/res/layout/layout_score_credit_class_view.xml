@@ -27,13 +27,13 @@
     </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout
-        android:padding="10dp"
-        android:background="@drawable/main_icon"
+        android:padding="15dp"
+        android:background="@drawable/bg_item_lightgray"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginVertical="20dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:orientation="vertical">
 
 
@@ -58,7 +58,6 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="20dp"
                 android:text="Cấu trúc dữ liệu và GT"
-                android:textAlignment="textEnd"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="italic"/>
@@ -111,13 +110,12 @@
                 android:id="@+id/tvPercent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="italic"
                 android:gravity="right"
                 android:paddingLeft="20dp"
                 android:text="10-20-70"
                 android:textColor="@color/black"
                 android:textSize="20sp"
-/>
+                android:textStyle="italic" />
         </LinearLayout>
     </LinearLayout>
 

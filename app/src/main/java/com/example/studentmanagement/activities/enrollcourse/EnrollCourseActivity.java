@@ -1,5 +1,6 @@
 package com.example.studentmanagement.activities.enrollcourse;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -156,6 +157,8 @@ public class EnrollCourseActivity extends CustomAppCompactActivitySearch {
     }
 
     private void callAllCourse() {
+        ProgressDialog progressDialog = CustomDialog.LoadingDialog(EnrollCourseActivity.this, "Loading...");
+        progressDialog.show();
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(EnrollCourseActivity.this, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
@@ -174,6 +177,7 @@ public class EnrollCourseActivity extends CustomAppCompactActivitySearch {
 
                     adapterPracticalClassSpinner.clear();
                     adapterPracticalClassSpinner.addAll(practicalClassItemList);
+                    progressDialog.dismiss();
                     adapterPracticalClassSpinner.notifyDataSetChanged();
                 } else {
                     if (response.errorBody() != null) {
@@ -182,6 +186,7 @@ public class EnrollCourseActivity extends CustomAppCompactActivitySearch {
                                 new TypeToken<ResponseObject<Object>>() {
                                 }.getType()
                         );
+                        progressDialog.dismiss();
                         new CustomDialog.BuliderOKDialog(EnrollCourseActivity.this)
                                 .setMessage("Lỗi" + errorResponse.getMessage())
                                 .setSuccessful(false)
@@ -193,6 +198,7 @@ public class EnrollCourseActivity extends CustomAppCompactActivitySearch {
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<List<List<CourseItem>>>> call, @NonNull Throwable t) {
+                progressDialog.dismiss();
                 new CustomDialog.BuliderOKDialog(EnrollCourseActivity.this)
                         .setMessage("Lỗi kết nối! " + t.getMessage())
                         .setSuccessful(false)
@@ -203,6 +209,8 @@ public class EnrollCourseActivity extends CustomAppCompactActivitySearch {
     }
 
     private void calAllPracticalClass() {
+        ProgressDialog progressDialog = CustomDialog.LoadingDialog(EnrollCourseActivity.this, "Loading...");
+        progressDialog.show();
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(EnrollCourseActivity.this, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
@@ -218,6 +226,7 @@ public class EnrollCourseActivity extends CustomAppCompactActivitySearch {
 
                     adapterPracticalClassSpinner.clear();
                     adapterPracticalClassSpinner.addAll(data);
+                    progressDialog.dismiss();
                     adapterPracticalClassSpinner.notifyDataSetChanged();
 
                     PracticalClassItem practicalClassItem = new PracticalClassItem();
@@ -230,6 +239,7 @@ public class EnrollCourseActivity extends CustomAppCompactActivitySearch {
                                 new TypeToken<ResponseObject<Object>>() {
                                 }.getType()
                         );
+                        progressDialog.dismiss();
                         new CustomDialog.BuliderOKDialog(EnrollCourseActivity.this)
                                 .setMessage("Lỗi" + errorResponse.getMessage())
                                 .setSuccessful(false)
@@ -241,6 +251,7 @@ public class EnrollCourseActivity extends CustomAppCompactActivitySearch {
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<List<List<PracticalClassItem>>>> call, @NonNull Throwable t) {
+                progressDialog.dismiss();
                 new CustomDialog.BuliderOKDialog(EnrollCourseActivity.this)
                         .setMessage("Lỗi kết nối! " + t.getMessage())
                         .setSuccessful(false)
@@ -252,6 +263,8 @@ public class EnrollCourseActivity extends CustomAppCompactActivitySearch {
 
     private void callCreditClass() {
         if(practicalClassCode == null) Toast.makeText(this, "Đang tải dữ liệu vui lòng thử lại sau!", Toast.LENGTH_SHORT).show();;
+        ProgressDialog progressDialog = CustomDialog.LoadingDialog(EnrollCourseActivity.this, "Loading...");
+        progressDialog.show();
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(EnrollCourseActivity.this, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
@@ -262,23 +275,44 @@ public class EnrollCourseActivity extends CustomAppCompactActivitySearch {
             @Override
             public void onResponse(@NonNull Call<ResponseObject<List<EnrollCourseItem>>> call, @NonNull Response<ResponseObject<List<EnrollCourseItem>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    ResponseObject<List<EnrollCourseItem>> resData= response.body();
+                    ResponseObject<List<EnrollCourseItem>> resData = response.body();
                     enrollCourseItemList = resData.getRetObj();
+                    progressDialog.dismiss();
                     setItemsLv();
                 } else {
-                    Toast.makeText(getApplicationContext(), "Lỗi!" , Toast.LENGTH_LONG).show();
+                    if (response.errorBody() != null) {
+                        ResponseObject<Object> errorResponse = new Gson().fromJson(
+                                response.errorBody().charStream(),
+                                new TypeToken<ResponseObject<Object>>() {
+                                }.getType()
+                        );
+                        progressDialog.dismiss();
+                        new CustomDialog.BuliderOKDialog(EnrollCourseActivity.this)
+                                .setMessage("Lỗi" + errorResponse.getMessage())
+                                .setSuccessful(false)
+                                .build()
+                                .show();
+                    }
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<List<EnrollCourseItem>>> call, @NonNull Throwable t) {
-                Toast.makeText(getApplicationContext(), "Lỗi kết nối dữ liệu! " + t.getMessage(), Toast.LENGTH_LONG).show();
+                progressDialog.dismiss();
+                new CustomDialog.BuliderOKDialog(EnrollCourseActivity.this)
+                        .setMessage("Lỗi kết nối! " + t.getMessage())
+                        .setSuccessful(false)
+                        .build()
+                        .show();
             }
         });
     }
 
     private void setItemsLv(){
-        if(enrollCourseItemList == null) return;
+        if(enrollCourseItemList == null || enrollCourseItemList.size()==0){
+            Toast.makeText(this, "Không có lớp tín chỉ nào", Toast.LENGTH_SHORT).show();
+            return;
+        }
         enrollCourseItemList = enrollCourseItemList.stream()
                 .peek(item -> {
                     Optional<EnrollCourseItem> enrollCourseItem = listChoseCourse.stream()

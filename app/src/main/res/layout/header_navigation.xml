@@ -10,10 +10,11 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_weight="1"
-        android:paddingTop="30dp"
+        android:paddingTop="50dp"
         android:paddingLeft="10dp"
         android:paddingBottom="20dp">
         <ImageView
+            android:id="@+id/imvAvatar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/baseline_account_circle_24" />

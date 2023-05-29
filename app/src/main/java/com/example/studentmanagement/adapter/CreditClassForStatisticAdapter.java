@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -136,7 +137,7 @@ public class CreditClassForStatisticAdapter extends ArrayAdapter implements Filt
         viewHolder.tvTenHP.setText("Tên HP: " + creditClassItem.getTenMh());
         viewHolder.tvTenGV.setText(lecturerName!=null?lecturerName:"Tên GV: " + creditClassItem.getTenGv());
 
-        viewHolder.btnThongKe.setOnClickListener(view -> {
+        viewHolder.lnlItem.setOnClickListener(view -> {
             Intent intent = new Intent(context, ViewStatisticActivity.class);
             intent.putExtra("creditClass", creditClassItem);
             context.startActivity(intent);
@@ -148,12 +149,12 @@ public class CreditClassForStatisticAdapter extends ArrayAdapter implements Filt
         TextView tvMaLTC;
         TextView tvTenGV;
         TextView tvTenHP;
-        Button btnThongKe;
+        LinearLayout lnlItem;
         public ViewHolder (View view){
             this.tvMaLTC = view.findViewById(R.id.tvMaLTC);
             this.tvTenHP = view.findViewById(R.id.tvTenHP);
             this.tvTenGV = view.findViewById(R.id.tvTenGV);
-            this.btnThongKe = view.findViewById(R.id.btnThongKe);
+            this.lnlItem = view.findViewById(R.id.lnlItem);
         }
     }
 }

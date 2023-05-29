@@ -6,9 +6,10 @@
     android:gravity="center"
     android:paddingHorizontal="10dp">
     <LinearLayout
-        android:padding="10dp"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="15dp"
         android:orientation="vertical"
-        android:background="@drawable/main_icon"
+        android:background="@drawable/bg_item_lightgray"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
@@ -35,7 +36,7 @@
                     android:layout_marginLeft="10dp"
                     android:text="Tên khoa"
                     android:textColor="#000"
-                    android:textSize="23sp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
                 <TextView
                     android:id="@+id/tvMaKhoa"

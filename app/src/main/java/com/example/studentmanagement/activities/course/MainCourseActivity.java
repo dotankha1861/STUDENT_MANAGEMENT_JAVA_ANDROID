@@ -1,6 +1,7 @@
 package com.example.studentmanagement.activities.course;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -158,6 +159,8 @@ public class MainCourseActivity extends CustomAppCompactActivitySearchAdd {
     }
 
     private void setListView() {
+        ProgressDialog progressDialog = CustomDialog.LoadingDialog(MainCourseActivity.this, "Loading...");
+        progressDialog.show();
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(MainCourseActivity.this, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
@@ -171,6 +174,7 @@ public class MainCourseActivity extends CustomAppCompactActivitySearchAdd {
                     if(jwtResponse.getRetObj()==null || jwtResponse.getRetObj().size()==0)
                         Toast.makeText(MainCourseActivity.this, "Khoa chưa có học phần nào", Toast.LENGTH_LONG).show();
                     else courseAdapter.addAll(jwtResponse.getRetObj());
+                    progressDialog.dismiss();
                     courseAdapter.notifyDataSetChanged();
                 } else {
                     if (response.errorBody() != null) {

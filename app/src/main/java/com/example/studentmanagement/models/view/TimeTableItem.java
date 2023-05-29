@@ -1,8 +1,9 @@
 package com.example.studentmanagement.models.view;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class TimeTableItem {
+public class TimeTableItem implements Serializable {
     private String thu;
     private String ngay;
     private List<ActivityItem> tkbDtoList;

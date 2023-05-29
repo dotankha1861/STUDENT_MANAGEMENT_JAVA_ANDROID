@@ -266,7 +266,7 @@
                     android:textColor="#000"
                     android:textStyle="bold"/>
                 <EditText
-                    android:inputType="text"
+                    android:inputType="phone"
                     android:id="@+id/edtSDT"
                     android:padding="10dp"
                     android:layout_width="match_parent"
@@ -337,7 +337,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
-                android:gravity="left"
+                android:gravity="left|center_vertical"
                 android:orientation="horizontal">
 
                 <Button

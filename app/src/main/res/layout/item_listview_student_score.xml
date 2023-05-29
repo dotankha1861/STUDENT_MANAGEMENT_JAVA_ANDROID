@@ -3,12 +3,12 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center"
-    android:paddingHorizontal="10dp">
+    android:gravity="center">
     <LinearLayout
+        android:id="@+id/lnlItem"
         android:padding="15dp"
         android:orientation="vertical"
-        android:background="@drawable/main_icon"
+        android:background="@drawable/bg_item_lightgray"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="10dp">
@@ -20,7 +20,7 @@
 
             <LinearLayout
                 android:paddingTop="5dp"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:layout_marginHorizontal="10dp"
@@ -43,18 +43,11 @@
                     android:textSize="20sp"/>
 
             </LinearLayout>
-            <Button
-                android:id="@+id/btnDiem"
+            <ImageView
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/baseline_arrow_forward_ios_24"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Xem điểm"
-                android:textAllCaps="false"
-                android:textSize="15sp"
-                android:paddingRight="10dp"
-                android:paddingLeft="10dp"
-                android:textColor="@color/white"
-                android:background="@drawable/custom_button_green"/>
+                android:layout_height="wrap_content"/>
         </LinearLayout>
     </LinearLayout>
 

@@ -5,10 +5,11 @@
     android:layout_height="wrap_content"
     android:gravity="center">
     <LinearLayout
+        android:id="@+id/lnlItem"
         android:layout_marginHorizontal="10dp"
         android:padding="10dp"
         android:orientation="vertical"
-        android:background="@drawable/main_icon"
+        android:background="@drawable/bg_item_lightgray"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
@@ -34,6 +35,7 @@
                     android:textSize="20sp"
                     android:textStyle="bold"/>
                 <TextView
+                    android:textStyle="italic"
                     android:id="@+id/tvTenHP"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -41,28 +43,24 @@
                     android:text="Tên học phần:"
                     android:textColor="#000"
                     android:textSize="20sp"/>
+
                 <TextView
+                    android:layout_marginBottom="10dp"
                     android:id="@+id/tvTenGV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:text="Tên giảng viên:"
                     android:textColor="#000"
-                    android:textSize="20sp"/>
+                    android:textSize="20sp"
+                    android:textStyle="italic" />
             </LinearLayout>
 
-            <Button
-                android:id="@+id/btnDiem"
+            <ImageView
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/baseline_arrow_forward_ios_24"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Xem điểm"
-                android:textAllCaps="false"
-                android:textSize="15sp"
-                android:paddingRight="10dp"
-                android:paddingLeft="10dp"
-                android:textColor="@color/white"
-                android:background="@drawable/custom_button_green"/>
+                android:layout_height="wrap_content"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -2,6 +2,7 @@ package com.example.studentmanagement.activities.student;
 
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -9,6 +10,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -109,6 +112,17 @@ public class EditStudentActivity extends CustomAppCompactActivity {
             if (radNu.isChecked() && !isSetImage)
                 imvAvatar.setImageResource(R.drawable.icon_fornt_woman);
         });
+        spnStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                crtStatus = i;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
         pickImageLauncher = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
                 uri -> {
@@ -119,6 +133,7 @@ public class EditStudentActivity extends CustomAppCompactActivity {
                                 .into(imvAvatar);
                         isSetImage = true;
                         uriPickedImage = uri;
+                        imvAvatar.requestFocus();
                         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                     }
                 }
@@ -209,11 +224,19 @@ public class EditStudentActivity extends CustomAppCompactActivity {
         student.setTrangThai(crtStatus);
         student.setMaLop(((Student) getIntent().getSerializableExtra("student")).getMaLop());
         student.setId(((Student) getIntent().getSerializableExtra("student")).getId());
-        student.setNgaySinh(new FormatterDate.Fomatter(ngaySinh)
-                .from(FormatterDate.dd_slash_MM_slash_yyyy)
-                .to(FormatterDate.yyyy_dash_MM_dash_dd)
-                .format()
-        );
+        student.setHinhAnh(((Student) getIntent().getSerializableExtra("student")).getHinhAnh());
+        try {
+            student.setNgaySinh(new FormatterDate.Fomatter(ngaySinh)
+                    .from(FormatterDate.dd_slash_MM_slash_yyyy)
+                    .to(FormatterDate.yyyy_dash_MM_dash_dd)
+                    .format()
+            );
+        }
+        catch (RuntimeException e){
+            edtNgaySinh.setError("Ngày sinh phải định dạng dd/MM/yyyy");
+            edtNgaySinh.requestFocus();
+            return;
+        }
 
         if (uriPickedImage != null) {
             UploadTask uploadTask = UpLoadImage.saveImageToDatabase(student.getMaSv(), uriPickedImage);
@@ -243,6 +266,8 @@ public class EditStudentActivity extends CustomAppCompactActivity {
     }
 
     private void callUpdateStudent(Student student) {
+        ProgressDialog progressDialog = CustomDialog.LoadingDialog(EditStudentActivity.this,"Loading...");
+        progressDialog.show();
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(EditStudentActivity.this, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
@@ -252,6 +277,7 @@ public class EditStudentActivity extends CustomAppCompactActivity {
             public void onResponse(@NonNull Call<ResponseObject<Student>> call, @NonNull Response<ResponseObject<Student>> response) {
                 if (response.isSuccessful()&&response.body()!=null) {
                     ResponseObject<Student> resData = response.body();
+                    progressDialog.dismiss();
                     if(resData.getStatus().equals("error")) {
                         new CustomDialog.BuliderOKDialog(EditStudentActivity.this)
                                 .setMessage(resData.getMessage())
@@ -306,7 +332,7 @@ public class EditStudentActivity extends CustomAppCompactActivity {
                 .to(FormatterDate.dd_slash_MM_slash_yyyy)
                 .format()
         );
-
+        spnStatus.setSelection(student.getTrangThai());
         boolean isMale = student.getPhai().equalsIgnoreCase("nam");
         if (isMale) radNam.setChecked(true);
         else radNu.setChecked(true);
@@ -318,7 +344,7 @@ public class EditStudentActivity extends CustomAppCompactActivity {
                     .placeholder(isMale ? R.drawable.icon_front_man : R.drawable.icon_fornt_woman)
                     .error(isMale ? R.drawable.icon_front_man : R.drawable.icon_fornt_woman)
                     .into(imvAvatar);
-            isSetImage = true;
+            if(student.getHinhAnh()!=null) isSetImage = true;
         } catch (Exception ignored) {
             imvAvatar.setImageResource(isMale ? R.drawable.icon_front_man : R.drawable.icon_fornt_woman);
         }

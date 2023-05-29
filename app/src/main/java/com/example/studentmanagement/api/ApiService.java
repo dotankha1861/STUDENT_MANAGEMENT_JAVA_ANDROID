@@ -43,13 +43,10 @@ public interface ApiService {
     // Authentication
     @POST("auth/signin")
     Call<ResponseObject<ResponseBodyLogin>> login(@Body RequestBodyLogin requestBodyLogin);
-//
-//    @POST("auth/signout")
-//    Call<ResponseObject<Object>> logout(@Header("Authorization") String jwt);
-//
+    @POST("signout")
+    Call<ResponseObject<Object>> logout(@Header("Authorization") String jwt);
     @PUT("admin/updatePassword")
     Call<ResponseObject<Object>> changePassword(@Header("Authorization") String jwt, @Body RequestBodyChangePassword requestBodyChangePassword);
-//
     // Giảng Viên
     @GET("admin/giangVien/khoa/{maKhoa}?page=0&size=999999")
     Call<ResponseObject<List<LecturerItem>>> getAllLecturerByFacultyCode(@Header("Authorization") String jwt, @Path("maKhoa") String maKhoa);
@@ -61,7 +58,7 @@ public interface ApiService {
     Call<ResponseObject<Lecturer>> updateLecturer(@Header("Authorization") String jwt, @Body Lecturer lecturer);
     @HTTP(method = "DELETE", path = "admin/giangVien", hasBody = true)
     Call<ResponseObject<List<String>>> removeLecturer(@Header("Authorization") String jwt, @Body List<String> listMaGiangVien);
-//    //Khoa
+    //Khoa
     @GET("admin/khoa")
     Call<ResponseObject<List<List<FacultyItem>>>> getAllFaculty(@Header("Authorization") String jwt);
     @GET("admin/khoa/{id}")
@@ -87,7 +84,7 @@ public interface ApiService {
     Call<ResponseObject<List<List<PracticalClassItem>>>> getAllPracticalClass(@Header("Authorization") String jwt);
     @GET("admin/lop")
     Call<ResponseObject<List<List<PracticalClass>>>> getAllPracticalClassFull(@Header("Authorization") String jwt);
-//    // Học phần
+    // Học phần
     @GET("admin/monHoc")
     Call<ResponseObject<List<List<CourseItem>>>> getAllCourse(@Header("Authorization") String jwt);
     @GET("admin/monHoc")
@@ -102,7 +99,6 @@ public interface ApiService {
     Call<ResponseObject<Course>> updateCourse(@Header("Authorization") String jwt, @Body Course course);
     @HTTP(method = "DELETE", path = "admin/monHoc", hasBody = true)
     Call<ResponseObject<List<String>>> removeCourse(@Header("Authorization") String jwt, @Body List<String> listCourseCode);
-
     //Sinh viên
     @GET("admin/sinhVien/{id}")
     Call<ResponseObject<Student>> getStudentById(@Header("Authorization") String jwt, @Path("id") String id);
@@ -114,11 +110,9 @@ public interface ApiService {
     Call<ResponseObject<Student>> updateStudent(@Header("Authorization") String jwt, @Body Student student);
     @HTTP(method = "DELETE", path = "admin/sinhVien", hasBody = true)
     Call<ResponseObject<List<String>>> removeStudent(@Header("Authorization") String jwt, @Body List<String> listMaSinhVien);
-
     // Kế hoạch
     @GET("admin/keHoachNam")
     Call<ResponseObject<List<List<SemesterItem>>>> getAllScheme(@Header("Authorization") String jwt);
-
     // Lớp tín chỉ
     @GET("admin/dsLopTc/monHoc")
     Call<ResponseObject<List<CreditClassItem>>> getAllCreditClassByCourseCode(@Header("Authorization") String jwt, @Query("maKeHoach") String maKeHoach, @Query("maMh") String maMh);
@@ -128,36 +122,23 @@ public interface ApiService {
     Call<ResponseObject<List<EnrollCourseItem>>> getAllEnrollCourseByCourseCode(@Header("Authorization") String jwt, @Query("maKeHoach") String maKeHoach, @Query("maMh") String maMh);
     @GET("admin/dsLopTc")
     Call<ResponseObject<List<EnrollCourseItem>>> getAllEnrollCourseByPracticalClass(@Header("Authorization") String jwt, @Query("maKeHoach") String maKeHoach, @Query("maLop") String maLop);
-//    @GET("admin/dsLopTc")
-//    Call<ResponseObject<List<LopTCItemLv>>> getDsLopTcByMaKHMaLop(@Header("Authorization") String jwt, @Query("maKeHoach") String maKeHoach, @Query("maLop") String maLop);
     @GET("admin/dsLopTc/{id}")
     Call<ResponseObject<CreditClass>> getCreditClassById(@Header("Authorization") String jwt, @Path("id") String id);
     @POST("admin/dsLopTc/giangVien/{maGV}")
     Call<ResponseObject<List<CreditClassItem>>> getAllCreditClassByLecturerCode(@Header("Authorization") String jwt, @Path("maGV") String maGV, @Query("maKeHoach") String maKeHoach);
-//    @POST("admin/dsLopTc/giangVien/{maGV}")
-//    Call<ResponseObject<List<LopTCItemLv>>> getDsLTCByMaGVMaKH(@Header("Authorization") String jwt, @Path("maGV") String maGV, @Query("maKeHoach") String maKeHoach);
-//    //Chi tiet LTC
+    @POST("admin/dsLopTc/giangVien/{maGV}")
+    Call<ResponseObject<List<CreditClassItem>>> getAllCreditClassByLecturerCodeLatest(@Header("Authorization") String jwt, @Path("maGV") String maGV);
+    //Chi tiet LTC
     @GET("admin/chiTietLopTc/lopTc/{maLTC}")
     Call<ResponseObject<List<DetailCreditClass>>> getDetailByCreditClassCode(@Header("Authorization") String jwt, @Path("maLTC") String maLTC);
     // Lấy thống kê điểm 1 lớp TC theo cột
     @GET("admin/diem/thong-ke")
     Call<ResponseObject<List<ScoreStatistic>>> getScoreStatisticByCreditClassCode(@Header("Authorization") String jwt, @Query("idLopTc") String idLopTc, @Query("col") String col);
-    //Diểm
-//    @GET("admin/diem/lopTc/detail/{maLTC}")
-//    Call<ResponseObject<List<DiemSinhVien>>> getDiemByMaLTC(@Header("Authorization") String jwt, @Path("maLTC") String maLTC);
-//
-//    @POST("admin/diem/{maSV}")
-//    Call<ResponseObject<List<DiemSinhVien2>>> getDiemByMaSVMaKH(@Header("Authorization") String jwt, @Path("maSV") String maSV, @Query("maKeHoach") String maKeHoach);
-//
-//    // Thời khóa biểu
-//    @GET("admin/tkb/sinhVien/{maSV}")
-//    Call<ResponseObject<List<TKBItem>>> getTKBSVByTuan(@Header("Authorization") String jwt, @Path("maSV") String maSV, @Query("tuan") int tuan);
     // Điểm
     @POST("admin/diem/{maSV}")
     Call<ResponseObject<List<ScoreStudent>>> getScoreByStudentCode(@Header("Authorization") String jwt, @Path("maSV") String maSV, @Query("maKeHoach") String maKeHoach);
     @GET("admin/diem/lopTc/detail/{maLTC}")
     Call<ResponseObject<List<ScoreCreditClass>>> getScoreByCreditClassCode(@Header("Authorization") String jwt, @Path("maLTC") String maLTC);
-
     // Thời khóa biểu
     @GET("admin/tkb/giangVien/{maGV}")
     Call<ResponseObject<List<TimeTableItem>>> getTimeTableLecturerByWeek(@Header("Authorization") String jwt, @Path("maGV") String maGV, @Query("tuan") int tuan);

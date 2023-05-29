@@ -1,15 +1,18 @@
 package com.example.studentmanagement.activities.home;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.media.DeniedByServerException;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,21 +23,23 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.studentmanagement.R;
+import com.example.studentmanagement.activities.authen.ChangePasswordActivity;
+import com.example.studentmanagement.activities.authen.LoadingActivity;
 import com.example.studentmanagement.activities.authen.LoginActivity;
+import com.example.studentmanagement.activities.authen.LogoutActivity;
 import com.example.studentmanagement.activities.authen.UserInforActivity;
 import com.example.studentmanagement.activities.customactivity.CustomAppCompactActivity;
 import com.example.studentmanagement.activities.enrollcourse.EnrollCourseActivity;
-import com.example.studentmanagement.activities.score.MainScoreLecturerActivity;
+import com.example.studentmanagement.activities.notification.MainNotificationActivity;
 import com.example.studentmanagement.activities.score.ViewScoreStudentActivity;
-import com.example.studentmanagement.activities.statistic.MainStatisticLecturerActivity;
 import com.example.studentmanagement.activities.timetable.TimeTableActivity;
 import com.example.studentmanagement.adapter.ActivityAdapter;
 import com.example.studentmanagement.api.ApiManager;
-import com.example.studentmanagement.api.ERole;
 import com.example.studentmanagement.api.ResponseObject;
 
 import com.example.studentmanagement.models.entity.PracticalClass;
 import com.example.studentmanagement.models.entity.Student;
+import com.example.studentmanagement.models.responsebody.ScoreStudent;
 import com.example.studentmanagement.models.view.ActivityItem;
 import com.example.studentmanagement.models.view.EnrollCourseItem;
 import com.example.studentmanagement.models.view.FacultyItem;
@@ -42,16 +47,21 @@ import com.example.studentmanagement.models.view.SemesterItem;
 import com.example.studentmanagement.models.view.StudentItem;
 import com.example.studentmanagement.models.view.TimeTableItem;
 import com.example.studentmanagement.ui.CustomDialog;
+import com.example.studentmanagement.utils.CircleTransformation;
 import com.example.studentmanagement.utils.FormatterDate;
 import com.example.studentmanagement.utils.MyFuncButton;
 import com.example.studentmanagement.utils.MyPrefs;
 import com.example.studentmanagement.utils.StatusEnroll;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.squareup.picasso.Picasso;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -64,8 +74,9 @@ import retrofit2.Response;
 
 @SuppressLint("SetTextI18n")
 public class HomeStudentActivity extends CustomAppCompactActivity {
+    DatabaseReference databaseReference;
 
-    TextView tvUsername, tvUserrole, tvToday, tvThu, tvNotActivity;
+    TextView tvUsername, tvUserrole, tvToday, tvThu, tvNotActivity, tvBadgeTextView;
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
     NavigationView navigationView;
@@ -75,12 +86,15 @@ public class HomeStudentActivity extends CustomAppCompactActivity {
     Date today;
     ListView lvActivity;
     Toolbar toolbar;
-    Button btnKhoa, btnThoiKhoaBieu, btnDiem, btnDangKy;
+    Button btnThongBao, btnThoiKhoaBieu, btnDiem, btnDangKy;
+    ProgressDialog progressDialog;
 
     ActivityAdapter adapterActivity;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ProgressDialog progressDialog = new ProgressDialog(HomeStudentActivity.this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_home_student);
         setControl();
@@ -92,16 +106,14 @@ public class HomeStudentActivity extends CustomAppCompactActivity {
         setActionBarDrawerToggle();
         setUserInfor();
         setStudentInfor();
+        setNumberOfNotification();
         setTodayActivities();
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.closeDrawers();
-                } else {
-                    drawerLayout.openDrawer(GravityCompat.START);
-                }
+        toolbar.setNavigationOnClickListener(v -> {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawers();
+            } else {
+                drawerLayout.openDrawer(GravityCompat.START);
             }
         });
 
@@ -118,17 +130,22 @@ public class HomeStudentActivity extends CustomAppCompactActivity {
                         callActivityInforStudent();
                         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                         break;
+                    case R.id.nav_ChangePassword:
+                        startActivity(new Intent(HomeStudentActivity.this, ChangePasswordActivity.class));
+                        break;
                     case R.id.navLogOut:
-                        startActivity(new Intent(HomeStudentActivity.this, LoginActivity.class));
+                        startActivity(new Intent(HomeStudentActivity.this, LogoutActivity.class));
                         break;
                 }
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return true;
             }
         });
+
         btnThoiKhoaBieu.setOnClickListener(view -> callScheme(MyFuncButton.VIEW_TIMETABLE));
         btnDiem.setOnClickListener(view -> callScheme(MyFuncButton.STUDENT_SCORE));
         btnDangKy.setOnClickListener(view -> callEnrollCourse());
+        btnThongBao.setOnClickListener(view -> callCreditClass());
 //        btnKhoa.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -144,24 +161,65 @@ public class HomeStudentActivity extends CustomAppCompactActivity {
 //        });
     }
 
-    private void callEnrollCourse() {
+    private void callCreditClass() {
+        List<ScoreStudent> scoreStudentList = (List<ScoreStudent>) getIntent().getSerializableExtra("listScoreStudent");
+        Intent intent = new Intent(HomeStudentActivity.this, MainNotificationActivity.class);
+        intent.putExtra("listScoreStudent", (ArrayList<ScoreStudent>)scoreStudentList);
+        startActivity(intent);
+    }
+
+    private void setNumberOfNotification() {
+        List<ScoreStudent> scoreStudentList = (List<ScoreStudent>) getIntent().getSerializableExtra("listScoreStudent");
         MyPrefs myPrefs = MyPrefs.getInstance();
-        String jwt = myPrefs.getString(HomeStudentActivity.this, "jwt","");
+        String maSV = myPrefs.getString(HomeStudentActivity.this, "username", "");
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("creditClasses");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Optional<Integer> n = scoreStudentList.stream()
+                        .map(item -> {
+                            int sum = 0;
+                            for (DataSnapshot notification : dataSnapshot.child(item.getMaLopTc()).child("notifications").getChildren()) {
+                                if (notification.child("isRead").child(maSV).getValue() == null)
+                                    sum += 1;
+                            }
+                            return sum;
+                        }).reduce(Integer::sum);
+
+                if (n.isPresent() && n.get() != 0) {
+                    tvBadgeTextView.setVisibility(View.VISIBLE);
+                    tvBadgeTextView.setText(String.valueOf(n.get()));
+                } else tvBadgeTextView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
+    }
+
+    private void callEnrollCourse() {
+        ProgressDialog progressDialog = CustomDialog.LoadingDialog(HomeStudentActivity.this, "Loading...");
+        progressDialog.show();
+        MyPrefs myPrefs = MyPrefs.getInstance();
+        String jwt = myPrefs.getString(HomeStudentActivity.this, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
         Call<ResponseObject<List<EnrollCourseItem>>> call = apiManager.getApiService().getListEnrolledCourse(jwt, student.getMaSv());
         call.enqueue(new Callback<ResponseObject<List<EnrollCourseItem>>>() {
             @Override
             public void onResponse(@NonNull Call<ResponseObject<List<EnrollCourseItem>>> call, @NonNull Response<ResponseObject<List<EnrollCourseItem>>> response) {
-                if(response.isSuccessful()&& response.body()!=null){
+                if (response.isSuccessful() && response.body() != null) {
                     List<EnrollCourseItem> data = response.body().getRetObj();
                     Intent intent = new Intent(HomeStudentActivity.this, EnrollCourseActivity.class);
                     intent.putExtra("listEnrolledCourse", (ArrayList<EnrollCourseItem>) data.stream()
                             .peek(hp -> hp.setStatusEnroll(StatusEnroll.DALUU))
                             .collect(Collectors.toList()));
                     intent.putExtra("student", student);
+                    progressDialog.dismiss();
                     startActivity(intent);
-                }
-                else {
+                } else {
                     if (response.errorBody() != null) {
                         ResponseObject<Object> errorResponse = new Gson().fromJson(
                                 response.errorBody().charStream(),
@@ -176,6 +234,7 @@ public class HomeStudentActivity extends CustomAppCompactActivity {
                     }
                 }
             }
+
             @Override
             public void onFailure(@NonNull Call<ResponseObject<List<EnrollCourseItem>>> call, @NonNull Throwable t) {
                 new CustomDialog.BuliderOKDialog(HomeStudentActivity.this)
@@ -186,6 +245,7 @@ public class HomeStudentActivity extends CustomAppCompactActivity {
             }
         });
     }
+
     private void setStudentInfor() {
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(HomeStudentActivity.this, "jwt", "");
@@ -201,6 +261,15 @@ public class HomeStudentActivity extends CustomAppCompactActivity {
                         Toast.makeText(getApplicationContext(), "User không tồn tại!", Toast.LENGTH_LONG).show();
                     } else {
                         student = resData.getRetObj();
+                        View headerView = navigationView.getHeaderView(0);
+                        try {
+                            Picasso.get()
+                                    .load(student.getHinhAnh())
+                                    .transform(new CircleTransformation())
+                                    .placeholder(R.drawable.baseline_account_circle_24)
+                                    .error(R.drawable.baseline_account_circle_24)
+                                    .into((ImageView) headerView.findViewById(R.id.imvAvatar));
+                        } catch (Exception ignored) {}
                         getClassInfor(student.getMaLop());
                     }
                 } else {
@@ -273,9 +342,9 @@ public class HomeStudentActivity extends CustomAppCompactActivity {
     private void setActionBarDrawerToggle() {
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_open, R.string.navigation_close);
         actionBarDrawerToggle.getDrawerArrowDrawable().setColor(Color.WHITE);
-        actionBarDrawerToggle.getDrawerArrowDrawable().setGapSize(10);
-        actionBarDrawerToggle.getDrawerArrowDrawable().setBarLength(50);
-        actionBarDrawerToggle.getDrawerArrowDrawable().setBarThickness(10);
+        actionBarDrawerToggle.getDrawerArrowDrawable().setGapSize(12);
+        actionBarDrawerToggle.getDrawerArrowDrawable().setBarLength(70);
+        actionBarDrawerToggle.getDrawerArrowDrawable().setBarThickness(15);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
     }
@@ -285,7 +354,7 @@ public class HomeStudentActivity extends CustomAppCompactActivity {
         dateOfWeek = FormatterDate.getDateOfWeek(today);
         tvThu.setText(dateOfWeek == 1 ? "Chủ nhật" : "Thứ " + dateOfWeek);
         tvToday.setText(FormatterDate.convertDate2String(today, FormatterDate.dd_slash_MM_slash_yyyy));
-        callScheme(MyFuncButton.TODAY_ACTIVITY);
+        setActivities();
     }
 
     private void callScheme(MyFuncButton myFuncButton) {
@@ -299,24 +368,21 @@ public class HomeStudentActivity extends CustomAppCompactActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     ResponseObject<List<List<SemesterItem>>> resData = response.body();
                     List<SemesterItem> data = resData.getRetObj().get(0);
-                    if (myFuncButton == MyFuncButton.TODAY_ACTIVITY) setActivities(data);
-                    else {
-                        Intent intent;
-                        if (myFuncButton == MyFuncButton.VIEW_TIMETABLE) {
-                            intent = new Intent(HomeStudentActivity.this, TimeTableActivity.class);
-                        } else { // myFuncButton==MyFuncButton.VIEW_SCORE
-                            intent = new Intent(HomeStudentActivity.this, ViewScoreStudentActivity.class);
-                            StudentItem studentItem = new StudentItem();
-                            studentItem.setMaSv(student.getMaSv());
-                            studentItem.setHo(student.getHo());
-                            studentItem.setTen(student.getTen());
-                            intent.putExtra("studentItem",studentItem);
-                            intent.putExtra("scoreItemLv", new ArrayList<>());
-                            intent.putExtra("crtSemester", 0);
-                        }
-                        intent.putExtra("listSemesterItemSpn", (ArrayList<SemesterItem>) data);
-                        startActivity(intent);
+                    Intent intent;
+                    if (myFuncButton == MyFuncButton.VIEW_TIMETABLE) {
+                        intent = new Intent(HomeStudentActivity.this, TimeTableActivity.class);
+                    } else { // myFuncButton==MyFuncButton.VIEW_SCORE
+                        intent = new Intent(HomeStudentActivity.this, ViewScoreStudentActivity.class);
+                        StudentItem studentItem = new StudentItem();
+                        studentItem.setMaSv(student.getMaSv());
+                        studentItem.setHo(student.getHo());
+                        studentItem.setTen(student.getTen());
+                        intent.putExtra("studentItem", studentItem);
+                        intent.putExtra("scoreItemLv", new ArrayList<>());
+                        intent.putExtra("crtSemester", 0);
                     }
+                    intent.putExtra("listSemesterItemSpn", (ArrayList<SemesterItem>) data);
+                    startActivity(intent);
                 } else {
                     if (response.errorBody() != null) {
                         ResponseObject<Object> errorResponse = new Gson().fromJson(
@@ -344,58 +410,22 @@ public class HomeStudentActivity extends CustomAppCompactActivity {
         });
     }
 
-    private void setActivities(List<SemesterItem> data) {
-        Optional<SemesterItem> semesterItem = data.stream()
-                .filter(item -> item.getTimeStudyBegin().compareTo(today) <= 0 && item.getTimeStudyEnd().compareTo(today) >= 0)
-                .findAny();
-        if (!semesterItem.isPresent() || dateOfWeek == 1) {
+    private void setActivities() {
+        List<TimeTableItem> tableItemList = (List<TimeTableItem>) getIntent().getSerializableExtra("todayActivities");
+
+        if(tableItemList.size()==0) {
+            tvNotActivity.setText("Không có hoạt động nào");
+            return;
+        }
+
+        List<ActivityItem> todayActivity = tableItemList.get(dateOfWeek - 2).getTkbDtoList();
+        if (todayActivity == null || todayActivity.size() == 0) {
             tvNotActivity.setText("Không có hoạt động nào");
         } else {
-            int week = FormatterDate.getWeek(semesterItem.get().getTimeStudyBegin(), today);
-            MyPrefs myPrefs = MyPrefs.getInstance();
-            String jwt = myPrefs.getString(HomeStudentActivity.this, "jwt", "");
-            String code = myPrefs.getString(HomeStudentActivity.this, "username", "");
-            ApiManager apiManager = ApiManager.getInstance();
-            Call<ResponseObject<List<TimeTableItem>>> call = apiManager.getApiService().getTimeTableStudentByWeek(jwt, code, week);
-            call.enqueue(new Callback<ResponseObject<List<TimeTableItem>>>() {
-                @Override
-                public void onResponse(@NonNull Call<ResponseObject<List<TimeTableItem>>> call, @NonNull Response<ResponseObject<List<TimeTableItem>>> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        ResponseObject<List<TimeTableItem>> resData = response.body();
-                        List<ActivityItem> todayActivity = resData.getRetObj().get(dateOfWeek - 2).getTkbDtoList();
-                        if (todayActivity == null || todayActivity.size() == 0) {
-                            tvNotActivity.setText("Không có hoạt động nào");
-                        } else {
-                            tvNotActivity.setVisibility(View.GONE);
-                            adapterActivity = new ActivityAdapter(HomeStudentActivity.this, R.layout.item_activity, (ArrayList<ActivityItem>) todayActivity);
-                            lvActivity.setAdapter(adapterActivity);
-                            adapterActivity.notifyDataSetChanged();
-                        }
-                    } else {
-                        if (response.errorBody() != null) {
-                            ResponseObject<Object> errorResponse = new Gson().fromJson(
-                                    response.errorBody().charStream(),
-                                    new TypeToken<ResponseObject<Object>>() {
-                                    }.getType()
-                            );
-                            new CustomDialog.BuliderOKDialog(HomeStudentActivity.this)
-                                    .setMessage("Lỗi" + errorResponse.getMessage())
-                                    .setSuccessful(false)
-                                    .build()
-                                    .show();
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(@NonNull Call<ResponseObject<List<TimeTableItem>>> call, @NonNull Throwable t) {
-                    new CustomDialog.BuliderOKDialog(HomeStudentActivity.this)
-                            .setMessage("Lỗi kết nối! " + t.getMessage())
-                            .setSuccessful(false)
-                            .build()
-                            .show();
-                }
-            });
+            tvNotActivity.setVisibility(View.GONE);
+            adapterActivity = new ActivityAdapter(HomeStudentActivity.this, R.layout.item_activity, (ArrayList<ActivityItem>) todayActivity);
+            lvActivity.setAdapter(adapterActivity);
+            adapterActivity.notifyDataSetChanged();
         }
     }
 
@@ -470,7 +500,6 @@ public class HomeStudentActivity extends CustomAppCompactActivity {
         tvUsername = findViewById(R.id.tvUserName);
         tvUserrole = findViewById(R.id.tvUserRole);
         navigationView = findViewById(R.id.navigation_menu);
-        btnKhoa = findViewById(R.id.btnKhoa);
         btnThoiKhoaBieu = findViewById(R.id.btnTKB);
         btnDiem = findViewById(R.id.btnDiem);
         btnDangKy = findViewById(R.id.btnDKHP);
@@ -479,5 +508,8 @@ public class HomeStudentActivity extends CustomAppCompactActivity {
         drawerLayout = findViewById(R.id.drawerlayout);
         tvThu = findViewById(R.id.tvThu);
         tvNotActivity = findViewById(R.id.NotActivity);
+        tvBadgeTextView = findViewById(R.id.badgeTextView);
+        progressBar = findViewById(R.id.pgbLoading);
+        btnThongBao = findViewById(R.id.btnThongBao);
     }
 }

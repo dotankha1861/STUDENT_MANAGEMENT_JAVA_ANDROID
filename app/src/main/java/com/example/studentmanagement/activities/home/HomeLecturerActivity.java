@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,8 +23,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.studentmanagement.R;
 import com.example.studentmanagement.activities.authen.ChangePasswordActivity;
 import com.example.studentmanagement.activities.authen.LoginActivity;
+import com.example.studentmanagement.activities.authen.LogoutActivity;
 import com.example.studentmanagement.activities.authen.UserInforActivity;
 import com.example.studentmanagement.activities.customactivity.CustomAppCompactActivity;
+import com.example.studentmanagement.activities.notification.MainNotificationActivity;
 import com.example.studentmanagement.activities.score.MainScoreLecturerActivity;
 import com.example.studentmanagement.activities.statistic.MainStatisticLecturerActivity;
 import com.example.studentmanagement.activities.timetable.TimeTableActivity;
@@ -30,18 +34,22 @@ import com.example.studentmanagement.adapter.ActivityAdapter;
 import com.example.studentmanagement.api.ApiManager;
 import com.example.studentmanagement.api.ERole;
 import com.example.studentmanagement.api.ResponseObject;
+import com.example.studentmanagement.models.entity.CreditClass;
 import com.example.studentmanagement.models.entity.Lecturer;
 import com.example.studentmanagement.models.view.ActivityItem;
+import com.example.studentmanagement.models.view.CreditClassItem;
 import com.example.studentmanagement.models.view.FacultyItem;
 import com.example.studentmanagement.models.view.SemesterItem;
 import com.example.studentmanagement.models.view.TimeTableItem;
 import com.example.studentmanagement.ui.CustomDialog;
+import com.example.studentmanagement.utils.CircleTransformation;
 import com.example.studentmanagement.utils.FormatterDate;
 import com.example.studentmanagement.utils.MyFuncButton;
 import com.example.studentmanagement.utils.MyPrefs;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,6 +60,7 @@ import java.util.Optional;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 @SuppressLint("SetTextI18n")
 public class HomeLecturerActivity extends CustomAppCompactActivity {
     TextView tvUsername, tvUserrole, tvToday, tvThu, tvNotActivity;
@@ -59,7 +68,7 @@ public class HomeLecturerActivity extends CustomAppCompactActivity {
     ActionBarDrawerToggle actionBarDrawerToggle;
     NavigationView navigationView;
     Toolbar toolbar;
-    Button btnKhoa, btnThoiKhoaBieu, btnDiem, btnThongke;
+    Button btnThongBao, btnThoiKhoaBieu, btnDiem, btnThongke;
     Lecturer lecturer;
     FacultyItem facultyItem;
     int dateOfWeek;
@@ -107,7 +116,7 @@ public class HomeLecturerActivity extends CustomAppCompactActivity {
                         startActivity(new Intent(HomeLecturerActivity.this, ChangePasswordActivity.class));
                         break;
                     case R.id.navLogOut:
-                        startActivity(new Intent(HomeLecturerActivity.this, LoginActivity.class));
+                        startActivity(new Intent(HomeLecturerActivity.this, LogoutActivity.class));
                         break;
                 }
                 drawerLayout.closeDrawer(GravityCompat.START);
@@ -118,6 +127,49 @@ public class HomeLecturerActivity extends CustomAppCompactActivity {
         btnThoiKhoaBieu.setOnClickListener(view -> callScheme(MyFuncButton.VIEW_TIMETABLE));
         btnDiem.setOnClickListener(view -> callScheme(MyFuncButton.LECTURER_SCORE));
         btnThongke.setOnClickListener(view -> callScheme(MyFuncButton.LECTURER_STATISTIC));
+        btnThongBao.setOnClickListener(view -> callCreditClass());
+    }
+
+    private void callCreditClass() {
+        MyPrefs myPrefs = MyPrefs.getInstance();
+        String jwt = myPrefs.getString(HomeLecturerActivity.this, "jwt", "");
+        String lecturerCode = myPrefs.getString(HomeLecturerActivity.this, "username", "");
+        ApiManager apiManager = ApiManager.getInstance();
+        Call<ResponseObject<List<CreditClassItem>>> call = apiManager.getApiService().getAllCreditClassByLecturerCodeLatest(jwt, lecturerCode);
+        call.enqueue(new Callback<ResponseObject<List<CreditClassItem>>>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseObject<List<CreditClassItem>>> call, @NonNull Response<ResponseObject<List<CreditClassItem>>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ResponseObject<List<CreditClassItem>> resData = response.body();
+                    List<CreditClassItem> creditClassItemList = resData.getRetObj();
+                    Intent intent = new Intent(HomeLecturerActivity.this, MainNotificationActivity.class);
+                    intent.putExtra("listCreditClass", (ArrayList<CreditClassItem>) creditClassItemList);
+                    startActivity(intent);
+                } else {
+                    if (response.errorBody() != null) {
+                        ResponseObject<Object> errorResponse = new Gson().fromJson(
+                                response.errorBody().charStream(),
+                                new TypeToken<ResponseObject<Object>>() {
+                                }.getType()
+                        );
+                        new CustomDialog.BuliderOKDialog(HomeLecturerActivity.this)
+                                .setMessage("Lỗi" + errorResponse.getMessage())
+                                .setSuccessful(false)
+                                .build()
+                                .show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseObject<List<CreditClassItem>>> call, @NonNull Throwable t) {
+                new CustomDialog.BuliderOKDialog(HomeLecturerActivity.this)
+                        .setMessage("Lỗi kết nối! " + t.getMessage())
+                        .setSuccessful(false)
+                        .build()
+                        .show();
+            }
+        });
     }
 
     private void callActivityInforLectuter() {
@@ -183,6 +235,15 @@ public class HomeLecturerActivity extends CustomAppCompactActivity {
                         Toast.makeText(getApplicationContext(), "User không tồn tại!", Toast.LENGTH_LONG).show();
                     } else {
                         lecturer = resData.getRetObj();
+                        View headerView = navigationView.getHeaderView(0);
+                        try {
+                            Picasso.get()
+                                    .load(lecturer.getHinhAnh())
+                                    .transform(new CircleTransformation())
+                                    .placeholder(R.drawable.baseline_account_circle_24)
+                                    .error(R.drawable.baseline_account_circle_24)
+                                    .into((ImageView) headerView.findViewById(R.id.imvAvatar));
+                        } catch (Exception ignored) {}
                         getFacultyInfor(lecturer.getMaKhoa());
                     }
                 } else {
@@ -223,21 +284,18 @@ public class HomeLecturerActivity extends CustomAppCompactActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     ResponseObject<List<List<SemesterItem>>> resData = response.body();
                     List<SemesterItem> data = resData.getRetObj().get(0);
-                    if(myFuncButton == MyFuncButton.TODAY_ACTIVITY) setActivities(data);
-                    else{
-                        Intent intent;
-                        if(myFuncButton == MyFuncButton.VIEW_TIMETABLE) {
-                            intent = new Intent(HomeLecturerActivity.this, TimeTableActivity.class);
-                        }
-                        else if(myFuncButton == MyFuncButton.LECTURER_STATISTIC){
-                            intent = new Intent(HomeLecturerActivity.this, MainStatisticLecturerActivity.class);
-                        }
-                        else { // myFuncButton==MyFuncButton.VIEW_SCORE
-                            intent = new Intent(HomeLecturerActivity.this, MainScoreLecturerActivity.class);
-                        }
-                        intent.putExtra("listSemesterItemSpn", (ArrayList<SemesterItem>) data);
-                        startActivity(intent);
+
+                    Intent intent;
+                    if (myFuncButton == MyFuncButton.VIEW_TIMETABLE) {
+                        intent = new Intent(HomeLecturerActivity.this, TimeTableActivity.class);
+                    } else if (myFuncButton == MyFuncButton.LECTURER_STATISTIC) {
+                        intent = new Intent(HomeLecturerActivity.this, MainStatisticLecturerActivity.class);
+                    } else { // myFuncButton==MyFuncButton.VIEW_SCORE
+                        intent = new Intent(HomeLecturerActivity.this, MainScoreLecturerActivity.class);
                     }
+                    intent.putExtra("listSemesterItemSpn", (ArrayList<SemesterItem>) data);
+                    startActivity(intent);
+
                 } else {
                     if (response.errorBody() != null) {
                         ResponseObject<Object> errorResponse = new Gson().fromJson(
@@ -265,69 +323,31 @@ public class HomeLecturerActivity extends CustomAppCompactActivity {
         });
     }
 
-    private void setActivities(List<SemesterItem> data) {
-        Optional<SemesterItem> semesterItem = data.stream()
-                .filter(item -> item.getTimeStudyBegin().compareTo(today) <= 0 && item.getTimeStudyEnd().compareTo(today) >= 0 )
-                .findAny();
-        if (!semesterItem.isPresent()||dateOfWeek==1) {
-            tvNotActivity.setText("Không có hoạt động nào");
-        }
-        else {
-            int week = FormatterDate.getWeek(semesterItem.get().getTimeStudyBegin(), today);
-            MyPrefs myPrefs = MyPrefs.getInstance();
-            String jwt = myPrefs.getString(HomeLecturerActivity.this, "jwt", "");
-            String code = myPrefs.getString(HomeLecturerActivity.this, "username", "");
-            ApiManager apiManager = ApiManager.getInstance();
-            Call<ResponseObject<List<TimeTableItem>>> call = apiManager.getApiService().getTimeTableLecturerByWeek(jwt, code, week);
-            call.enqueue(new Callback<ResponseObject<List<TimeTableItem>>>() {
-                @Override
-                public void onResponse(@NonNull Call<ResponseObject<List<TimeTableItem>>> call, @NonNull Response<ResponseObject<List<TimeTableItem>>> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        ResponseObject<List<TimeTableItem>> resData = response.body();
-                        List<ActivityItem> todayActivity = resData.getRetObj().get(dateOfWeek-2).getTkbDtoList();
-                        if(todayActivity==null||todayActivity.size()==0){
-                            tvNotActivity.setText("Không có hoạt động nào");
-                        }
-                        else{
-                            tvNotActivity.setVisibility(View.GONE);
-                            adapterActivity = new ActivityAdapter(HomeLecturerActivity.this, R.layout.item_activity, (ArrayList<ActivityItem>) todayActivity);
-                            lvActivity.setAdapter(adapterActivity);
-                            adapterActivity.notifyDataSetChanged();
-                        }
-                    } else {
-                        if (response.errorBody() != null) {
-                            ResponseObject<Object> errorResponse = new Gson().fromJson(
-                                    response.errorBody().charStream(),
-                                    new TypeToken<ResponseObject<Object>>() {
-                                    }.getType()
-                            );
-                            new CustomDialog.BuliderOKDialog(HomeLecturerActivity.this)
-                                    .setMessage("Lỗi" + errorResponse.getMessage())
-                                    .setSuccessful(false)
-                                    .build()
-                                    .show();
-                        }
-                    }
-                }
+    private void setActivities() {
+        List<TimeTableItem> tableItemList = (List<TimeTableItem>) getIntent().getSerializableExtra("todayActivities");
 
-                @Override
-                public void onFailure(@NonNull Call<ResponseObject<List<TimeTableItem>>> call, @NonNull Throwable t) {
-                    new CustomDialog.BuliderOKDialog(HomeLecturerActivity.this)
-                            .setMessage("Lỗi kết nối! " + t.getMessage())
-                            .setSuccessful(false)
-                            .build()
-                            .show();
-                }
-            });
+        if(tableItemList.size()==0) {
+            tvNotActivity.setText("Không có hoạt động nào");
+            return;
+        }
+
+        List<ActivityItem> todayActivity = tableItemList.get(dateOfWeek - 2).getTkbDtoList();
+        if (todayActivity == null || todayActivity.size() == 0) {
+            tvNotActivity.setText("Không có hoạt động nào");
+        } else {
+            tvNotActivity.setVisibility(View.GONE);
+            adapterActivity = new ActivityAdapter(HomeLecturerActivity.this, R.layout.item_activity, (ArrayList<ActivityItem>) todayActivity);
+            lvActivity.setAdapter(adapterActivity);
+            adapterActivity.notifyDataSetChanged();
         }
     }
 
     private void setTodayActivities() {
         today = new Date(System.currentTimeMillis());
         dateOfWeek = FormatterDate.getDateOfWeek(today);
-        tvThu.setText(dateOfWeek ==1 ?"Chủ nhật":"Thứ " + dateOfWeek);
+        tvThu.setText(dateOfWeek == 1 ? "Chủ nhật" : "Thứ " + dateOfWeek);
         tvToday.setText(FormatterDate.convertDate2String(today, FormatterDate.dd_slash_MM_slash_yyyy));
-        callScheme(MyFuncButton.TODAY_ACTIVITY);
+        setActivities();
     }
 
     private void setUserInfor() {
@@ -344,12 +364,13 @@ public class HomeLecturerActivity extends CustomAppCompactActivity {
     private void setActionBarDrawerToggle() {
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_open, R.string.navigation_close);
         actionBarDrawerToggle.getDrawerArrowDrawable().setColor(Color.WHITE);
-        actionBarDrawerToggle.getDrawerArrowDrawable().setGapSize(10);
-        actionBarDrawerToggle.getDrawerArrowDrawable().setBarLength(50);
-        actionBarDrawerToggle.getDrawerArrowDrawable().setBarThickness(10);
+        actionBarDrawerToggle.getDrawerArrowDrawable().setGapSize(12);
+        actionBarDrawerToggle.getDrawerArrowDrawable().setBarLength(70);
+        actionBarDrawerToggle.getDrawerArrowDrawable().setBarThickness(15);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
     }
+
     public void onBackPressed() {
         new CustomDialog.Builder(this)
                 .setImage(R.drawable.icon_question)
@@ -365,7 +386,7 @@ public class HomeLecturerActivity extends CustomAppCompactActivity {
         tvUsername = findViewById(R.id.tvUserName);
         tvUserrole = findViewById(R.id.tvUserRole);
         navigationView = findViewById(R.id.navigation_menu);
-        btnKhoa = findViewById(R.id.btnKhoa);
+        btnThongBao = findViewById(R.id.btnThongBao);
         btnThoiKhoaBieu = findViewById(R.id.btnTKB);
         btnDiem = findViewById(R.id.btnDiem);
         btnThongke = findViewById(R.id.btnThongKe);
@@ -373,6 +394,6 @@ public class HomeLecturerActivity extends CustomAppCompactActivity {
         tvThu = findViewById(R.id.tvThu);
         drawerLayout = findViewById(R.id.drawerlayout);
         toolbar = findViewById(R.id.toolbar);
-        tvNotActivity =findViewById(R.id.NotActivity);
+        tvNotActivity = findViewById(R.id.NotActivity);
     }
 }

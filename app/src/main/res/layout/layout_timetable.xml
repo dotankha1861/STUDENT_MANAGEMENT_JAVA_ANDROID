@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -29,15 +28,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/bar_control">
+        android:orientation="vertical">
         <TextView
+            android:textAllCaps="true"
+            android:layout_marginTop="15dp"
             android:id="@+id/tvHK"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="10dp"
-            android:textSize="23sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="@color/primary_color"
             android:text="Học kì 1 - (2023-2024)"/>
@@ -45,8 +45,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:paddingVertical="15dp"
+            android:paddingHorizontal="10dp"
+            android:layout_marginBottom="10dp"
+
             android:gravity="left|center_vertical"
             android:orientation="horizontal">
 
@@ -54,18 +55,18 @@
                 android:layout_width="260dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/spinner_shadow"
+                android:background="@drawable/bg_item_lightgray"
                 android:gravity="center"
                 android:orientation="horizontal">
 
                 <Spinner
                     android:id="@+id/spnListTuan"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="60dp"
                     android:dropDownWidth="match_parent"
                     android:overlapAnchor="false"
                     android:paddingVertical="10dp"
-                    android:spinnerMode="dropdown" />
+                    android:spinnerMode="dialog" />
 
             </LinearLayout>
 

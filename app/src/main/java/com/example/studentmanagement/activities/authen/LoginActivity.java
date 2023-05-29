@@ -2,6 +2,7 @@ package com.example.studentmanagement.activities.authen;
 
 import android.annotation.SuppressLint;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -22,11 +23,13 @@ import com.example.studentmanagement.activities.home.HomeStudentActivity;
 import com.example.studentmanagement.api.ApiManager;
 import com.example.studentmanagement.api.ERole;
 import com.example.studentmanagement.api.ResponseObject;
+import com.example.studentmanagement.firebase.MyFirebaseMessagingService;
 import com.example.studentmanagement.models.requestbody.RequestBodyLogin;
 import com.example.studentmanagement.models.responsebody.ResponseBodyLogin;
 import com.example.studentmanagement.ui.CustomDialog;
 import com.example.studentmanagement.ui.TextWatcherWrapper;
 import com.example.studentmanagement.utils.MyPrefs;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -139,11 +142,7 @@ public class LoginActivity extends AppCompatActivity {
                         myPrefs.putString(getApplicationContext(), "idLogin", data.getUserDetail().getIdLogin());
                         myPrefs.putString(getApplicationContext(), "role", role.toString());
 
-                        Intent intent;
-                        if(role == ERole.ADMIN) intent = new Intent(getApplicationContext(), HomeAdminActivity.class);
-                        else if(role == ERole.GIANGVIEN) intent = new Intent(getApplicationContext(), HomeLecturerActivity.class);
-                        else intent = new Intent(getApplicationContext(), HomeStudentActivity.class);
-                        startActivity(intent);
+                        startActivity(new Intent(LoginActivity.this, LoadingActivity.class));
                     }
                 } else {
                     if (response.errorBody() != null) {

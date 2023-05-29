@@ -24,11 +24,11 @@ public class ScoreStudentAdapter extends ArrayAdapter implements Filterable {
     int resource;
     ArrayList<ScoreStudent> data_view;
 
-    public ScoreStudentAdapter(Context context, int resource, ArrayList<ScoreStudent> data) {
-        super(context, resource, data);
+    public ScoreStudentAdapter(Context context, int resource) {
+        super(context, resource);
         this.context = context;
         this.resource = resource;
-        this.data_view = data;
+        this.data_view = new ArrayList<>();
     }
 
     @Override

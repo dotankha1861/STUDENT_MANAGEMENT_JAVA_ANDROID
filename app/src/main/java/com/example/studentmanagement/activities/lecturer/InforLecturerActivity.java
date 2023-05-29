@@ -15,7 +15,7 @@ import com.example.studentmanagement.utils.FormatterDate;
 @SuppressLint("SetTextI18n")
 public class InforLecturerActivity extends CustomAppCompactActivity {
     Toolbar toolbar;
-    TextView tvMaGV, tvHoTen, tvGioiTinh, tvSDT, tvEmail, tvKhoa,tvNgaySinh, tvVaiTro;
+    TextView tvMaGV, tvHoTen, tvGioiTinh, tvSDT, tvEmail, tvKhoa,tvNgaySinh;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +53,6 @@ public class InforLecturerActivity extends CustomAppCompactActivity {
         tvKhoa = findViewById(R.id.tvKhoa);
         tvNgaySinh = findViewById(R.id.tvNgaySinh);
         tvGioiTinh = findViewById(R.id.tvGT);
-        tvVaiTro=findViewById(R.id.tvVaiTro);
     }
 
 }

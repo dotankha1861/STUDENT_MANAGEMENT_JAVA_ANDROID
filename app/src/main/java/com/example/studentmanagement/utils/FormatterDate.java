@@ -15,6 +15,8 @@ public class FormatterDate {
     public static long MILLIS_OF_DAY = 86_400_000L;
     public static String dd_slash_MM_slash_yyyy = "dd/MM/yyyy";
 
+    public static String TIME_DATE = "hh:mm:ss dd/MM/yyyy";
+
     public static String yyyy_dash_MM_dash_dd = "yyyy-MM-dd";
     public static String ISO_8601 = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
     public static String convertDate2String(Date date, String pattern){
@@ -69,7 +71,7 @@ public class FormatterDate {
             try {
                 return formatter2.format(Objects.requireNonNull(formatter.parse(this.dateString)));
             } catch (ParseException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException();
             }
         }
     }

@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -21,6 +22,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.studentmanagement.R;
 import com.example.studentmanagement.activities.authen.ChangePasswordActivity;
+import com.example.studentmanagement.activities.authen.LogoutActivity;
 import com.example.studentmanagement.activities.course.MainCourseActivity;
 import com.example.studentmanagement.activities.creditclass.MainCreditClassActivity;
 import com.example.studentmanagement.activities.faculty.MainFacultyActivity;
@@ -37,11 +39,13 @@ import com.example.studentmanagement.models.view.FacultyItem;
 import com.example.studentmanagement.models.view.PracticalClassItem;
 import com.example.studentmanagement.models.view.SemesterItem;
 import com.example.studentmanagement.ui.CustomDialog;
+import com.example.studentmanagement.utils.CircleTransformation;
 import com.example.studentmanagement.utils.MyFuncButton;
 import com.example.studentmanagement.utils.MyPrefs;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +92,7 @@ public class HomeAdminActivity extends CustomAppCompactActivity {
                     startActivity(new Intent(HomeAdminActivity.this, ChangePasswordActivity.class));
                     break;
                 case R.id.navLogOut:
-                    startActivity(new Intent(HomeAdminActivity.this, LoginActivity.class));
+                    startActivity(new Intent(HomeAdminActivity.this, LogoutActivity.class));
                     break;
             }
             drawerLayout.closeDrawer(GravityCompat.START);
@@ -257,20 +261,29 @@ public class HomeAdminActivity extends CustomAppCompactActivity {
         View viewHeader = navigationView.getHeaderView(0);
         TextView tvUN_nav = viewHeader.findViewById(R.id.tvUserName);
         TextView tvEmail_nav = viewHeader.findViewById(R.id.tvEmail);
+        ImageView imageView_nav = viewHeader.findViewById(R.id.imvAvatar);
 
         MyPrefs myPrefs = MyPrefs.getInstance();
         tvUsername.setText(myPrefs.getString(getApplicationContext(), "username", ""));
         tvUserrole.setText(myPrefs.getString(getApplicationContext(), "role", ""));
         tvUN_nav.setText(myPrefs.getString(getApplicationContext(), "username", ""));
         tvEmail_nav.setText(myPrefs.getString(getApplicationContext(), "email", ""));
+        try {
+            Picasso.get()
+                    .load("https://firebasestorage.googleapis.com/v0/b/studentmanagement-5a665.appspot.com/o/images%2Fadmin.jpg?alt=media&token=9d06a93e-8d47-4802-bc4a-9f9c0399dbc1")
+                    .transform(new CircleTransformation())
+                    .placeholder(R.drawable.baseline_account_circle_24)
+                    .error(R.drawable.baseline_account_circle_24)
+                    .into(imageView_nav);
+        } catch (Exception ignored) {}
     }
 
     private void setActionBarDrawerToggle() {
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_open, R.string.navigation_close);
         actionBarDrawerToggle.getDrawerArrowDrawable().setColor(Color.WHITE);
-        actionBarDrawerToggle.getDrawerArrowDrawable().setGapSize(10);
-        actionBarDrawerToggle.getDrawerArrowDrawable().setBarLength(50);
-        actionBarDrawerToggle.getDrawerArrowDrawable().setBarThickness(10);
+        actionBarDrawerToggle.getDrawerArrowDrawable().setGapSize(12);
+        actionBarDrawerToggle.getDrawerArrowDrawable().setBarLength(70);
+        actionBarDrawerToggle.getDrawerArrowDrawable().setBarThickness(15);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
     }

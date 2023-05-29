@@ -1,6 +1,8 @@
 package com.example.studentmanagement.models.view;
 
-public class ActivityItem {
+import java.io.Serializable;
+
+public class ActivityItem implements Serializable {
     private String tenMh;
     private int tiet;
     private int soTiet;

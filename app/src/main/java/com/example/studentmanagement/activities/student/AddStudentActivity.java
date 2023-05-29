@@ -3,6 +3,7 @@ package com.example.studentmanagement.activities.student;
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -130,6 +131,17 @@ public class AddStudentActivity extends CustomAppCompactActivity {
             if (radNu.isChecked() && !isSetImage)
                 imvAvatar.setImageResource(R.drawable.icon_fornt_woman);
         });
+        spnStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                crtStatus = i;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
         pickImageLauncher = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
                 uri -> {
@@ -140,6 +152,7 @@ public class AddStudentActivity extends CustomAppCompactActivity {
                                 .into(imvAvatar);
                         isSetImage = true;
                         uriPickedImage = uri;
+                        imvAvatar.requestFocus();
                         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                     }
                 }
@@ -239,11 +252,18 @@ public class AddStudentActivity extends CustomAppCompactActivity {
         student.setDiaChi(diaChi);
         student.setSdt(sdt);
         student.setEmail(email);
-        student.setNgaySinh(new FormatterDate.Fomatter(ngaySinh)
-                .from(FormatterDate.dd_slash_MM_slash_yyyy)
-                .to(FormatterDate.yyyy_dash_MM_dash_dd)
-                .format()
-        );
+        try {
+            student.setNgaySinh(new FormatterDate.Fomatter(ngaySinh)
+                    .from(FormatterDate.dd_slash_MM_slash_yyyy)
+                    .to(FormatterDate.yyyy_dash_MM_dash_dd)
+                    .format()
+            );
+        }
+        catch (RuntimeException e){
+            edtNgaySinh.setError("Ngày sinh phải định dạng dd/MM/yyyy");
+            edtNgaySinh.requestFocus();
+            return;
+        }
         student.setTrangThai(crtStatus);
         student.setMaLop(getIntent().getStringExtra("crtPracticalClassCode"));
         if (uriPickedImage != null) {
@@ -266,6 +286,8 @@ public class AddStudentActivity extends CustomAppCompactActivity {
 
 
     private void callAddStudent(Student student) {
+        ProgressDialog progressDialog = CustomDialog.LoadingDialog(AddStudentActivity.this, "Loading...");
+        progressDialog.show();
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(AddStudentActivity.this, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
@@ -275,6 +297,7 @@ public class AddStudentActivity extends CustomAppCompactActivity {
             public void onResponse(@NonNull Call<ResponseObject<Student>> call, @NonNull Response<ResponseObject<Student>> response) {
                 if (response.isSuccessful()&&response.body()!=null) {
                     ResponseObject<Student> resData= response.body();
+                    progressDialog.dismiss();
                     if (resData.getStatus().equals("error")) {
                         new CustomDialog.BuliderOKDialog(AddStudentActivity.this)
                                 .setMessage(resData.getMessage())

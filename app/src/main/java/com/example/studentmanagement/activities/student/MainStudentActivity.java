@@ -1,6 +1,7 @@
 package com.example.studentmanagement.activities.student;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -186,6 +187,8 @@ public class MainStudentActivity extends CustomAppCompactActivitySearchAdd {
     }
 
     private void setListView() {
+        ProgressDialog progressDialog = CustomDialog.LoadingDialog(MainStudentActivity.this,"Loading...");
+        progressDialog.show();
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(MainStudentActivity.this, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
@@ -195,6 +198,7 @@ public class MainStudentActivity extends CustomAppCompactActivitySearchAdd {
             public void onResponse(@NonNull Call<ResponseObject<List<StudentItem>>> call, @NonNull Response<ResponseObject<List<StudentItem>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     ResponseObject<List<StudentItem>> resData = response.body();
+                    progressDialog.dismiss();
                     studentAdapter.clear();
                     if(resData.getRetObj()==null || resData.getRetObj().size()==0)
                         Toast.makeText(MainStudentActivity.this, "Lớp chưa có sinh viên nào", Toast.LENGTH_LONG).show();

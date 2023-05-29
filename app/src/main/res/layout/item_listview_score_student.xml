@@ -68,7 +68,7 @@
             android:paddingBottom="10dp"
             android:textColor="#000"
             android:textSize="15sp"
-            android:textStyle="bold" />
+            android:textStyle="italic" />
     </LinearLayout>
 
     <LinearLayout
@@ -96,7 +96,7 @@
             android:text="20"
             android:textColor="#000"
             android:textSize="15sp"
-            android:textStyle="bold" />
+            android:textStyle="italic" />
     </LinearLayout>
 
 
@@ -125,7 +125,7 @@
             android:text="70"
             android:textColor="#000"
             android:textSize="15sp"
-            android:textStyle="bold" />
+            android:textStyle="italic" />
     </LinearLayout>
 
     <TextView

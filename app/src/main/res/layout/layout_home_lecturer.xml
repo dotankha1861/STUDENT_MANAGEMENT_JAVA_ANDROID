@@ -22,15 +22,12 @@
             app:theme="@style/BaseTheme"
             app:titleTextColor="@color/white">
             <LinearLayout
+                android:paddingVertical="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/baseline_account_circle_24" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -78,15 +75,15 @@
                     android:paddingHorizontal="35dp">
                     <Button
                         android:drawableRight="@drawable/baseline_arrow_forward_ios_24"
-                        android:id="@+id/btnKhoa"
+                        android:id="@+id/btnThongBao"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/main_icon"
+                        android:background="@drawable/bg_item_lightgray"
                         android:drawableLeft="@drawable/khoa_icon"
                         android:drawablePadding="5dp"
                         android:paddingVertical="8dp"
                         android:paddingHorizontal="15dp"
-                        android:text="KHOA"
+                        android:text="THÔNG BÁO"
                         android:textColor="@color/primary_color"
                         android:textSize="17sp"
                         android:layout_marginBottom="10dp"/>
@@ -96,7 +93,7 @@
                         android:layout_marginBottom="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/main_icon"
+                        android:background="@drawable/bg_item_lightgray"
                         android:drawableLeft="@drawable/tkb_icon"
                         android:drawablePadding="5dp"
                         android:paddingVertical="8dp"
@@ -110,7 +107,7 @@
                         android:layout_marginBottom="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/main_icon"
+                        android:background="@drawable/bg_item_lightgray"
                         android:drawableLeft="@drawable/diem_icon"
                         android:drawablePadding="5dp"
                         android:paddingVertical="8dp"
@@ -125,7 +122,7 @@
                         android:layout_marginBottom="7dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/main_icon"
+                        android:background="@drawable/bg_item_lightgray"
                         android:drawableLeft="@drawable/thongke_icon"
                         android:drawablePadding="5dp"
                         android:paddingVertical="8dp"

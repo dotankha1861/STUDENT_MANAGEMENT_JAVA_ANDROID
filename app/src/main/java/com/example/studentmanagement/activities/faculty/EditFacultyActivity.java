@@ -77,16 +77,6 @@ public class EditFacultyActivity extends CustomAppCompactActivity {
             error = true;
         }
 
-        if(TextUtils.isEmpty(maKhoa)){
-            edtMaKhoa.setError("Vui lòng nhập mã khoa");
-            edtMaKhoa.requestFocus();
-            error = true;
-        }
-        else if(maKhoa.length()<3){
-            edtMaKhoa.setError("Mã khoa phải có tối thiểu 3 kí tự");
-            edtMaKhoa.requestFocus();
-            error = true;
-        }
 
         if(error){
             error=false;

@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@drawable/bar_control">
+        android:background="@drawable/spinner_shadow">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/spinner_shadow"
+                android:background="@drawable/bg_item_lightgray"
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:layout_weight="1">
@@ -67,7 +67,6 @@
         android:id="@+id/lvDshp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
         android:divider="@color/white"
         android:dividerHeight="10dp" />
 

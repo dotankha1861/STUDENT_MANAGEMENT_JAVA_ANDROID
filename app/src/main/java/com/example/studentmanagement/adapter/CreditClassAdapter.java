@@ -1,6 +1,7 @@
 package com.example.studentmanagement.adapter;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -140,7 +141,7 @@ public class CreditClassAdapter extends ArrayAdapter implements Filterable {
         } else viewHolder = (ViewHolder) convertView.getTag();
 
         CreditClassItem creditClassItem = data_view.get(position);
-        viewHolder.tvMaLTC.setText("Mã LTC: " + creditClassItem.getMaLopTc());
+        viewHolder.tvMaLTC.setText("Lớp tín chỉ: " + creditClassItem.getMaLopTc());
         viewHolder.tvTenHP.setText("Tên HP: " + creditClassItem.getTenMh());
         viewHolder.tvTenGV.setText("Tên GV: " + creditClassItem.getTenGv());
 
@@ -194,6 +195,8 @@ public class CreditClassAdapter extends ArrayAdapter implements Filterable {
     }
 
     private void callDetailCreditClass(CreditClass creditClass, MyFuncButton myFuncButton) {
+        ProgressDialog progressDialog  = CustomDialog.LoadingDialog(context, "Loading...");
+        progressDialog.show();
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(context, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
@@ -208,11 +211,8 @@ public class CreditClassAdapter extends ArrayAdapter implements Filterable {
                         intent = new Intent(context, InforCreditClassActivity.class);
                         intent.putExtra("detailCreditClass", (ArrayList<DetailCreditClass>)data);
                         intent.putExtra("creditClass", creditClass);
+                        progressDialog.dismiss();
                         context.startActivity(intent);
-                    } else {
-//                        intent = new Intent(context, EditStudentActivity.class);
-//                        intent.putExtra("student", data);
-//                        mUpdateSinhVienLauncher.launch(intent);
                     }
                 } else {
                     if (response.errorBody() != null) {
@@ -221,6 +221,7 @@ public class CreditClassAdapter extends ArrayAdapter implements Filterable {
                                 new TypeToken<ResponseObject<Object>>() {
                                 }.getType()
                         );
+                        progressDialog.dismiss();
                         new CustomDialog.BuliderOKDialog(context)
                                 .setMessage("Lỗi" + errorResponse.getMessage())
                                 .setSuccessful(false)
@@ -232,6 +233,7 @@ public class CreditClassAdapter extends ArrayAdapter implements Filterable {
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<List<DetailCreditClass>>> call, @NonNull Throwable t) {
+                progressDialog.dismiss();
                 new CustomDialog.BuliderOKDialog(context)
                         .setMessage("Lỗi kết nối!" + t.getMessage())
                         .setSuccessful(false)

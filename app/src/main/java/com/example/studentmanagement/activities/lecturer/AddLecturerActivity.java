@@ -1,6 +1,7 @@
 package com.example.studentmanagement.activities.lecturer;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -107,6 +108,7 @@ public class AddLecturerActivity extends CustomAppCompactActivity {
                                 .into(imvAvatar);
                         isSetImage = true;
                         uriPickedImage = uri;
+                        imvAvatar.requestFocus();
                         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                     }
                 }
@@ -174,11 +176,18 @@ public class AddLecturerActivity extends CustomAppCompactActivity {
         lecturer.setPhai(isNam ? "Nam" : "Nữ");
         lecturer.setSdt(sdt);
         lecturer.setEmail(email);
-        lecturer.setNgaySinh(new FormatterDate.Fomatter(ngaysinh)
-                .from(FormatterDate.dd_slash_MM_slash_yyyy)
-                .to(FormatterDate.yyyy_dash_MM_dash_dd)
-                .format()
-        );
+        try {
+            lecturer.setNgaySinh(new FormatterDate.Fomatter(ngaysinh)
+                    .from(FormatterDate.dd_slash_MM_slash_yyyy)
+                    .to(FormatterDate.yyyy_dash_MM_dash_dd)
+                    .format()
+            );
+        }
+        catch (RuntimeException e){
+            edtNgaySinh.setError("Ngày sinh phải định dạng dd/MM/yyyy");
+            edtNgaySinh.requestFocus();
+            return;
+        }
 
         lecturer.setMaKhoa(getIntent().getStringExtra("crtFacultyCode"));
         if (uriPickedImage != null) {
@@ -201,6 +210,8 @@ public class AddLecturerActivity extends CustomAppCompactActivity {
 
 
     private void callAddLecturer(Lecturer lecturer) {
+        ProgressDialog progressDialog = CustomDialog.LoadingDialog(AddLecturerActivity.this,"Loading...");
+        progressDialog.show();
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(AddLecturerActivity.this, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
@@ -210,6 +221,7 @@ public class AddLecturerActivity extends CustomAppCompactActivity {
             public void onResponse(@NonNull Call<ResponseObject<Lecturer>> call, @NonNull Response<ResponseObject<Lecturer>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     ResponseObject<Lecturer> resData = response.body();
+                    progressDialog.dismiss();
                     if (resData.getStatus().equals("error")) {
                         new CustomDialog.BuliderOKDialog(AddLecturerActivity.this)
                                 .setMessage(resData.getMessage())

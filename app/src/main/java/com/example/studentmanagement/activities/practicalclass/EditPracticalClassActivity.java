@@ -55,6 +55,7 @@ public class EditPracticalClassActivity extends CustomAppCompactActivity {
         PracticalClass practicalClass = (PracticalClass) getIntent().getSerializableExtra("practicalClass");
         edtTenLop.setText(practicalClass.getTenLop());
         edtMaLop.setText(practicalClass.getMaLop());
+        edtMaLop.setEnabled(false);
     }
 
     private void customToolbar() {
@@ -68,6 +69,11 @@ public class EditPracticalClassActivity extends CustomAppCompactActivity {
 
         if (TextUtils.isEmpty(tenLop)) {
             edtTenLop.setError("Vui lòng nhập tên lớp");
+            edtTenLop.requestFocus();
+            error = true;
+        }
+        else if(tenLop.length()<4){
+            edtTenLop.setError("Tên lớp phải có tối thiểu 4 kí tự");
             edtTenLop.requestFocus();
             error = true;
         }

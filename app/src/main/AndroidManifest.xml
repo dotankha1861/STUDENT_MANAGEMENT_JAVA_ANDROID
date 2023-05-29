@@ -71,8 +71,6 @@
             android:exported="true"/>
         <activity android:name=".activities.creditclass.MainCreditClassActivity"
             android:exported="true"/>
-        <activity android:name=".activities.creditclass.AddCreditClassClassActicity"
-            android:exported="true"/>
         <activity android:name=".activities.creditclass.InforCreditClassActivity"
             android:exported="true"/>
         <activity android:name=".activities.home.HomeLecturerActivity"
@@ -91,8 +89,16 @@
             android:exported="true"/>
         <activity android:name=".activities.enrollcourse.ListChoseCourseActivity"
             android:exported="true"/>
+        <activity android:name=".activities.notification.MainNotificationActivity"
+            android:exported="true"/>
+        <activity android:name=".activities.notification.ViewNotificationActivity"
+            android:exported="true"/>
+        <activity android:name=".activities.authen.LoadingActivity"
+            android:exported="true"/>
+        <activity android:name=".activities.authen.LogoutActivity"
+            android:exported="true"/>
         <service
-            android:name=".MyFirebaseMessagingService"
+            android:name=".firebase.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

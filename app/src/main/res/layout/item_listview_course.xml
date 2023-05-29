@@ -9,7 +9,7 @@
         android:paddingHorizontal="20dp"
         android:paddingVertical="12dp"
         android:orientation="vertical"
-        android:background="@drawable/main_icon"
+        android:background="@drawable/bg_item_lightgray"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout

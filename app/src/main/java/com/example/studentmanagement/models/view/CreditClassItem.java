@@ -63,10 +63,14 @@ public class CreditClassItem implements Serializable {
         this.tenGv = tenGv;
     }
 
-    @NonNull
     @Override
     public String toString() {
-        return this.tenMh + " " + this.getMaLopTc() + " " + this.tenGv;
+        return "CreditClassItem{" +
+                "id='" + id + '\'' +
+                ", maLopTc='" + maLopTc + '\'' +
+                ", tenMh='" + tenMh + '\'' +
+                ", maMh='" + maMh + '\'' +
+                ", tenGv='" + tenGv + '\'' +
+                '}';
     }
-
 }

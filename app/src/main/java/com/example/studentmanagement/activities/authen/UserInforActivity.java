@@ -6,6 +6,8 @@ import android.content.Intent;
 
 import android.os.Bundle;
 import android.widget.ImageButton;
+import android.widget.ImageSwitcher;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
@@ -15,15 +17,17 @@ import com.example.studentmanagement.activities.customactivity.CustomAppCompactA
 import com.example.studentmanagement.api.ERole;
 import com.example.studentmanagement.models.entity.Lecturer;
 import com.example.studentmanagement.models.entity.Student;
+import com.example.studentmanagement.utils.CircleTransformation;
 import com.example.studentmanagement.utils.FormatterDate;
 import com.example.studentmanagement.utils.MyPrefs;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 
 @SuppressLint("SetTextI18n")
 public class UserInforActivity extends CustomAppCompactActivity {
     TextView tvUsername, tvUserRole, tvIDMa, tvNgaySinh, tvGioiTinh, tvSDT, tvEmail, tvKhoa, tvTypeMa;
-    ImageButton btnBack;
+    ImageView imvAvatar;
     Toolbar toolbar;
 
     @Override
@@ -46,11 +50,20 @@ public class UserInforActivity extends CustomAppCompactActivity {
         String role = myPrefs.getString(UserInforActivity.this, "role", "");
         String userFullNane = myPrefs.getString(UserInforActivity.this, "userFullName", "");
         Intent intent = getIntent();
+
         tvUsername.setText(userFullNane);
         tvUserRole.setText(role);
         if (ERole.valueOf(role) == ERole.GIANGVIEN) {
             tvTypeMa.setText("Mã giảng viên: ");
             Lecturer lecturer = (Lecturer) intent.getSerializableExtra("lecturer");
+            try {
+                Picasso.get()
+                        .load(lecturer.getHinhAnh())
+                        .transform(new CircleTransformation())
+                        .placeholder(R.drawable.baseline_account_circle_24)
+                        .error(R.drawable.baseline_account_circle_24)
+                        .into(imvAvatar);
+            } catch (Exception ignored) {}
             tvIDMa.setText(lecturer.getMaGv());
             tvNgaySinh.setText(new FormatterDate.Fomatter(lecturer.getNgaySinh())
                     .from(FormatterDate.yyyy_dash_MM_dash_dd)
@@ -65,6 +78,14 @@ public class UserInforActivity extends CustomAppCompactActivity {
         else if(ERole.valueOf(role)==ERole.SINHVIEN){
             tvTypeMa.setText("Mã sinh viên:");
             Student student = (Student) intent.getSerializableExtra("student");
+            try {
+                Picasso.get()
+                        .load(student.getHinhAnh())
+                        .transform(new CircleTransformation())
+                        .placeholder(R.drawable.baseline_account_circle_24)
+                        .error(R.drawable.baseline_account_circle_24)
+                        .into(imvAvatar);
+            } catch (Exception ignored) {}
             tvIDMa.setText(student.getMaSv());
             tvNgaySinh.setText(new FormatterDate.Fomatter(student.getNgaySinh())
                     .from(FormatterDate.yyyy_dash_MM_dash_dd)
@@ -75,6 +96,7 @@ public class UserInforActivity extends CustomAppCompactActivity {
             tvSDT.setText(student.getSdt());
             tvEmail.setText(student.getEmail());
             tvKhoa.setText(intent.getStringExtra("facultyName"));
+
         }
     }
 
@@ -90,6 +112,7 @@ public class UserInforActivity extends CustomAppCompactActivity {
         tvKhoa = findViewById(R.id.tvUserKhoa);
         toolbar = findViewById(R.id.toolbar);
         tvTypeMa = findViewById(R.id.tvTypeMa);
+        imvAvatar = findViewById(R.id.imvAvatar);
     }
 
     public void onBackPressed() {

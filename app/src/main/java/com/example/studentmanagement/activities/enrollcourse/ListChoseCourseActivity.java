@@ -1,5 +1,6 @@
 package com.example.studentmanagement.activities.enrollcourse;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -101,6 +102,8 @@ public class ListChoseCourseActivity extends CustomAppCompactActivitySearch {
     }
 
     private void hanldeHuyDK() {
+        ProgressDialog progressDialog = CustomDialog.LoadingDialog(ListChoseCourseActivity.this, "Loading...");
+        progressDialog.show();
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(ListChoseCourseActivity.this, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
@@ -119,12 +122,13 @@ public class ListChoseCourseActivity extends CustomAppCompactActivitySearch {
                     List<String> listMaLTC = response.body().getRetObj().getMaLopTcList();
 
                     listChoseCourse = listChoseCourse.stream()
-                            .filter(item -> !listMaLTC.contains(item.getMaLopTc()))
+                            .filter(item -> !listMaLTC.contains(item.getMaLopTc()) &&item.getStatusEnroll()==StatusEnroll.DALUU)
                             .peek(item -> item.setChecked(false))
                             .collect(Collectors.toList());
 
                     creditClassForChoseCourseAdapter.clear();
                     creditClassForChoseCourseAdapter.addAll(listChoseCourse);
+                    progressDialog.dismiss();
                     creditClassForChoseCourseAdapter.notifyDataSetChanged();
 
                     new CustomDialog.BuliderOKDialog(ListChoseCourseActivity.this)
@@ -139,6 +143,7 @@ public class ListChoseCourseActivity extends CustomAppCompactActivitySearch {
                                 new TypeToken<ResponseObject<Object>>() {
                                 }.getType()
                         );
+                        progressDialog.dismiss();
                         new CustomDialog.BuliderOKDialog(ListChoseCourseActivity.this)
                                 .setMessage("Lỗi" + errorResponse.getMessage())
                                 .setSuccessful(false)
@@ -150,6 +155,7 @@ public class ListChoseCourseActivity extends CustomAppCompactActivitySearch {
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<ResponseBodyEnroll>> call, @NonNull Throwable t) {
+                progressDialog.dismiss();
                 new CustomDialog.BuliderOKDialog(ListChoseCourseActivity.this)
                         .setMessage("Lỗi kết nối! " + t.getMessage())
                         .setSuccessful(false)
@@ -160,6 +166,8 @@ public class ListChoseCourseActivity extends CustomAppCompactActivitySearch {
     }
 
     private void hanldeDK() {
+        ProgressDialog progressDialog = CustomDialog.LoadingDialog(ListChoseCourseActivity.this, "Loading...");
+        progressDialog.show();
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(ListChoseCourseActivity.this, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
@@ -185,6 +193,7 @@ public class ListChoseCourseActivity extends CustomAppCompactActivitySearch {
 
                     creditClassForChoseCourseAdapter.clear();
                     creditClassForChoseCourseAdapter.addAll(listChoseCourse);
+                    progressDialog.dismiss();
                     creditClassForChoseCourseAdapter.notifyDataSetChanged();
 
                     new CustomDialog.BuliderOKDialog(ListChoseCourseActivity.this)
@@ -199,6 +208,7 @@ public class ListChoseCourseActivity extends CustomAppCompactActivitySearch {
                                 new TypeToken<ResponseObject<Object>>() {
                                 }.getType()
                         );
+                        progressDialog.dismiss();
                         new CustomDialog.BuliderOKDialog(ListChoseCourseActivity.this)
                                 .setMessage("Lỗi" + errorResponse.getMessage())
                                 .setSuccessful(false)
@@ -210,6 +220,7 @@ public class ListChoseCourseActivity extends CustomAppCompactActivitySearch {
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<ResponseBodyEnroll>> call, @NonNull Throwable t) {
+                progressDialog.dismiss();
                 new CustomDialog.BuliderOKDialog(ListChoseCourseActivity.this)
                         .setMessage("Lỗi kết nối! " + t.getMessage())
                         .setSuccessful(false)

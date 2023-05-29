@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -149,111 +150,29 @@ public class CreditClassForScoreAdapter extends ArrayAdapter implements Filterab
         } else viewHolder = (ViewHolder) convertView.getTag();
 
         CreditClassItem creditClassItem = data_view.get(position);
-        viewHolder.tvMaLTC.setText("Mã LTC: " + creditClassItem.getMaLopTc());
+        viewHolder.tvMaLTC.setText("Lớp tín chỉ: " + creditClassItem.getMaLopTc());
         viewHolder.tvTenHP.setText("Tên HP: " + creditClassItem.getTenMh());
         viewHolder.tvTenGV.setText(lecturerName!=null?lecturerName:"Tên GV: " + creditClassItem.getTenGv());
 
-        viewHolder.btnXemDiem.setOnClickListener(view -> callCourse(creditClassItem));
+        viewHolder.lnlItem.setOnClickListener(view -> {
+            Intent intent = new Intent(context, ViewScoreCreditClassActivity.class);
+            intent.putExtra("creditClassItem", creditClassItem);
+            context.startActivity(intent);
+        });
         return convertView;
     }
 
-    private void callCourse(CreditClassItem creditClassItem) {
-        MyPrefs myPrefs = MyPrefs.getInstance();
-        String jwt = myPrefs.getString(context, "jwt", "");
-        ApiManager apiManager = ApiManager.getInstance();
-        Call<ResponseObject<List<List<Course>>>> call = apiManager.getApiService().getAllCourseFull(jwt);
-        call.enqueue(new Callback<ResponseObject<List<List<Course>>>>() {
-            @Override
-            public void onResponse(@NonNull Call<ResponseObject<List<List<Course>>>> call, @NonNull Response<ResponseObject<List<List<Course>>>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    ResponseObject<List<List<Course>>> resData = response.body();
-                    List<Course> data = resData.getRetObj().get(0);
 
-                    Course course = new Course();
-                    course.setMaMh(creditClassItem.getMaMh());
-                    course = data.get(data.indexOf(course));
-                    callScore(creditClassItem, course);
-                } else {
-                    if (response.errorBody() != null) {
-                        ResponseObject<Object> errorResponse = new Gson().fromJson(
-                                response.errorBody().charStream(),
-                                new TypeToken<ResponseObject<Object>>() {
-                                }.getType()
-                        );
-                        new CustomDialog.BuliderOKDialog(context)
-                                .setMessage("Lỗi" + errorResponse.getMessage())
-                                .setSuccessful(false)
-                                .build()
-                                .show();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ResponseObject<List<List<Course>>>> call, @NonNull Throwable t) {
-                new CustomDialog.BuliderOKDialog(context)
-                        .setMessage("Lỗi kết nối! " + t.getMessage())
-                        .setSuccessful(false)
-                        .build()
-                        .show();
-            }
-        });
-    }
-
-    private void callScore(CreditClassItem creditClassItem, Course course) {
-        MyPrefs myPrefs = MyPrefs.getInstance();
-        String jwt = myPrefs.getString(context, "jwt", "");
-        ApiManager apiManager = ApiManager.getInstance();
-        Call<ResponseObject<List<ScoreCreditClass>>> call = apiManager.getApiService().getScoreByCreditClassCode(jwt, creditClassItem.getMaLopTc());
-        call.enqueue(new Callback<ResponseObject<List<ScoreCreditClass>>>() {
-            @Override
-            public void onResponse(@NonNull Call<ResponseObject<List<ScoreCreditClass>>> call, @NonNull Response<ResponseObject<List<ScoreCreditClass>>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    ResponseObject<List<ScoreCreditClass>> responseObject = response.body();
-                    List<ScoreCreditClass> data = responseObject.getRetObj();
-                    Intent intent = new Intent(context, ViewScoreCreditClassActivity.class);
-                    intent.putExtra("creditClassCode", creditClassItem.getMaLopTc());
-                    intent.putExtra("course", course);
-                    intent.putExtra("ScoreItemLv", (ArrayList<ScoreCreditClass>) data);
-                    context.startActivity(intent);
-                } else {
-                    if (response.errorBody() != null) {
-                        ResponseObject<Object> errorResponse = new Gson().fromJson(
-                                response.errorBody().charStream(),
-                                new TypeToken<ResponseObject<Object>>() {
-                                }.getType()
-                        );
-                        new CustomDialog.BuliderOKDialog(context)
-                                .setMessage("Lỗi" + errorResponse.getMessage())
-                                .setSuccessful(false)
-                                .build()
-                                .show();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ResponseObject<List<ScoreCreditClass>>> call, @NonNull Throwable t) {
-                new CustomDialog.BuliderOKDialog(context)
-                        .setMessage("Lỗi kết nối! " + t.getMessage())
-                        .setSuccessful(false)
-                        .build()
-                        .show();
-            }
-        });
-    }
-
-    //
     private class ViewHolder {
         TextView tvMaLTC;
         TextView tvTenGV;
         TextView tvTenHP;
-        Button btnXemDiem;
+        LinearLayout lnlItem;
         public ViewHolder (View view){
             this.tvMaLTC = view.findViewById(R.id.tvMaLTC);
             this.tvTenHP = view.findViewById(R.id.tvTenHP);
             this.tvTenGV = view.findViewById(R.id.tvTenGV);
-            this.btnXemDiem = view.findViewById(R.id.btnDiem);
+            this.lnlItem = view.findViewById(R.id.lnlItem);
         }
     }
 }

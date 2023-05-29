@@ -7,7 +7,7 @@
     android:paddingHorizontal="10dp">
     <LinearLayout
         android:orientation="vertical"
-        android:background="@drawable/main_icon"
+        android:background="@drawable/bg_item_lightgray"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
@@ -33,15 +33,19 @@
                     android:textColor="#000"
                     android:textSize="20sp"
                     android:textStyle="bold"/>
+
                 <TextView
+                    android:textStyle="italic"
                     android:id="@+id/tvTenHP"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:text="Tên HP:"
                     android:textColor="#000"
-                    android:textSize="20sp"/>
+                    android:textSize="20sp" />
+
                 <TextView
+                    android:textStyle="italic"
                     android:id="@+id/tvTenGV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -50,6 +54,7 @@
                     android:textColor="#000"
                     android:textSize="20sp"/>
                 <TextView
+
                     android:layout_marginLeft="10dp"
                     android:id="@+id/tvDetail"
                     android:layout_width="wrap_content"
@@ -60,27 +65,6 @@
                     android:textSize="20dp"
                     android:text="Xem chi tiết ..."
                     android:textColor="@color/second_color" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:layout_marginLeft="10dp"
-                android:paddingRight="15dp">
-
-                <ImageButton
-                    android:id="@+id/ibtSua"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/icon_edit" />
-                <ImageButton
-                    android:id="@+id/ibtXoa"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:background="@drawable/icon_delete" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

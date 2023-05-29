@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/a"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"/>
+
+        <LinearLayout
+            android:id="@+id/lnlItem"
+            android:padding="10dp"
+            android:orientation="vertical"
+            android:background="@drawable/bg_item_lightgray"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:paddingTop="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left|center_vertical"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+                    <TextView
+                        android:layout_marginBottom="3dp"
+                        android:id="@+id/tvMaLTC"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="Mã lớp TC:"
+                        android:textColor="#000"
+                        android:textSize="20sp"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/tvTenHP"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="HP:"
+                        android:textStyle="italic"
+                        android:textColor="#000"
+                        android:textSize="20sp"/>
+                    <TextView
+                        android:layout_marginBottom="5dp"
+                        android:textStyle="italic"
+                        android:id="@+id/tvTenGV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="GV:"
+                        android:textColor="#000"
+                        android:textSize="20sp"/>
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/baseline_arrow_forward_ios_24"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/badgeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/a"
+            android:layout_alignEnd="@id/a"
+            android:layout_marginTop="-2dp"
+            android:layout_marginEnd="2dp"
+            android:background="@drawable/baseline_circle_24"
+            android:elevation="10dp"
+            android:gravity="center"
+            android:text="99+"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+</LinearLayout>

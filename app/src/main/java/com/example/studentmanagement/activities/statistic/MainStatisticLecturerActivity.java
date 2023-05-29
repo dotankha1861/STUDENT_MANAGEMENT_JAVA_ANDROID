@@ -1,5 +1,6 @@
 package com.example.studentmanagement.activities.statistic;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -105,6 +106,8 @@ public class MainStatisticLecturerActivity extends CustomAppCompactActivitySearc
     }
 
     private void callCreditClass(String semesterCode) {
+        ProgressDialog progressDialog = CustomDialog.LoadingDialog(MainStatisticLecturerActivity.this, "Loading...");
+        progressDialog.show();
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(MainStatisticLecturerActivity.this, "jwt", "");
         String lecturerCode = myPrefs.getString(MainStatisticLecturerActivity.this, "username", "");
@@ -119,6 +122,7 @@ public class MainStatisticLecturerActivity extends CustomAppCompactActivitySearc
                     creditClassForStatisticAdapter.clear();
                     creditClassForStatisticAdapter.addAll(resData.getRetObj());
                     lvCreditClass.setAdapter(creditClassForStatisticAdapter);
+                    progressDialog.dismiss();
                     creditClassForStatisticAdapter.notifyDataSetChanged();
                 } else {
                     if (response.errorBody() != null) {
@@ -127,6 +131,7 @@ public class MainStatisticLecturerActivity extends CustomAppCompactActivitySearc
                                 new TypeToken<ResponseObject<Object>>() {
                                 }.getType()
                         );
+                        progressDialog.dismiss();
                         new CustomDialog.BuliderOKDialog(MainStatisticLecturerActivity.this)
                                 .setMessage("Lỗi" + errorResponse.getMessage())
                                 .setSuccessful(false)
@@ -138,6 +143,7 @@ public class MainStatisticLecturerActivity extends CustomAppCompactActivitySearc
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<List<CreditClassItem>>> call, @NonNull Throwable t) {
+                progressDialog.dismiss();
                 new CustomDialog.BuliderOKDialog(MainStatisticLecturerActivity.this)
                         .setMessage("Lỗi kết nối! " + t.getMessage())
                         .setSuccessful(false)

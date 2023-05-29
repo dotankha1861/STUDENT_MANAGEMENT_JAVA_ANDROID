@@ -1,5 +1,6 @@
 package com.example.studentmanagement.activities.score;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -23,11 +25,17 @@ import com.example.studentmanagement.activities.customactivity.CustomAppCompactA
 import com.example.studentmanagement.adapter.CreditClassForScoreAdapter;
 import com.example.studentmanagement.api.ApiManager;
 import com.example.studentmanagement.api.ResponseObject;
+import com.example.studentmanagement.firebase.NotificationData;
 import com.example.studentmanagement.models.view.CreditClassItem;
 import com.example.studentmanagement.models.view.SemesterItem;
 import com.example.studentmanagement.models.view.StudentItem;
 import com.example.studentmanagement.ui.CustomDialog;
 import com.example.studentmanagement.utils.MyPrefs;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -101,7 +109,10 @@ public class MainScoreLecturerActivity extends CustomAppCompactActivitySearch {
         });
     }
 
+
     private void callCreditClass(String semesterCode) {
+        ProgressDialog progressDialog = CustomDialog.LoadingDialog(MainScoreLecturerActivity.this, "Loading...");
+        progressDialog.show();
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(MainScoreLecturerActivity.this, "jwt", "");
         String lecturerCode = myPrefs.getString(MainScoreLecturerActivity.this, "username", "");
@@ -112,10 +123,12 @@ public class MainScoreLecturerActivity extends CustomAppCompactActivitySearch {
             public void onResponse(@NonNull Call<ResponseObject<List<CreditClassItem>>> call, @NonNull Response<ResponseObject<List<CreditClassItem>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     ResponseObject<List<CreditClassItem>> resData = response.body();
-
                     creditClassForScoreAdapter.clear();
-                    creditClassForScoreAdapter.addAll(resData.getRetObj());
+                    if(resData.getRetObj()==null||resData.getRetObj().size()==0)
+                        Toast.makeText(MainScoreLecturerActivity.this, "Không có lớp tín chỉ nào", Toast.LENGTH_SHORT).show();
+                    else creditClassForScoreAdapter.addAll(resData.getRetObj());
                     lvCreditClass.setAdapter(creditClassForScoreAdapter);
+                    progressDialog.dismiss();
                     creditClassForScoreAdapter.notifyDataSetChanged();
                 } else {
                     if (response.errorBody() != null) {
@@ -124,6 +137,7 @@ public class MainScoreLecturerActivity extends CustomAppCompactActivitySearch {
                                 new TypeToken<ResponseObject<Object>>() {
                                 }.getType()
                         );
+                        progressDialog.dismiss();
                         new CustomDialog.BuliderOKDialog(MainScoreLecturerActivity.this)
                                 .setMessage("Lỗi" + errorResponse.getMessage())
                                 .setSuccessful(false)
@@ -135,6 +149,7 @@ public class MainScoreLecturerActivity extends CustomAppCompactActivitySearch {
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<List<CreditClassItem>>> call, @NonNull Throwable t) {
+                progressDialog.dismiss();
                 new CustomDialog.BuliderOKDialog(MainScoreLecturerActivity.this)
                         .setMessage("Lỗi kết nối! " + t.getMessage())
                         .setSuccessful(false)
@@ -143,7 +158,6 @@ public class MainScoreLecturerActivity extends CustomAppCompactActivitySearch {
             }
         });
     }
-
 
     private void setControl() {
         toolbar = findViewById(R.id.toolbar);

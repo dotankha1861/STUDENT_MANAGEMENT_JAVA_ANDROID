@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary_color"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
+    <EditText
+        android:pointerIcon="none"
+        android:cursorVisible="false"
+        android:id="@+id/edtCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/primary_color"
+        android:textColor="@color/primary_color"/>
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_marginTop="50dp"
+        android:layout_width="300dp"
+        android:layout_height="400dp"
+        android:layout_centerHorizontal="true"
+
+        android:src="@drawable/university_detail" />
+    <LinearLayout
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/image">
+
+        <ProgressBar
+            android:id="@+id/pgbLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true" />
+
+        <TextView
+            android:id="@+id/tvLoading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignTop="@+id/image"
+            android:layout_alignBottom="@+id/pgbLoading"
+            android:gravity="center"
+            android:text="Loading ..."
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="24sp"/>
+    </LinearLayout>
+
+</LinearLayout>

@@ -13,6 +13,7 @@ public class ScoreStudent implements Serializable {
     private float percentCc;
     private float percentGk;
     private float percentCk;
+    private String maLopTc;
 
     public ScoreStudent() {
     }
@@ -28,6 +29,14 @@ public class ScoreStudent implements Serializable {
         this.percentCc = percentCc;
         this.percentGk = percentGk;
         this.percentCk = percentCk;
+    }
+
+    public String getMaLopTc() {
+        return maLopTc;
+    }
+
+    public void setMaLopTc(String maLopTc) {
+        this.maLopTc = maLopTc;
     }
 
     public String getMaMh() {

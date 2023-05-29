@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@drawable/bar_control">
+        android:background="@drawable/spinner_shadow">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -43,10 +43,8 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:layout_marginRight="10dp"
-                android:background="@drawable/spinner_shadow"
-                android:gravity="center"
+                android:background="@drawable/bg_item_lightgray"
                 android:orientation="horizontal">
 
                 <Spinner
@@ -63,7 +61,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/spinner_shadow"
+                android:background="@drawable/bg_item_lightgray"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -91,7 +89,7 @@
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/spinner_shadow"
+                android:background="@drawable/bg_item_lightgray"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -106,11 +104,6 @@
 
             </LinearLayout>
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
             <Button
                 android:id="@+id/btnLoc"
                 android:layout_width="wrap_content"
@@ -123,7 +116,7 @@
 
     </LinearLayout>
     <ListView
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
         android:dividerHeight="10dp"
         android:id="@+id/lvDsloptinchi"
         android:layout_width="match_parent"

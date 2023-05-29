@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="20dp"
-    android:padding="30dp"
+    android:padding="20dp"
     android:background="@drawable/spinner_shadow"
     android:gravity="center">
     <ImageView
@@ -25,11 +25,27 @@
         android:layout_marginBottom="15dp"/>
 
     <EditText
+        android:padding="10dp"
+        android:background="@drawable/custom_edittext"
         android:id="@+id/editText"
+        android:hint="Tiêu đề"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="top|left"
         android:inputType="text"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:layout_marginBottom="20dp"/>
+
+    <EditText
+        android:hint="Nội dung"
+        android:padding="15dp"
+        android:background="@drawable/custom_edittext"
+        android:id="@+id/edtBody"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:gravity="top|left"
+        android:maxLines="10"
         android:textColor="@color/black"
         android:textSize="20sp"
         android:layout_marginBottom="20dp"/>

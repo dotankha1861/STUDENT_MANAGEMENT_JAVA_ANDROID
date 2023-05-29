@@ -1,5 +1,6 @@
 package com.example.studentmanagement.activities.score;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -16,6 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.example.studentmanagement.R;
 import com.example.studentmanagement.activities.customactivity.CustomAppCompactActivitySearch;
+import com.example.studentmanagement.activities.statistic.MainStatisticAdminActivity;
 import com.example.studentmanagement.adapter.CreditClassForScoreAdapter;
 import com.example.studentmanagement.adapter.StudentForScoreAdapter;
 import com.example.studentmanagement.api.ApiManager;
@@ -130,6 +132,7 @@ public class MainScoreAdminActivity extends CustomAppCompactActivitySearch {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 viewMode = i;
+                if(viewMode == 0) callAllPracticalClass();
             }
 
             @Override
@@ -137,6 +140,7 @@ public class MainScoreAdminActivity extends CustomAppCompactActivitySearch {
 
             }
         });
+
         spnPracticalClass.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -151,7 +155,7 @@ public class MainScoreAdminActivity extends CustomAppCompactActivitySearch {
         });
 
         btnFilter.setOnClickListener((View.OnClickListener) view -> {
-            if(viewMode == 0) callCreditClass();
+            if(viewMode==0) callCreditClass();
             else callStudent();
         });
     }
@@ -199,8 +203,49 @@ public class MainScoreAdminActivity extends CustomAppCompactActivitySearch {
             }
         });
     }
+    private void callAllPracticalClass() {
+        MyPrefs myPrefs = MyPrefs.getInstance();
+        String jwt = myPrefs.getString(MainScoreAdminActivity.this, "jwt", "");
+        ApiManager apiManager = ApiManager.getInstance();
+        Call<ResponseObject<List<List<PracticalClassItem>>>> call = apiManager.getApiService().getAllPracticalClass(jwt);
+        call.enqueue(new Callback<ResponseObject<List<List<PracticalClassItem>>>>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseObject<List<List<PracticalClassItem>>>> call, @NonNull Response<ResponseObject<List<List<PracticalClassItem>>>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ResponseObject<List<List<PracticalClassItem>>> resData = response.body();
+                    List<PracticalClassItem> data = resData.getRetObj().get(0);
+                    adapterPracticalClassSpinner = new ArrayAdapter<>(MainScoreAdminActivity.this, R.layout.item_selected_spinner, data);
+                    adapterPracticalClassSpinner.setDropDownViewResource(R.layout.item_dropdown_spinner);
+                    spnPracticalClass.setAdapter(adapterPracticalClassSpinner);
+                } else {
+                    if (response.errorBody() != null) {
+                        ResponseObject<Object> errorResponse = new Gson().fromJson(
+                                response.errorBody().charStream(),
+                                new TypeToken<ResponseObject<Object>>() {
+                                }.getType()
+                        );
+                        new CustomDialog.BuliderOKDialog(MainScoreAdminActivity.this)
+                                .setMessage("Lỗi" + errorResponse.getMessage())
+                                .setSuccessful(false)
+                                .build()
+                                .show();
+                    }
+                }
+            }
 
+            @Override
+            public void onFailure(@NonNull Call<ResponseObject<List<List<PracticalClassItem>>>> call, @NonNull Throwable t) {
+                new CustomDialog.BuliderOKDialog(MainScoreAdminActivity.this)
+                        .setMessage("Lỗi kết nối! " + t.getMessage())
+                        .setSuccessful(false)
+                        .build()
+                        .show();
+            }
+        });
+    }
     private void callCreditClass() {
+        ProgressDialog progressDialog = CustomDialog.LoadingDialog(MainScoreAdminActivity.this, "Loading...");
+        progressDialog.show();
         MyPrefs myPrefs = MyPrefs.getInstance();
         String jwt = myPrefs.getString(MainScoreAdminActivity.this, "jwt", "");
         ApiManager apiManager = ApiManager.getInstance();
@@ -210,10 +255,12 @@ public class MainScoreAdminActivity extends CustomAppCompactActivitySearch {
             public void onResponse(@NonNull Call<ResponseObject<List<CreditClassItem>>> call, @NonNull Response<ResponseObject<List<CreditClassItem>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     ResponseObject<List<CreditClassItem>> resData = response.body();
-
                     creditClassForScoreAdapter.clear();
+                    if(resData.getRetObj()==null || resData.getRetObj().size()==0)
+                        Toast.makeText(MainScoreAdminActivity.this, "Không có lớp tín chỉ nào", Toast.LENGTH_SHORT).show();
                     creditClassForScoreAdapter.addAll(resData.getRetObj());
                     lvObject.setAdapter(creditClassForScoreAdapter);
+                    progressDialog.dismiss();
                     creditClassForScoreAdapter.notifyDataSetChanged();
                 } else {
                     if (response.errorBody() != null) {

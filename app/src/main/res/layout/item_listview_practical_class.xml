@@ -8,7 +8,7 @@
     <LinearLayout
         android:padding="10dp"
         android:orientation="vertical"
-        android:background="@drawable/main_icon"
+        android:background="@drawable/bg_item_lightgray"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
@@ -35,7 +35,7 @@
                     android:layout_marginLeft="10dp"
                     android:text="Tên lớp"
                     android:textColor="#000"
-                    android:textSize="22sp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
                 <TextView
                     android:id="@+id/tvMaLop"

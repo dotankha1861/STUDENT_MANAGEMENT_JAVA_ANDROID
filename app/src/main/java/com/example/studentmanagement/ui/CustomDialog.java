@@ -1,6 +1,7 @@
 package com.example.studentmanagement.ui;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -19,7 +20,6 @@ import java.util.function.Predicate;
 public class CustomDialog {
     private final Dialog dialog;
 
-
     private CustomDialog(Dialog dialog) {
         this.dialog = dialog;
     }
@@ -35,6 +35,7 @@ public class CustomDialog {
         private Button btnNegative;
 
         private EditText editText;
+        private EditText edtBody;
 
         public Builder(Context context) {
             dialog = new Dialog(context);
@@ -53,11 +54,17 @@ public class CustomDialog {
             tvMessage.setText(message);
             return this;
         }
-        public Builder setEditText(String hint, String text){
+        public Builder setEdtTitle(String hint, String text){
             editText = dialog.findViewById(R.id.editText);
             editText.setText(text);
             editText.setHint(hint);
             return this;
+        }
+        public Builder setEdtBody(String hint, String text){
+            edtBody = dialog.findViewById(R.id.edtBody);
+            edtBody.setText(text);
+            edtBody.setHint(hint);
+            return  this;
         }
 
         public Builder setPositiveButton(String text, View.OnClickListener listener, Predicate<Boolean> hasDismiss) {
@@ -86,8 +93,9 @@ public class CustomDialog {
             if(btnPositive == null) dialog.findViewById(R.id.btn_positive).setVisibility(View.GONE);
             if(btnNegative == null) dialog.findViewById(R.id.btn_negative).setVisibility(View.GONE);
             if(editText == null) dialog.findViewById(R.id.editText).setVisibility(View.GONE);
+            if(edtBody == null) dialog.findViewById(R.id.edtBody).setVisibility(View.GONE);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            dialog.getWindow().setLayout(1000, 1200);
+            dialog.getWindow().setLayout(1000, 1500);
             return new CustomDialog(dialog);
         }
     }
@@ -132,6 +140,14 @@ public class CustomDialog {
         public CustomDialog build(){
             return builder.build();
         }
+    }
+    public static ProgressDialog LoadingDialog(Context context, String message){
+        ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage(message);
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        return progressDialog;
     }
 }
 

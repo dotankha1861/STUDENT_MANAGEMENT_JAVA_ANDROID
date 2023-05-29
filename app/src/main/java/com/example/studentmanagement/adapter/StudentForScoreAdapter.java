@@ -1,6 +1,7 @@
 package com.example.studentmanagement.adapter;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -157,62 +159,27 @@ public class StudentForScoreAdapter extends ArrayAdapter implements Filterable {
         viewHolder.tvTenSV.setText(studentItem.getHo() + " " + studentItem.getTen());
         viewHolder.tvMaSV.setText("Mã SV: " + studentItem.getMaSv());
 
-        viewHolder.btnXemDiem.setOnClickListener(view -> callScore(studentItem));
+        viewHolder.lnlItem.setOnClickListener(view -> callScore(studentItem));
 
         return convertView;
     }
 
     private void callScore(StudentItem studentItem) {
-        MyPrefs myPrefs = MyPrefs.getInstance();
-        String jwt = myPrefs.getString(context, "jwt", "");
-        ApiManager apiManager = ApiManager.getInstance();
-        Call<ResponseObject<List<ScoreStudent>>> call = apiManager.getApiService().getScoreByStudentCode(jwt, studentItem.getMaSv(), crtSemester);
-        call.enqueue(new Callback<ResponseObject<List<ScoreStudent>>>() {
-            @Override
-            public void onResponse(@NonNull Call<ResponseObject<List<ScoreStudent>>> call, @NonNull Response<ResponseObject<List<ScoreStudent>>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    ResponseObject<List<ScoreStudent>> resData = response.body();
-                    Intent intent = new Intent(context, ViewScoreStudentActivity.class);
-                    intent.putExtra("studentItem", studentItem);
-                    intent.putExtra("scoreItemLv", (ArrayList<ScoreStudent>)resData.getRetObj());
-                    intent.putExtra("crtSemester", crtSemester);
-                    intent.putExtra("listSemesterItemSpn", (ArrayList<SemesterItem>)semesterItemList);
-                    context.startActivity(intent);
-                } else {
-                    if (response.errorBody() != null) {
-                        ResponseObject<Object> errorResponse = new Gson().fromJson(
-                                response.errorBody().charStream(),
-                                new TypeToken<ResponseObject<Object>>() {
-                                }.getType()
-                        );
-                        new CustomDialog.BuliderOKDialog(context)
-                                .setMessage("Lỗi" + errorResponse.getMessage())
-                                .setSuccessful(false)
-                                .build()
-                                .show();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ResponseObject<List<ScoreStudent>>> call, @NonNull Throwable t) {
-                new CustomDialog.BuliderOKDialog(context)
-                        .setMessage("Lỗi kết nối!" + t.getMessage())
-                        .setSuccessful(false)
-                        .build()
-                        .show();
-            }
-        });
+        Intent intent = new Intent(context, ViewScoreStudentActivity.class);
+        intent.putExtra("studentItem", studentItem);
+        intent.putExtra("crtSemester", crtSemester);
+        intent.putExtra("listSemesterItemSpn", (ArrayList<SemesterItem>)semesterItemList);
+        context.startActivity(intent);
     }
 
     private static class ViewHolder {
         TextView tvTenSV;
         TextView tvMaSV;
-        Button btnXemDiem;
+        LinearLayout lnlItem;
         public ViewHolder (View view){
             this.tvTenSV = view.findViewById(R.id.tvHoTenSV);
             this.tvMaSV = view.findViewById(R.id.tvMaSV);
-            this.btnXemDiem = view.findViewById(R.id.btnDiem);
+            this.lnlItem = view.findViewById(R.id.lnlItem);
         }
     }
 }

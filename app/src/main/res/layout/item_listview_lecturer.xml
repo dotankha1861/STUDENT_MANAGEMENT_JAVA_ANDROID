@@ -3,16 +3,17 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center"
-    android:paddingHorizontal="10dp">
+    android:gravity="center">
     <LinearLayout
-        android:padding="10dp"
+        android:paddingHorizontal="10dp"
         android:orientation="vertical"
-        android:background="@drawable/main_icon"
+        android:background="@drawable/bg_item_lightgray"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="10dp">
         <LinearLayout
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"

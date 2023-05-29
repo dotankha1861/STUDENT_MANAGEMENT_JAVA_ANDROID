@@ -29,60 +29,67 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@drawable/bar_control">
+        android:background="@drawable/spinner_shadow">
+
         <LinearLayout
+            android:layout_marginHorizontal="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:background="@drawable/bg_item_lightgray"
             android:orientation="vertical"
-            android:padding="15dp"
-            android:background="@drawable/main_icon">
+            android:padding="15dp">
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:orientation="horizontal"
-                android:paddingHorizontal="5dp"
-                android:layout_marginBottom="5dp">
+                android:paddingHorizontal="5dp">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:text="Họ và tên: "
-                    android:textStyle="bold"
-                    android:textSize="20sp"
                     android:textColor="@color/black"
-                    android:layout_gravity="center"/>
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
                 <TextView
-                    android:layout_weight="1"
                     android:id="@+id/tvHoTenSV"
-                    android:paddingLeft="25dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingLeft="10dp"
                     android:text="Cao Văn Lâm"
-                    android:textStyle="italic"
+                    android:textColor="@color/black"
                     android:textSize="20sp"
-                    android:textColor="@color/black"/>
+                    android:textStyle="italic" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingHorizontal="5dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="MSSV:"
-                    android:textStyle="bold"
-                    android:textSize="20sp"
-                    android:textColor="@color/black"
-                    android:layout_gravity="center"/>
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:text="MSSV:"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_weight="1"
                     android:id="@+id/tvMaSV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-
-                    android:paddingLeft="65dp"
+                    android:paddingLeft="10dp"
                     android:text="N19DCCN085"
                     android:textColor="@color/black"
                     android:textSize="20sp"
@@ -95,7 +102,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:paddingVertical="15dp"
             android:gravity="left|center_vertical"
             android:orientation="horizontal">
 
